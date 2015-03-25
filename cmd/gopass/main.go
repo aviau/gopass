@@ -93,20 +93,20 @@ func main() {
 
 func execHelp() {
 	fmt.Println(`Usage:
-      init                  init command
-      ls                    ls command
-      find                  find command
-      show                  show command
-      grep                  grep command
-      insert                insert command
-      edit                  edit command
-      generate              generate command
-      rm                    rm command
-      mv                    mv command
-      cp                    cp command
-      git                   git command
-      help                  help command
-      version               version command
+      init                  Initialize a new password store.
+      ls                    List passwords.
+      find                  List passwords that match a string.
+      show                  Show an encryped password.
+      grep                  Search for a string in all passwords.
+      insert                Insert a new password.
+      edit                  Edit an existing password.
+      generate              Generate a new password.
+      rm                    Remove a password.
+      mv                    Move a password.
+      cp                    Copy a password.
+      git                   Execute a git command.
+      help                  Show this text.
+      version               Show version information.
 `)
 }
 
