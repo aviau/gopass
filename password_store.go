@@ -24,6 +24,8 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+
+	gopassio "github.com/ReAzem/gopass/io"
 )
 
 //PasswordStore represents a password store.
@@ -133,7 +135,7 @@ func (store *PasswordStore) Copy(source, dest string) error {
 	//Check if the path is a password
 	passwordPath += ".gpg"
 	if _, err := os.Stat(passwordPath); err == nil {
-		//TODO : COPY PASSWORD
+		gopassio.CopyFileContents(passwordPath, path.Join(store.Path, dest+".gpg"))
 		return nil
 	}
 
