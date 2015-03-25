@@ -32,6 +32,10 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+var (
+	version = "0.1.0"
+)
+
 //CommandLine holds options from the main parser
 type CommandLine struct {
 	Path   string //Path to the password store
@@ -85,6 +89,8 @@ func main() {
 		execHelp()
 	case "init":
 		fmt.Println("Executing", cmd)
+	case "version":
+		execVersion()
 	default:
 		execShow(&c, args)
 	}
@@ -108,6 +114,10 @@ func execHelp() {
       help                  Show this text.
       version               Show version information.
 `)
+}
+
+func execVersion() {
+	fmt.Printf("gopass v%s\n", version)
 }
 
 //execInsert runs the "insert" command.
