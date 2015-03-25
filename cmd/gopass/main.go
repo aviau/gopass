@@ -72,7 +72,7 @@ func main() {
 	case "grep":
 		execGrep(&c, args[1:])
 	case "cp":
-		fmt.Println("Executing", cmd)
+		execCp(&c, args[1:])
 	case "mv":
 		execMv(&c, args[1:])
 	case "rm":
@@ -276,6 +276,7 @@ func execGenerate(cmd *CommandLine, args []string) {
 //execRm runs the "rm" command.
 func execRm(c *CommandLine, args []string) {
 	fs := flag.NewFlagSet("rm", flag.ExitOnError)
+	fs.Usage = func() { fmt.Println("Usage: gopass rm pass-name") }
 	fs.Parse(args)
 
 	store := GetStore(c)
@@ -291,6 +292,7 @@ func execRm(c *CommandLine, args []string) {
 //execMv runs the "mv" comand.
 func execMv(c *CommandLine, args []string) {
 	fs := flag.NewFlagSet("mv", flag.ExitOnError)
+	fs.Usage = func() { fmt.Println("Usage: gopass mv old-path new-path") }
 	fs.Parse(args)
 
 	store := GetStore(c)
@@ -308,6 +310,30 @@ func execMv(c *CommandLine, args []string) {
 		fmt.Printf("Error: %s\n", err)
 	} else {
 		fmt.Printf("Moved password/directory from '%s' to '%s'\n", source, dest)
+	}
+}
+
+//execCp runs the "cp" command.
+func execCp(c *CommandLine, args []string) {
+	fs := flag.NewFlagSet("cp", flag.ExitOnError)
+	fs.Usage = func() { fmt.Println("Usage: gopass cp old-path new-path") }
+	fs.Parse(args)
+
+	store := GetStore(c)
+
+	source := fs.Arg(0)
+	dest := fs.Arg(1)
+
+	if source == "" || dest == "" {
+		fmt.Println("Error: Received empty source or dest argument")
+		os.Exit(1)
+	}
+
+	err := store.Copy(source, dest)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+	} else {
+		fmt.Printf("Copied password/directory from '%s' to '%s'\n", source, dest)
 	}
 }
 

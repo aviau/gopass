@@ -120,6 +120,26 @@ func (store *PasswordStore) Move(source, dest string) error {
 	return fmt.Errorf("Could not find password or directory at path %s", path.Join(store.Path, source))
 }
 
+//Copy copies a password or directory from source to dest.
+func (store *PasswordStore) Copy(source, dest string) error {
+	passwordPath := path.Join(store.Path, source)
+
+	//Check if the path is a dir
+	if _, err := os.Stat(passwordPath); err == nil {
+		//TODO : COPY DIRECTORY
+		return nil
+	}
+
+	//Check if the path is a password
+	passwordPath += ".gpg"
+	if _, err := os.Stat(passwordPath); err == nil {
+		//TODO : COPY PASSWORD
+		return nil
+	}
+
+	return fmt.Errorf("Could not find password or directory at path %s", path.Join(store.Path, source))
+}
+
 //GetPassword returns a decrypted password
 func (store *PasswordStore) GetPassword(pwname string) (string, error) {
 	passwordPath := path.Join(store.Path, pwname+".gpg")
