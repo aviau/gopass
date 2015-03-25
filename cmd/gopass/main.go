@@ -26,10 +26,10 @@ import (
 	"strconv"
 	"strings"
 
+	"code.google.com/p/go.crypto/ssh/terminal"
 	"github.com/ReAzem/gopass"
 	"github.com/ReAzem/gopass/pwgen"
 	"github.com/mgutz/ansi"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 var (
