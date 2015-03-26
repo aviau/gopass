@@ -226,7 +226,7 @@ func execEdit(cmd *CommandLine, args []string) {
 	err = store.InsertPassword(passname, password)
 	if err != nil {
 		fmt.Println(err)
-		return
+		os.Exit(1)
 	}
 
 	fmt.Printf("Succesfully edited password '%s'\n", passname)
