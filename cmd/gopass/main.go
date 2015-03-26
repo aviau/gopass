@@ -218,6 +218,7 @@ func execEdit(cmd *CommandLine, args []string) {
 	editor := exec.Command(cmd.Editor, file.Name())
 	editor.Stdout = os.Stdout
 	editor.Stdin = os.Stdin
+	editor.Stderr = os.Stderr
 	editor.Run()
 
 	pwText, _ := ioutil.ReadFile(file.Name())
@@ -422,10 +423,21 @@ func execGrep(c *CommandLine, args []string) {
 
 //execGit runs the "git" command
 func execGit(c *CommandLine, args []string) {
-	//TODO: Add work-dir arg.
-	git := exec.Command("git", args...)
+	store := GetStore(c)
+
+	gitArgs := []string{
+		"--git-dir=" + path.Join(store.Path, ".git"),
+		"--work-tree=" + store.Path}
+
+	gitArgs = append(gitArgs, args...)
+
+	git := exec.Command(
+		"git",
+		gitArgs...)
+
 	git.Stdout = os.Stdout
 	git.Stderr = os.Stderr
+	git.Stdin = os.Stdin
 	git.Run()
 }
 
