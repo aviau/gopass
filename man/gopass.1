@@ -1,0 +1,187 @@
+.TH GOPASS 1 "2015 March 29" Alexandre\ Viau "Password Store"
+
+.SH NAME
+gopass - stores, retrieves, generates, and synchronizes passwords securely
+
+.SH SYNOPSIS
+.B gopass
+[
+.I COMMAND
+] [
+.I OPTIONS
+]... [
+.I ARGS
+]...
+
+.SH DESCRIPTION
+
+.B gopass
+is a very simple password store that keeps passwords inside
+.BR gpg2 (1)
+encrypted files inside a simple directory tree residing at
+.IR ~/.password-store .
+The
+.B gopass
+utility provides a series of commands for manipulating the password store,
+allowing the user to add, remove, edit, synchronize, generate, and manipulate
+passwords.
+
+If no COMMAND is specified, COMMAND defaults to either
+.B show
+or
+.BR ls ,
+depending on the type of specifier in ARGS. Otherwise COMMAND must be one of
+the valid commands listed below.
+
+Several of the commands below rely on or provide additional functionality if
+the password store directory is also a git repository. If the password store
+directory is a git repository, all password store modification commands will
+cause a corresponding git commit.
+.BR git (1).
+
+The \fBinit\fP command must be run before other commands in order to initialize
+the password store with the correct gpg key id. Passwords are encrypting using
+the gpg key set with \fBinit\fP.
+
+There is a corresponding bash completion script for use with tab completing
+password names in
+.BR bash (1).
+
+.SH COMMANDS
+
+.TP
+\fBinit\fP [ \fI--path=sub-folder\fP, \fI-p sub-folder\fP ] \fIgpg-id...\fP
+Initialize new password storage and use
+.I gpg-id
+for encryption. This command must be run first before a password
+store can be used. Note that use of
+.BR gpg-agent (1)
+is recommended so that the batch decryption does not require as much user
+intervention.
+.TP
+\fBls\fP \fIsubfolder\fP
+List names of passwords inside the tree at
+.I subfolder
+by using the
+.BR tree (1)
+program. This command is alternatively named \fBlist\fP.
+.TP
+\fBgrep\fP \fIsearch-string\fP
+Searches inside each decrypted password file for \fIsearch-string\fP, and displays line
+containing matched string along with filename.
+.TP
+\fBfind\fP \fIpass-names\fP...
+List names of passwords inside the tree that match \fIpass-names\fP by using the
+.BR tree (1)
+program. This command is alternatively named \fBsearch\fP.
+.TP
+\fBshow\fP \fIpass-name\fP
+Decrypt and print a password named \fIpass-name\fP.
+.TP
+\fBinsert\fP [ \fI--multiline\fP, \fI-m\fP ] [ \fI--force\fP, \fI-f\fP ] \fIpass-name\fP
+Insert a new password into the password store called \fIpass-name\fP. This will
+read the new password from standard in. If \fI--multiline\fP or \fI-m\fP is specified, an editor will be
+opened for you yo type the password. Otherwise, only a single line from standard in is read. Prompt
+before overwriting an existing password, unless \fI--force\fP or \fI-f\fP is specified. This
+command is alternatively named \fBadd\fP.
+.TP
+\fBedit\fP \fIpass-name\fP
+Edit an existing password using the default text editor specified
+by the environment variable \fIEDITOR\fP or using
+.BR vi (1)
+as a fallback. This mode makes use of temporary files for editing.
+.TP
+\fBgenerate\fP [ \fI--no-symbols\fP, \fI-n\fP ] \fIpass-name pass-length\fP
+Generate a new password of length \fIpass-length\fP and insert into \fIpass-name\fP.
+If \fI--no-symbols\fP or \fI-n\fP is specified, do not use any non-alphanumeric characters
+in the generated password.
+.TP
+\fBrm\fP [ \fI--recursive\fP, \fI-r\fP ] [ \fI--force\fP, \fI-f\fP ] \fIpass-name\fP
+Remove the password named \fIpass-name\fP from the password store. This command is
+alternatively named \fBremove\fP or \fBdelete\fP. If \fI--recursive\fP or \fI-r\fP
+is specified, delete pass-name recursively if it is a directory. If \fI--force\fP
+or \fI-f\fP is specified, do not interactively prompt before removal.
+.TP
+\fBmv\fP [ \fI--force\fP, \fI-f\fP ] \fIold-path\fP \fInew-path\fP
+Renames the password or directory named \fIold-path\fP to \fInew-path\fP. This
+command is alternatively named \fBrename\fP. If \fI--force\fP is specified,
+silently overwrite \fInew-path\fP if it exists. If \fInew-path\fP ends in a
+trailing \fI/\fP, it is always treated as a directory. Passwords are selectively
+reencrypted to the corresponding keys of their new destination.
+.TP
+\fBcp\fP [ \fI--force\fP, \fI-f\fP ] \fIold-path\fP \fInew-path\fP
+Copies the password or directory named \fIold-path\fP to \fInew-path\fP. This
+command is alternatively named \fBcopy\fP. If \fI--force\fP is specified,
+silently overwrite \fInew-path\fP if it exists. If \fInew-path\fP ends in a
+trailing \fI/\fP, it is always treated as a directory. Passwords are selectively
+reencrypted to the corresponding keys of their new destination.
+.TP
+\fBgit\fP \fIgit-command-args\fP...
+If the password store is a git repository, pass \fIgit-command-args\fP as arguments to
+.BR git (1)
+using the password store as the git repository. If \fIgit-command-args\fP is \fBinit\fP,
+in addition to initializing the git repository, add the current contents of the password
+store to the repository in an initial commit.
+.TP
+\fBhelp\fP
+Show usage message.
+.TP
+\fBversion\fP
+Show version information.
+
+.SH FILES
+
+.TP
+.B ~/.password-store
+The default password storage directory.
+.TP
+.B ~/.password-store/.gpg-id
+Contains the default gpg key identification used for encryption and decryption.
+Multiple gpg keys may be specified in this file, one per line. If this file
+exists in any sub directories, passwords inside those sub directories are
+encrypted using those keys. This should be set using the \fBinit\fP command.
+
+.SH ENVIRONMENT VARIABLES
+
+.TP
+.I PASSWORD_STORE_DIR
+Overrides the default password storage directory.
+.SH SEE ALSO
+.BR gpg2 (1),
+.BR git (1),
+
+.SH AUTHOR
+.B gopass
+was written by
+.MT alexandre@alexandreviau.net
+Alexandre Viau
+.ME .
+For updates and more information, a project page is available on the
+.UR http://\:www.github.com/ReAzem/gopass
+World Wide Web
+.UE .
+
+.B pass
+was written by
+.MT Jason@zx2c4.com
+Jason A. Donenfeld
+.ME .
+For updates and more information, a project page is available on the
+.UR http://\:www.passwordstore.org/
+World Wide Web
+.UE .
+
+.SH COPYING
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
