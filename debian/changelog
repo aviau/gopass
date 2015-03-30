@@ -1,0 +1,5 @@
+gopass (0.1.0-1) unstable; urgency=low
+
+  * Initial release. (Closes: #781494)
+
+ -- Alexandre Viau <alexandre@alexandreviau.net>  Sun, 29 Mar 2015 22:05:33 -0400

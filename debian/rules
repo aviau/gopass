@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+export DH_GOPKG := github.com/ReAzem/gopass
+
+%:
+	dh $@ --buildsystem=golang --with=golang

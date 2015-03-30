@@ -1,0 +1,32 @@
+Source: gopass
+Section: admin
+Priority: extra
+Homepage: https://github.com/ReAzem/gopass
+Maintainer: Alexandre Viau <alexandre@alexandreviau.net>
+Build-Depends: debhelper (>= 9),
+               dh-golang,
+               golang-go,
+               golang-ansi-dev,
+               golang-go.crypto-dev
+Standards-Version: 3.9.6
+Vcs-Git: https://github.com/ReAzem/gopass.git
+Vcs-Browser: https://github.com/ReAzem/gopass
+
+Package: gopass
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends} 
+Built-Using: ${misc:Built-Using}
+Description: pass implementation in Go
+ gopass makes managing these individual password files extremely easy. All 
+ passwords live in ~/.password-store, and gopass provides some nice commands
+ for adding, editing, generating, and retrieving passwords.
+
+Package: golang-gopass-dev
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends} 
+Built-Using: ${misc:Built-Using}
+Description: pass implementation in Go
+ gopass makes managing these individual password files extremely easy. All 
+ passwords live in ~/.password-store, and gopass provides some nice commands
+ for adding, editing, generating, and retrieving passwords.
+
