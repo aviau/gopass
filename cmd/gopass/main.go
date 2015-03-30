@@ -352,7 +352,7 @@ func execCp(c *CommandLine, args []string) {
 //execShow runs the "show" command.
 func execShow(c *CommandLine, args []string) {
 	fs := flag.NewFlagSet("show", flag.ExitOnError)
-	fs.Usage = func() { fmt.Println(`Usage: gopass show [--clip,-c] [pass-name]`) }
+	fs.Usage = func() { fmt.Println(`Usage: gopass show [pass-name]`) }
 	fs.Parse(args)
 	password := fs.Arg(0)
 
