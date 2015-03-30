@@ -236,23 +236,15 @@ func execEdit(cmd *CommandLine, args []string) {
 //execGenerate runs the "generate" command.
 func execGenerate(cmd *CommandLine, args []string) {
 	var noSymbols, n bool
-	var clip, c bool
-	var inPlace, i bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("generate", flag.ExitOnError)
 	fs.Usage = func() {
-		fmt.Println(`Usage: pass generate [--no-symbols,-n] [--clip,-c] [--in-place,-i | --force,-f] pass-name pass-length`)
+		fmt.Println(`Usage: pass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
 	}
 
 	fs.BoolVar(&noSymbols, "no-symbols", false, "")
 	fs.BoolVar(&n, "n", false, "")
-
-	fs.BoolVar(&clip, "clip", false, "")
-	fs.BoolVar(&c, "c", false, "")
-
-	fs.BoolVar(&inPlace, "in-place", false, "")
-	fs.BoolVar(&i, "i", false, "")
 
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
@@ -260,8 +252,6 @@ func execGenerate(cmd *CommandLine, args []string) {
 	fs.Parse(args)
 
 	noSymbols = noSymbols || n
-	clip = clip || c
-	inPlace = inPlace || i
 	force = force || f
 
 	passName := fs.Arg(0)
@@ -280,6 +270,7 @@ func execGenerate(cmd *CommandLine, args []string) {
 
 	store := GetStore(cmd)
 
+	//TODO: Check if password already exists
 	store.InsertPassword(passName, password)
 	fmt.Printf("Password %s added to the store\n", passName)
 }
