@@ -69,7 +69,7 @@ func main() {
 		execEdit(&c, args[1:])
 	case "insert":
 		execInsert(&c, args[1:])
-	case "find", "ls":
+	case "find", "ls", "search":
 		execFind(&c, args[1:])
 	case "":
 		execFind(&c, args)
