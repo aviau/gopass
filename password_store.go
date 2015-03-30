@@ -31,6 +31,7 @@ import (
 //PasswordStore represents a password store.
 type PasswordStore struct {
 	Path   string //path of the store
+	GitDir string //The path of the git directory
 	GPGBin string //The GPG binary to use
 	GPGID  string //The GPG ID used to encrypt the passwords
 }
@@ -39,6 +40,7 @@ type PasswordStore struct {
 func NewPasswordStore(storePath string) *PasswordStore {
 	s := PasswordStore{}
 	s.Path = storePath
+	s.GitDir = path.Join(s.Path, ".git")
 
 	// Find the GPG bin
 	which := exec.Command("which", "gpg2")
@@ -61,6 +63,14 @@ func NewPasswordStore(storePath string) *PasswordStore {
 func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	passwordPath := path.Join(store.Path, pwname+".gpg")
 
+	//Check if password already exists
+	var gitAction string
+	if _, err := os.Stat(passwordPath); err == nil {
+		gitAction = "Edited"
+	} else {
+		gitAction = "Added"
+	}
+
 	gpg := exec.Command(
 		store.GPGBin,
 		"-e",
@@ -79,6 +89,11 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	if err != nil {
 		return fmt.Errorf("Error: %s" + string(output))
 	}
+
+	store.AddAndCommit(
+		fmt.Sprintf("%s password '%s'", gitAction, pwname),
+		passwordPath)
+
 	return nil
 }
 
@@ -89,6 +104,11 @@ func (store *PasswordStore) Remove(pwname string) error {
 	//Check if the path is a dir
 	if _, err := os.Stat(passwordPath); err == nil {
 		os.RemoveAll(passwordPath)
+
+		store.AddAndCommit(
+			fmt.Sprintf("Removed directory '%s' from the store", pwname),
+			passwordPath)
+
 		return nil
 	}
 
@@ -96,6 +116,11 @@ func (store *PasswordStore) Remove(pwname string) error {
 	passwordPath += ".gpg"
 	if _, err := os.Stat(passwordPath); err == nil {
 		os.Remove(passwordPath)
+
+		store.AddAndCommit(
+			fmt.Sprintf("Removed password '%s' from the store", pwname),
+			passwordPath)
+
 		return nil
 	}
 
@@ -109,6 +134,11 @@ func (store *PasswordStore) Move(source, dest string) error {
 	//Check if the path is a dir
 	if _, err := os.Stat(passwordPath); err == nil {
 		os.Rename(passwordPath, path.Join(store.Path, dest))
+
+		store.AddAndCommit(
+			fmt.Sprintf("Moved directory '%s' to '%s'", source, dest),
+			passwordPath)
+
 		return nil
 	}
 
@@ -116,6 +146,11 @@ func (store *PasswordStore) Move(source, dest string) error {
 	passwordPath += ".gpg"
 	if _, err := os.Stat(passwordPath); err == nil {
 		os.Rename(passwordPath, path.Join(store.Path, dest+".gpg"))
+
+		store.AddAndCommit(
+			fmt.Sprintf("Moved Password '%s' to '%s'", source, dest),
+			passwordPath)
+
 		return nil
 	}
 
@@ -128,14 +163,19 @@ func (store *PasswordStore) Copy(source, dest string) error {
 
 	//Check if the path is a dir
 	if _, err := os.Stat(passwordPath); err == nil {
-		//TODO : COPY DIRECTORY
-		return nil
+		err := exec.Command("cp", "-r", passwordPath, path.Join(store.Path, dest)).Run()
+		return err
 	}
 
 	//Check if the path is a password
 	passwordPath += ".gpg"
 	if _, err := os.Stat(passwordPath); err == nil {
 		gopassio.CopyFileContents(passwordPath, path.Join(store.Path, dest+".gpg"))
+
+		store.AddAndCommit(
+			fmt.Sprintf("Copied Password '%s' to '%s'", source, dest),
+			passwordPath)
+
 		return nil
 	}
 
@@ -178,4 +218,42 @@ func (store *PasswordStore) GetPasswordsList() []string {
 	filepath.Walk(store.Path, scan)
 
 	return list
+}
+
+//AddAndCommit adds paths to the index and creates a commit
+func (store *PasswordStore) AddAndCommit(message string, paths ...string) error {
+	store.git("reset")
+
+	for _, path := range paths {
+		store.git("add", path)
+	}
+
+	store.git("commit", "-m", fmt.Sprintf("'%s'", message))
+
+	return nil
+}
+
+//git executes a git command
+func (store *PasswordStore) git(args ...string) error {
+	gitArgs := []string{
+		"--git-dir=" + store.GitDir,
+		"--work-tree=" + store.Path}
+
+	gitArgs = append(gitArgs, args...)
+
+	git := exec.Command("git", gitArgs...)
+
+	//Should we do that?
+	git.Stdout = os.Stdout
+	git.Stderr = os.Stderr
+	git.Stdin = os.Stdin
+
+	err := git.Run()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return fmt.Errorf("Git error: %s", err.Error())
+	}
+
+	return nil
 }

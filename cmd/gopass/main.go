@@ -343,6 +343,7 @@ func execCp(c *CommandLine, args []string) {
 	err := store.Copy(source, dest)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
+		os.Exit(1)
 	} else {
 		fmt.Printf("Copied password/directory from '%s' to '%s'\n", source, dest)
 	}
@@ -426,7 +427,7 @@ func execGit(c *CommandLine, args []string) {
 	store := GetStore(c)
 
 	gitArgs := []string{
-		"--git-dir=" + path.Join(store.Path, ".git"),
+		"--git-dir=" + store.GitDir,
 		"--work-tree=" + store.Path}
 
 	gitArgs = append(gitArgs, args...)
