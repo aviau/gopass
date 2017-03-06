@@ -1,0 +1,8 @@
+language: go
+
+install:
+  - make get-deps
+  - go get -u github.com/golang/lint/golint
+
+notifications:
+  email: false
