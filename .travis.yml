@@ -2,3 +2,6 @@ language: go
 
 install:
   - make get-deps
+
+notifications:
+  email: false
