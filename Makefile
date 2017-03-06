@@ -25,3 +25,7 @@ vet:
 .PHONY: lint
 lint:
 	golint ./...
+
+.PHONY: fmt
+fmt:
+	go fmt ./...
