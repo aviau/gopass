@@ -1,4 +1,4 @@
-all: gopass test
+all: gopass test vet
 
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
@@ -17,3 +17,7 @@ install:
 .PHONY: clean
 clean:
 	rm -rf gopass
+
+.PHONY: vet
+vet:
+	go vet -v ./...
