@@ -26,6 +26,9 @@ func TestLength(t *testing.T) {
 	runes := pwgen.Alpha
 	password := pwgen.RandSeq(10, runes)
 	assert.Equal(t, len(password), 10)
+
+	password = pwgen.RandSeq(30, runes)
+	assert.Equal(t, len(password), 30)
 }
 
 func TestContainsNumsOnly(t *testing.T) {
