@@ -1,4 +1,4 @@
-all: gopass test vet
+all: gopass test vet lint
 
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
@@ -21,3 +21,7 @@ clean:
 .PHONY: vet
 vet:
 	go vet -v ./...
+
+.PHONY: lint
+lint:
+	golint ./...
