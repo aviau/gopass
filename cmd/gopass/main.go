@@ -26,8 +26,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ReAzem/gopass"
-	"github.com/ReAzem/gopass/pwgen"
+	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/pwgen"
 	"github.com/mgutz/ansi"
 	"golang.org/x/crypto/ssh/terminal"
 )
