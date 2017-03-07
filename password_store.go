@@ -59,6 +59,54 @@ func NewPasswordStore(storePath string) *PasswordStore {
 	return &s
 }
 
+//Init creates a Password Store at the Path
+func (store *PasswordStore) Init(gpgID string) error {
+	//Check if the password path already exists
+	fi, err := os.Stat(store.Path)
+	if err == nil {
+		//Path exists, but is it a directory?
+		if fi.Mode().IsDir() == false {
+			return fmt.Errorf(
+				"Could not create password store. Path `%s` already exists and it is not a directory.",
+				store.Path)
+		}
+	} else {
+		//Error during os.Stat
+		if os.IsNotExist(err) {
+			//Path does not exist, create it
+			err = os.Mkdir(store.Path, 0700)
+			if err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
+	//Check if the .gpg-id file already exists.
+	gpgIDFilePath := path.Join(store.Path, ".gpg-id")
+	fi, err = os.Stat(gpgIDFilePath)
+	if err == nil {
+		//.gpg-id already exists
+		return fmt.Errorf("There is already a .gpg-id file at %s. Stopping init.", gpgIDFilePath)
+	}
+
+	gpgIDFile, err := os.Create(path.Join(store.Path, ".gpg-id"))
+	if err != nil {
+		return err
+	}
+	defer gpgIDFile.Close()
+	gpgIDFile.WriteString(gpgID + "\n")
+	store.GPGID = gpgID
+
+	err = store.git("init")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 //InsertPassword inserts a new password or overwrites an existing one
 func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	passwordPath := path.Join(store.Path, pwname+".gpg")

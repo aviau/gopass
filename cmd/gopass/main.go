@@ -22,6 +22,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -88,7 +89,7 @@ func main() {
 	case "help":
 		execHelp()
 	case "init":
-		fmt.Println("Executing", cmd)
+		execInit(&c, args[1:])
 	case "version":
 		execVersion()
 	default:
@@ -118,6 +119,44 @@ func execHelp() {
 
 func execVersion() {
 	fmt.Printf("gopass v%s\n", version)
+}
+
+func execInit(c *CommandLine, args []string) {
+	var path, p string
+
+	fs := flag.NewFlagSet("init", flag.ExitOnError)
+
+	fs.StringVar(&path, "path", getDefaultPasswordStoreDir(c), "")
+	fs.StringVar(&p, "p", "", "")
+
+	fs.Usage = func() { fmt.Println(`Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`) }
+	fs.Parse(args)
+
+	if p != "" {
+		path = p
+	}
+
+	path, err := filepath.Abs(path)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if fs.NArg() != 1 {
+		fs.Usage()
+		return
+	}
+
+	gpgID := fs.Arg(0)
+
+	store := gopass.NewPasswordStore(path)
+	err = store.Init(gpgID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Sucessfully created Password Store at %s\n", path)
 }
 
 //execInsert runs the "insert" command.
@@ -433,8 +472,7 @@ func execGit(c *CommandLine, args []string) {
 	git.Run()
 }
 
-//getStore finds and returns the PasswordStore
-func getStore(c *CommandLine) *gopass.PasswordStore {
+func getDefaultPasswordStoreDir(c *CommandLine) string {
 	//Look for the store path in the CommandLine,
 	// env var, or default to $HOME/.password-store
 	storePath := c.Path
@@ -444,7 +482,12 @@ func getStore(c *CommandLine) *gopass.PasswordStore {
 			storePath = path.Join(os.Getenv("HOME"), ".password-store")
 		}
 	}
+	return storePath
+}
 
+//getStore finds and returns the PasswordStore
+func getStore(c *CommandLine) *gopass.PasswordStore {
+	storePath := getDefaultPasswordStoreDir(c)
 	s := gopass.NewPasswordStore(storePath)
 	return s
 }
