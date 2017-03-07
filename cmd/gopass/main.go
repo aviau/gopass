@@ -141,7 +141,7 @@ func execInsert(c *CommandLine, args []string) {
 
 	pwname := fs.Arg(0)
 
-	store := GetStore(c)
+	store := getStore(c)
 
 	passwordPath := path.Join(store.Path, pwname+".gpg")
 
@@ -199,7 +199,7 @@ func execEdit(cmd *CommandLine, args []string) {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := GetStore(cmd)
+	store := getStore(cmd)
 
 	passname := fs.Arg(0)
 
@@ -268,7 +268,7 @@ func execGenerate(cmd *CommandLine, args []string) {
 
 	password := pwgen.RandSeq(int(passLength), runes)
 
-	store := GetStore(cmd)
+	store := getStore(cmd)
 
 	//TODO: Check if password already exists
 	store.InsertPassword(passName, password)
@@ -281,7 +281,7 @@ func execRm(c *CommandLine, args []string) {
 	fs.Usage = func() { fmt.Println("Usage: gopass rm pass-name") }
 	fs.Parse(args)
 
-	store := GetStore(c)
+	store := getStore(c)
 
 	err := store.Remove(fs.Arg(0))
 	if err != nil {
@@ -297,7 +297,7 @@ func execMv(c *CommandLine, args []string) {
 	fs.Usage = func() { fmt.Println("Usage: gopass mv old-path new-path") }
 	fs.Parse(args)
 
-	store := GetStore(c)
+	store := getStore(c)
 
 	source := fs.Arg(0)
 	dest := fs.Arg(1)
@@ -321,7 +321,7 @@ func execCp(c *CommandLine, args []string) {
 	fs.Usage = func() { fmt.Println("Usage: gopass cp old-path new-path") }
 	fs.Parse(args)
 
-	store := GetStore(c)
+	store := getStore(c)
 
 	source := fs.Arg(0)
 	dest := fs.Arg(1)
@@ -347,7 +347,7 @@ func execShow(c *CommandLine, args []string) {
 	fs.Parse(args)
 	password := fs.Arg(0)
 
-	store := GetStore(c)
+	store := getStore(c)
 
 	password, err := store.GetPassword(password)
 
@@ -364,7 +364,7 @@ func execFind(c *CommandLine, args []string) {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := GetStore(c)
+	store := getStore(c)
 
 	terms := fs.Args()
 	pattern := "*" + strings.Join(terms, "*|*") + "*"
@@ -393,7 +393,7 @@ func execGrep(c *CommandLine, args []string) {
 
 	pattern, _ := regexp.CompilePOSIX(fs.Arg(0))
 
-	store := GetStore(c)
+	store := getStore(c)
 
 	passwords := store.GetPasswordsList()
 
@@ -415,7 +415,7 @@ func execGrep(c *CommandLine, args []string) {
 
 //execGit runs the "git" command
 func execGit(c *CommandLine, args []string) {
-	store := GetStore(c)
+	store := getStore(c)
 
 	gitArgs := []string{
 		"--git-dir=" + store.GitDir,
@@ -433,8 +433,8 @@ func execGit(c *CommandLine, args []string) {
 	git.Run()
 }
 
-//GetStore finds and returns the PasswordStore
-func GetStore(c *CommandLine) *gopass.PasswordStore {
+//getStore finds and returns the PasswordStore
+func getStore(c *CommandLine) *gopass.PasswordStore {
 	//Look for the store path in the CommandLine,
 	// env var, or default to $HOME/.password-store
 	storePath := c.Path
