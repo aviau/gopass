@@ -35,8 +35,8 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-//CommandLine holds options from the main parser
-type CommandLine struct {
+//commandLine holds options from the main parser
+type commandLine struct {
 	Path         string    //Path to the password store
 	Editor       string    //Text editor to use
 	WriterOutput io.Writer //The writer to use for output
@@ -50,7 +50,7 @@ func Run(args []string, writerOutput io.Writer) {
 		cmd = args[0]
 	}
 
-	c := CommandLine{}
+	c := commandLine{}
 
 	c.WriterOutput = writerOutput
 
@@ -96,7 +96,7 @@ func Run(args []string, writerOutput io.Writer) {
 
 }
 
-func execHelp(c *CommandLine) {
+func execHelp(c *commandLine) {
 	fmt.Fprintln(c.WriterOutput, `Usage:
       init                  Initialize a new password store.
       ls                    List passwords.
@@ -115,11 +115,11 @@ func execHelp(c *CommandLine) {
 `)
 }
 
-func execVersion(c *CommandLine) {
+func execVersion(c *commandLine) {
 	fmt.Fprintf(c.WriterOutput, "gopass v%s\n", version.Version)
 }
 
-func execInit(c *CommandLine, args []string) {
+func execInit(c *commandLine, args []string) {
 	var path, p string
 
 	fs := flag.NewFlagSet("init", flag.ExitOnError)
@@ -158,7 +158,7 @@ func execInit(c *CommandLine, args []string) {
 }
 
 //execInsert runs the "insert" command.
-func execInsert(c *CommandLine, args []string) {
+func execInsert(c *commandLine, args []string) {
 	var multiline, m bool
 	var force, f bool
 
@@ -234,7 +234,7 @@ func execInsert(c *CommandLine, args []string) {
 }
 
 //execEdit rund the "edit" command.
-func execEdit(cmd *CommandLine, args []string) {
+func execEdit(cmd *commandLine, args []string) {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -273,7 +273,7 @@ func execEdit(cmd *CommandLine, args []string) {
 }
 
 //execGenerate runs the "generate" command.
-func execGenerate(cmd *CommandLine, args []string) {
+func execGenerate(cmd *commandLine, args []string) {
 	var noSymbols, n bool
 	var force, f bool
 
@@ -315,7 +315,7 @@ func execGenerate(cmd *CommandLine, args []string) {
 }
 
 //execRm runs the "rm" command.
-func execRm(c *CommandLine, args []string) {
+func execRm(c *commandLine, args []string) {
 	fs := flag.NewFlagSet("rm", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass rm pass-name") }
 	fs.Parse(args)
@@ -331,7 +331,7 @@ func execRm(c *CommandLine, args []string) {
 }
 
 //execMv runs the "mv" comand.
-func execMv(c *CommandLine, args []string) {
+func execMv(c *commandLine, args []string) {
 	fs := flag.NewFlagSet("mv", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass mv old-path new-path") }
 	fs.Parse(args)
@@ -355,7 +355,7 @@ func execMv(c *CommandLine, args []string) {
 }
 
 //execCp runs the "cp" command.
-func execCp(c *CommandLine, args []string) {
+func execCp(c *commandLine, args []string) {
 	fs := flag.NewFlagSet("cp", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass cp old-path new-path") }
 	fs.Parse(args)
@@ -380,7 +380,7 @@ func execCp(c *CommandLine, args []string) {
 }
 
 //execShow runs the "show" command.
-func execShow(c *CommandLine, args []string) {
+func execShow(c *commandLine, args []string) {
 	fs := flag.NewFlagSet("show", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, `Usage: gopass show [pass-name]`) }
 	fs.Parse(args)
@@ -399,7 +399,7 @@ func execShow(c *CommandLine, args []string) {
 }
 
 //execFind runs the "find" command.
-func execFind(c *CommandLine, args []string) {
+func execFind(c *commandLine, args []string) {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -426,7 +426,7 @@ func execFind(c *CommandLine, args []string) {
 }
 
 //execGrep runs the "grep" command
-func execGrep(c *CommandLine, args []string) {
+func execGrep(c *commandLine, args []string) {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -453,7 +453,7 @@ func execGrep(c *CommandLine, args []string) {
 }
 
 //execGit runs the "git" command
-func execGit(c *CommandLine, args []string) {
+func execGit(c *commandLine, args []string) {
 	store := getStore(c)
 
 	gitArgs := []string{
@@ -472,8 +472,8 @@ func execGit(c *CommandLine, args []string) {
 	git.Run()
 }
 
-func getDefaultPasswordStoreDir(c *CommandLine) string {
-	//Look for the store path in the CommandLine,
+func getDefaultPasswordStoreDir(c *commandLine) string {
+	//Look for the store path in the commandLine,
 	// env var, or default to $HOME/.password-store
 	storePath := c.Path
 	if storePath == "" {
@@ -486,7 +486,7 @@ func getDefaultPasswordStoreDir(c *CommandLine) string {
 }
 
 //getStore finds and returns the PasswordStore
-func getStore(c *CommandLine) *gopass.PasswordStore {
+func getStore(c *commandLine) *gopass.PasswordStore {
 	storePath := getDefaultPasswordStoreDir(c)
 	s := gopass.NewPasswordStore(storePath)
 	return s
