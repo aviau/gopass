@@ -13,17 +13,27 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package main
+package tests
 
 import (
-	"os"
+	"bytes"
+	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/aviau/gopass/cmd/gopass/cli"
+	"github.com/aviau/gopass/version"
 )
 
-func main() {
-	// Retrieve args and Shift binary name off argument list.
-	args := os.Args[1:]
+func TestVersion(t *testing.T) {
+	var writer bytes.Buffer
 
-	cli.Run(args, os.Stdout)
+	cli.Run([]string{"version"}, &writer)
+
+	assert.Equal(t,
+		writer.String(),
+		fmt.Sprintf("gopass v%s\n", version.Version))
+
+	assert.True(t, true)
 }
