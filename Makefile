@@ -2,17 +2,19 @@ all: gopass test vet lint
 
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
+VERSION := 0.1.0
+LDFLAGS=-ldflags "-X main.version=$(VERSION)"
 
 gopass: $(SOURCES)
-	go build -o gopass cmd/gopass/main.go
+	go build ${LDFLAGS} -o gopass cmd/gopass/main.go
 
 .PHONY: test
 test:
-	go test -v ./...
+	go test ${LDFLAGS} -v ./...
 
 .PHONY: install
 install:
-	go install ./...
+	go install ${LDFLAGS} ./...
 
 .PHONY: clean
 clean:
