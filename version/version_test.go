@@ -17,6 +17,7 @@ package version_test
 
 import (
 	"testing"
+	"unicode"
 
 	"github.com/stretchr/testify/assert"
 
@@ -25,4 +26,10 @@ import (
 
 func TestVersionNotUnknown(t *testing.T) {
 	assert.NotEqual(t, version.Version, "UNKNOWN")
+}
+
+func TestVersionNoLetters(t *testing.T) {
+	for _, character := range version.Version {
+		assert.False(t, unicode.IsLetter(character))
+	}
 }
