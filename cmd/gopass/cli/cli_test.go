@@ -35,5 +35,4 @@ func TestVersion(t *testing.T) {
 		writer.String(),
 		fmt.Sprintf("gopass v%s\n", version.Version))
 
-	assert.True(t, true)
 }
