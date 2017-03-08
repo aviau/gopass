@@ -29,12 +29,9 @@ import (
 
 	"github.com/aviau/gopass"
 	"github.com/aviau/gopass/pwgen"
+	"github.com/aviau/gopass/version"
 	"github.com/mgutz/ansi"
 	"golang.org/x/crypto/ssh/terminal"
-)
-
-var (
-	version = "UNKNOWN"
 )
 
 //CommandLine holds options from the main parser
@@ -118,7 +115,7 @@ func execHelp() {
 }
 
 func execVersion() {
-	fmt.Printf("gopass v%s\n", version)
+	fmt.Printf("gopass v%s\n", version.Version)
 }
 
 func execInit(c *CommandLine, args []string) {
