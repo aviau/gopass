@@ -44,22 +44,28 @@ type commandLine struct {
 
 //Run parses the arguments and executes the gopass CLI
 func Run(args []string, writerOutput io.Writer) {
-	// Retrieve command name as first argument.
-	var cmd string
-	if len(args) > 0 && !strings.HasPrefix(args[0], "-") {
-		cmd = args[0]
-	}
-
 	c := commandLine{}
-
 	c.WriterOutput = writerOutput
 
 	//Parse the common flags
+	var h, help bool
+
 	fs := flag.NewFlagSet("default", flag.ExitOnError)
 	fs.StringVar(&c.Path, "PASSWORD_STORE_DIR", "", "Path to the password store")
 	fs.StringVar(&c.Editor, "EDITOR", "editor", "Text editor to use")
-	fs.Usage = func() { execHelp(&c) }
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
+
 	fs.Parse(args)
+
+	if h || help {
+		execHelp(&c)
+		return
+	}
+
+	// Retrieve command name as first argument.
+	cmd := fs.Arg(0)
 
 	switch cmd {
 	case "show":

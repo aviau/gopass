@@ -18,6 +18,7 @@ package cli_test
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -34,5 +35,21 @@ func TestVersion(t *testing.T) {
 	assert.Equal(t,
 		writer.String(),
 		fmt.Sprintf("gopass v%s\n", version.Version))
+}
 
+func TestHelp(t *testing.T) {
+	var writer bytes.Buffer
+
+	cli.Run([]string{"help"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage"))
+
+	writer.Reset()
+
+	cli.Run([]string{"--help"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage"))
+
+	writer.Reset()
+
+	cli.Run([]string{"-h"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage"))
 }
