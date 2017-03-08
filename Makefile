@@ -1,7 +1,7 @@
 all: gopass test vet lint
 
 SOURCEDIR=.
-SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
+SOURCES := $(shell find $(SOURCEDIR) -name '*.go') Makefile
 VERSION := 0.1.0
 LDFLAGS=-ldflags "-X main.version=$(VERSION)"
 
