@@ -333,13 +333,19 @@ func execGenerate(cmd *commandLine, args []string) {
 
 //execRm runs the "rm" command.
 func execRm(c *commandLine, args []string) {
-	fs := flag.NewFlagSet("rm", flag.ExitOnError)
-	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass rm pass-name") }
-	fs.Parse(args)
+	fs := flag.NewFlagSet("rm", flag.ContinueOnError)
+	fs.Usage = func() {
+		fmt.Fprintln(c.WriterOutput, "Usage: gopass rm pass-name")
+    }
+
+	err := fs.Parse(args)
+	if err != nil {
+		return
+	}
 
 	store := getStore(c)
 
-	err := store.Remove(fs.Arg(0))
+	err = store.Remove(fs.Arg(0))
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 	} else {
