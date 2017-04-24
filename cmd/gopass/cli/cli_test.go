@@ -53,3 +53,16 @@ func TestHelp(t *testing.T) {
 	cli.Run([]string{"-h"}, &writer)
 	assert.True(t, strings.Contains(writer.String(), "Usage"))
 }
+
+
+func TestInitHelp(t *testing.T) {
+	var writer bytes.Buffer
+
+	cli.Run([]string{"init", "-h"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage: gopass init"))
+
+	writer.Reset()
+
+	cli.Run([]string{"init", "--h"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage: gopass init"))
+}

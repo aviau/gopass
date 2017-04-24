@@ -128,19 +128,24 @@ func execVersion(c *commandLine) {
 func execInit(c *commandLine, args []string) {
 	var path, p string
 
-	fs := flag.NewFlagSet("init", flag.ExitOnError)
+	fs := flag.NewFlagSet("init", flag.ContinueOnError)
 
 	fs.StringVar(&path, "path", getDefaultPasswordStoreDir(c), "")
 	fs.StringVar(&p, "p", "", "")
 
-	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`) }
-	fs.Parse(args)
+	fs.Usage = func() {
+		fmt.Fprintln(c.WriterOutput, `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`)
+	}
+	err := fs.Parse(args)
+	if err != nil {
+		return
+	}
 
 	if p != "" {
 		path = p
 	}
 
-	path, err := filepath.Abs(path)
+	path, err = filepath.Abs(path)
 	if err != nil {
 		fmt.Fprintln(c.WriterOutput, err)
 		return
