@@ -1,4 +1,4 @@
-all: gopass test vet lint
+all: fmt gopass test vet lint
 
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go') Makefile
