@@ -54,7 +54,6 @@ func TestHelp(t *testing.T) {
 	assert.True(t, strings.Contains(writer.String(), "Usage"))
 }
 
-
 func TestInitHelp(t *testing.T) {
 	var writer bytes.Buffer
 

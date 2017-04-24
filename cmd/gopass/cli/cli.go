@@ -336,7 +336,7 @@ func execRm(c *commandLine, args []string) {
 	fs := flag.NewFlagSet("rm", flag.ContinueOnError)
 	fs.Usage = func() {
 		fmt.Fprintln(c.WriterOutput, "Usage: gopass rm pass-name")
-    }
+	}
 
 	err := fs.Parse(args)
 	if err != nil {
