@@ -291,9 +291,9 @@ func execGenerate(cmd *commandLine, args []string) {
 	var noSymbols, n bool
 	var force, f bool
 
-	fs := flag.NewFlagSet("generate", flag.ExitOnError)
+	fs := flag.NewFlagSet("generate", flag.ContinueOnError)
 	fs.Usage = func() {
-		fmt.Fprintln(cmd.WriterOutput, `Usage: pass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
+		fmt.Fprintln(cmd.WriterOutput, `Usage: gopass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
 	}
 
 	fs.BoolVar(&noSymbols, "no-symbols", false, "")
@@ -302,7 +302,10 @@ func execGenerate(cmd *commandLine, args []string) {
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
 
-	fs.Parse(args)
+	err := fs.Parse(args)
+	if err != nil {
+		return
+	}
 
 	noSymbols = noSymbols || n
 	force = force || f

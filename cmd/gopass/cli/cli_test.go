@@ -78,3 +78,15 @@ func TestInsertHelp(t *testing.T) {
 	cli.Run([]string{"insert", "--help"}, &writer)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass insert"))
 }
+
+func TestGenerateHelp(t *testing.T) {
+	var writer bytes.Buffer
+
+	cli.Run([]string{"generate", "--help"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage: gopass generate"))
+
+	writer.Reset()
+
+	cli.Run([]string{"generate", "--help"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage: gopass generate"))
+}
