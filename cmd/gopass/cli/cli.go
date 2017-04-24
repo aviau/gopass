@@ -173,7 +173,7 @@ func execInsert(c *commandLine, args []string) {
 	var multiline, m bool
 	var force, f bool
 
-	fs := flag.NewFlagSet("insert", flag.ExitOnError)
+	fs := flag.NewFlagSet("insert", flag.ContinueOnError)
 
 	fs.BoolVar(&multiline, "multiline", false, "")
 	fs.BoolVar(&m, "m", false, "")
@@ -184,7 +184,10 @@ func execInsert(c *commandLine, args []string) {
 	fs.Usage = func() {
 		fmt.Fprintln(c.WriterOutput, `Usage: gopass insert [ --multiline, -m ] [ --force, -f ] pass-name`)
 	}
-	fs.Parse(args)
+	err := fs.Parse(args)
+	if err != nil {
+		return
+	}
 
 	multiline = multiline || m
 	force = force || f
@@ -235,7 +238,7 @@ func execInsert(c *commandLine, args []string) {
 		}
 	}
 
-	err := store.InsertPassword(pwname, password)
+	err = store.InsertPassword(pwname, password)
 	if err != nil {
 		fmt.Fprintln(c.WriterOutput, err)
 		return

@@ -58,11 +58,23 @@ func TestHelp(t *testing.T) {
 func TestInitHelp(t *testing.T) {
 	var writer bytes.Buffer
 
-	cli.Run([]string{"init", "-h"}, &writer)
+	cli.Run([]string{"init", "--help"}, &writer)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass init"))
 
 	writer.Reset()
 
-	cli.Run([]string{"init", "--h"}, &writer)
+	cli.Run([]string{"init", "-h"}, &writer)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass init"))
+}
+
+func TestInsertHelp(t *testing.T) {
+	var writer bytes.Buffer
+
+	cli.Run([]string{"insert", "--help"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage: gopass insert"))
+
+	writer.Reset()
+
+	cli.Run([]string{"insert", "--help"}, &writer)
+	assert.True(t, strings.Contains(writer.String(), "Usage: gopass insert"))
 }
