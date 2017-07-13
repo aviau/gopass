@@ -50,7 +50,7 @@ password names in
 .SH COMMANDS
 
 .TP
-\fBinit\fP [ \fI--path=sub-folder\fP, \fI-p sub-folder\fP ] \fIgpg-id...\fP
+\fBinit\fP [ \fI--path=path\fP, \fI-p path\fP ] \fIgpg-id...\fP
 Initialize new password storage and use
 .I gpg-id
 for encryption. This command must be run first before a password
@@ -106,15 +106,13 @@ or \fI-f\fP is specified, do not interactively prompt before removal.
 Renames the password or directory named \fIold-path\fP to \fInew-path\fP. This
 command is alternatively named \fBrename\fP. If \fI--force\fP is specified,
 silently overwrite \fInew-path\fP if it exists. If \fInew-path\fP ends in a
-trailing \fI/\fP, it is always treated as a directory. Passwords are selectively
-reencrypted to the corresponding keys of their new destination.
+trailing \fI/\fP, it is always treated as a directory.
 .TP
 \fBcp\fP [ \fI--force\fP, \fI-f\fP ] \fIold-path\fP \fInew-path\fP
 Copies the password or directory named \fIold-path\fP to \fInew-path\fP. This
 command is alternatively named \fBcopy\fP. If \fI--force\fP is specified,
 silently overwrite \fInew-path\fP if it exists. If \fInew-path\fP ends in a
-trailing \fI/\fP, it is always treated as a directory. Passwords are selectively
-reencrypted to the corresponding keys of their new destination.
+trailing \fI/\fP, it is always treated as a directory.
 .TP
 \fBgit\fP \fIgit-command-args\fP...
 If the password store is a git repository, pass \fIgit-command-args\fP as arguments to
@@ -137,9 +135,7 @@ The default password storage directory.
 .TP
 .B ~/.password-store/.gpg-id
 Contains the default gpg key identification used for encryption and decryption.
-Multiple gpg keys may be specified in this file, one per line. If this file
-exists in any sub directories, passwords inside those sub directories are
-encrypted using those keys. This should be set using the \fBinit\fP command.
+Multiple gpg keys may be specified in this file, one per line.
 
 .SH ENVIRONMENT VARIABLES
 
