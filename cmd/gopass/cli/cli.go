@@ -74,7 +74,7 @@ func Run(args []string, writerOutput io.Writer) {
 		execEdit(&c, args[1:])
 	case "insert", "add":
 		execInsert(&c, args[1:])
-	case "find", "ls", "search":
+	case "find", "ls", "search", "list":
 		execFind(&c, args[1:])
 	case "":
 		execFind(&c, args)
