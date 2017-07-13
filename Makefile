@@ -6,7 +6,7 @@ VERSION := 0.1.0
 LDFLAGS=-ldflags "-X github.com/aviau/gopass/version.Version=$(VERSION)"
 
 gopass: $(SOURCES)
-	go build ${LDFLAGS} -o gopass cmd/gopass/main.go
+	go build -v ${LDFLAGS} -o gopass cmd/gopass/main.go
 
 .PHONY: test
 test:
