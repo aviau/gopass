@@ -276,7 +276,7 @@ func (store *PasswordStore) AddAndCommit(message string, paths ...string) error 
 		store.git("add", path)
 	}
 
-	store.git("commit", "-m", fmt.Sprintf("'%s'", message))
+	store.git("commit", "-m", message)
 
 	return nil
 }
