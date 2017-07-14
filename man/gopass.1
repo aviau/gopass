@@ -88,7 +88,7 @@ command is alternatively named \fBadd\fP.
 \fBedit\fP \fIpass-name\fP
 Edit an existing password using the default text editor specified
 by the environment variable \fIEDITOR\fP or using
-.BR vi (1)
+.BR editor
 as a fallback. This mode makes use of temporary files for editing.
 .TP
 \fBgenerate\fP [ \fI--no-symbols\fP, \fI-n\fP ] \fIpass-name pass-length\fP
@@ -142,6 +142,9 @@ Multiple gpg keys may be specified in this file, one per line.
 .TP
 .I PASSWORD_STORE_DIR
 Overrides the default password storage directory.
+.TP
+.I EDITOR
+Text editor to use.
 .SH SEE ALSO
 .BR gpg2 (1),
 .BR git (1),

@@ -52,7 +52,7 @@ func Run(args []string, writerOutput io.Writer) {
 
 	fs := flag.NewFlagSet("default", flag.ExitOnError)
 	fs.StringVar(&c.Path, "PASSWORD_STORE_DIR", "", "Path to the password store")
-	fs.StringVar(&c.Editor, "EDITOR", "editor", "Text editor to use")
+	fs.StringVar(&c.Editor, "EDITOR", "", "Text editor to use")
 
 	fs.BoolVar(&help, "help", false, "")
 	fs.BoolVar(&h, "h", false, "")
@@ -210,7 +210,7 @@ func execInsert(c *commandLine, args []string) {
 		file, _ := ioutil.TempFile(os.TempDir(), "gopass")
 		defer os.Remove(file.Name())
 
-		editor := exec.Command(c.Editor, file.Name())
+		editor := exec.Command(getEditor(c), file.Name())
 		editor.Stdout = os.Stdout
 		editor.Stdin = os.Stdin
 		editor.Run()
@@ -268,7 +268,7 @@ func execEdit(cmd *commandLine, args []string) {
 
 	ioutil.WriteFile(file.Name(), []byte(password), 0600)
 
-	editor := exec.Command(cmd.Editor, file.Name())
+	editor := exec.Command(getEditor(cmd), file.Name())
 	editor.Stdout = os.Stdout
 	editor.Stdin = os.Stdin
 	editor.Stderr = os.Stderr
@@ -506,6 +506,19 @@ func getDefaultPasswordStoreDir(c *commandLine) string {
 		}
 	}
 	return storePath
+}
+
+func getEditor(c *commandLine) string {
+	// Look for the editor to use in the commandLine,
+	// env var, or default to editor.
+	editor := c.Editor
+	if editor == "" {
+		editor = os.Getenv("EDITOR")
+		if editor == "" {
+			editor = "editor"
+		}
+	}
+	return editor
 }
 
 //getStore finds and returns the PasswordStore
