@@ -109,11 +109,11 @@ func (store *PasswordStore) Init(gpgID string) error {
 
 //InsertPassword inserts a new password or overwrites an existing one
 func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
-	passwordPath := path.Join(store.Path, pwname+".gpg")
+	containsPassword, passwordPath := store.ContainsPassword(pwname)
 
 	//Check if password already exists
 	var gitAction string
-	if _, err := os.Stat(passwordPath); err == nil {
+	if containsPassword {
 		gitAction = "Edited"
 	} else {
 		gitAction = "Added"
@@ -147,22 +147,22 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 
 //Remove removes a password or a directory of the store
 func (store *PasswordStore) Remove(pwname string) error {
-	passwordPath := path.Join(store.Path, pwname)
 
 	//Check if the path is a dir
-	if _, err := os.Stat(passwordPath); err == nil {
-		os.RemoveAll(passwordPath)
+	containsDirectory, directoryPath := store.ContainsDirectory(pwname)
+	if containsDirectory {
+		os.RemoveAll(directoryPath)
 
 		store.AddAndCommit(
 			fmt.Sprintf("Removed directory '%s' from the store", pwname),
-			passwordPath)
+			directoryPath)
 
 		return nil
 	}
 
 	//Check if the path is a password
-	passwordPath += ".gpg"
-	if _, err := os.Stat(passwordPath); err == nil {
+	containsPassword, passwordPath := store.ContainsPassword(pwname)
+	if containsPassword {
 		os.Remove(passwordPath)
 
 		store.AddAndCommit(
@@ -177,27 +177,31 @@ func (store *PasswordStore) Remove(pwname string) error {
 
 //Move moves a passsword or directory from source to dest.
 func (store *PasswordStore) Move(source, dest string) error {
-	passwordPath := path.Join(store.Path, source)
 
 	//Check if the path is a dir
-	if _, err := os.Stat(passwordPath); err == nil {
-		os.Rename(passwordPath, path.Join(store.Path, dest))
+	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
+	if containsDirectory {
+		destDirectoryPath := path.Join(store.Path, dest)
+		os.Rename(sourceDirectoryPath, destDirectoryPath)
 
 		store.AddAndCommit(
 			fmt.Sprintf("Moved directory '%s' to '%s'", source, dest),
-			passwordPath)
+			sourceDirectoryPath,
+			destDirectoryPath)
 
 		return nil
 	}
 
 	//Check if the path is a password
-	passwordPath += ".gpg"
-	if _, err := os.Stat(passwordPath); err == nil {
-		os.Rename(passwordPath, path.Join(store.Path, dest+".gpg"))
+	containsPassword, sourcePasswordPath := store.ContainsPassword(source)
+	if containsPassword {
+		destPasswordPath := path.Join(store.Path, dest+".gpg")
+		os.Rename(sourcePasswordPath, destPasswordPath)
 
 		store.AddAndCommit(
 			fmt.Sprintf("Moved Password '%s' to '%s'", source, dest),
-			passwordPath)
+			sourcePasswordPath,
+			destPasswordPath)
 
 		return nil
 	}
@@ -207,22 +211,23 @@ func (store *PasswordStore) Move(source, dest string) error {
 
 //Copy copies a password or directory from source to dest.
 func (store *PasswordStore) Copy(source, dest string) error {
-	passwordPath := path.Join(store.Path, source)
 
 	//Check if the path is a dir
-	if _, err := os.Stat(passwordPath); err == nil {
-		err := exec.Command("cp", "-r", passwordPath, path.Join(store.Path, dest)).Run()
+	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
+	if containsDirectory {
+		err := exec.Command("cp", "-r", sourceDirectoryPath, path.Join(store.Path, dest)).Run()
 		return err
 	}
 
 	//Check if the path is a password
-	passwordPath += ".gpg"
-	if _, err := os.Stat(passwordPath); err == nil {
-		gopassio.CopyFileContents(passwordPath, path.Join(store.Path, dest+".gpg"))
+	containsPassword, sourcePasswordPath := store.ContainsPassword(source)
+	if containsPassword {
+		destPasswordPath := path.Join(store.Path, dest+".gpg")
+		gopassio.CopyFileContents(sourcePasswordPath, destPasswordPath)
 
 		store.AddAndCommit(
 			fmt.Sprintf("Copied Password '%s' to '%s'", source, dest),
-			passwordPath)
+			destPasswordPath)
 
 		return nil
 	}
@@ -232,10 +237,10 @@ func (store *PasswordStore) Copy(source, dest string) error {
 
 //GetPassword returns a decrypted password
 func (store *PasswordStore) GetPassword(pwname string) (string, error) {
-	passwordPath := path.Join(store.Path, pwname+".gpg")
+	containsPassword, passwordPath := store.ContainsPassword(pwname)
 
-	// Check if the passwiord exists
-	if _, err := os.Stat(passwordPath); os.IsNotExist(err) {
+	//Error if the password does not exist
+	if containsPassword == false {
 		return "", fmt.Errorf("Could not find password '%s' at path '%s'", pwname, passwordPath)
 	}
 
@@ -248,6 +253,30 @@ func (store *PasswordStore) GetPassword(pwname string) (string, error) {
 	}
 
 	return strings.TrimSpace(string(output)), nil
+}
+
+//ContainsPassword returns whether or not the store contains a password with this name.
+//it also conveniently returns the password path that was checked
+func (store *PasswordStore) ContainsPassword(pwname string) (bool, string) {
+	passwordPath := path.Join(store.Path, pwname+".gpg")
+
+	if _, err := os.Stat(passwordPath); os.IsNotExist(err) {
+		return false, passwordPath
+	}
+
+	return true, passwordPath
+}
+
+//ContainsDirectory returns whether or not the store contains a directory with this name.
+//it also conveniently returns the directory path that was checked
+func (store *PasswordStore) ContainsDirectory(dirname string) (bool, string) {
+	directoryPath := path.Join(store.Path, dirname)
+
+	if _, err := os.Stat(directoryPath); os.IsNotExist(err) {
+		return false, directoryPath
+	}
+
+	return true, directoryPath
 }
 
 //GetPasswordsList returns a list of all the passwords
