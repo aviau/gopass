@@ -30,6 +30,7 @@ import (
 
 	"github.com/aviau/gopass"
 	"github.com/aviau/gopass/pwgen"
+	gopass_terminal "github.com/aviau/gopass/terminal"
 	"github.com/aviau/gopass/version"
 	"github.com/mgutz/ansi"
 	"golang.org/x/crypto/ssh/terminal"
@@ -333,19 +334,60 @@ func execGenerate(cmd *commandLine, args []string) {
 
 //execRm runs the "rm" command.
 func execRm(c *commandLine, args []string) {
+	var recursive, r bool
+	var force, f bool
+
 	fs := flag.NewFlagSet("rm", flag.ContinueOnError)
 	fs.Usage = func() {
 		fmt.Fprintln(c.WriterOutput, "Usage: gopass rm pass-name")
 	}
+
+	fs.BoolVar(&recursive, "recursive", false, "")
+	fs.BoolVar(&r, "r", false, "")
+
+	fs.BoolVar(&force, "force", false, "")
+	fs.BoolVar(&f, "f", false, "")
 
 	err := fs.Parse(args)
 	if err != nil {
 		return
 	}
 
+	force = force || f
+
 	store := getStore(c)
 
-	err = store.Remove(fs.Arg(0))
+	pwname := fs.Arg(0)
+
+	if containsPassword, _ := store.ContainsPassword(pwname); !containsPassword {
+		// Store does not contain password
+
+		if containsDirectory, _ := store.ContainsDirectory(pwname); !containsDirectory {
+			//Store does not contain directory nor password
+			fmt.Fprintf(c.WriterOutput, "Error: %s is not in the password store.\n", pwname)
+			return
+		}
+
+		//Store contains directory. -r flag is needed
+		if !(r || recursive) {
+			fmt.Fprintf(c.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
+			return
+		}
+
+		//Ask for confirmation to delete directory
+		if !force || !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
+			return
+		}
+
+	} else {
+		//Store contains the password
+		//Ask for confirmation to delete password
+		if !force || !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
+			return
+		}
+	}
+
+	err = store.Remove(pwname)
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 	} else {
