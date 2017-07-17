@@ -16,6 +16,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/aviau/gopass/cmd/gopass/cli"
@@ -27,6 +28,7 @@ func main() {
 
 	err := cli.Run(args, os.Stdout)
 	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }
