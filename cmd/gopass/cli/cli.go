@@ -83,7 +83,7 @@ func Run(args []string, writerOutput io.Writer) error {
 		return execGrep(&c, args[1:])
 	case "cp":
 		return execCp(&c, args[1:])
-	case "mv":
+	case "mv", "rename":
 		return execMv(&c, args[1:])
 	case "rm", "remove", "delete":
 		return execRm(&c, args[1:])
