@@ -150,7 +150,6 @@ func execInit(c *commandLine, args []string) error {
 
 	path, err = filepath.Abs(path)
 	if err != nil {
-		fmt.Fprintln(c.WriterOutput, err)
 		return err
 	}
 
@@ -164,7 +163,6 @@ func execInit(c *commandLine, args []string) error {
 	store := gopass.NewPasswordStore(path)
 	err = store.Init(gpgID)
 	if err != nil {
-		fmt.Fprintln(c.WriterOutput, err)
 		return err
 	}
 
@@ -244,7 +242,6 @@ func execInsert(c *commandLine, args []string) error {
 
 	err = store.InsertPassword(pwname, password)
 	if err != nil {
-		fmt.Fprintln(c.WriterOutput, err)
 		return err
 	}
 
@@ -264,7 +261,6 @@ func execEdit(cmd *commandLine, args []string) error {
 	password, err := store.GetPassword(passname)
 
 	if err != nil {
-		fmt.Fprintf(cmd.WriterOutput, "Error: %s\n", err)
 		return err
 	}
 
@@ -284,7 +280,6 @@ func execEdit(cmd *commandLine, args []string) error {
 
 	err = store.InsertPassword(passname, password)
 	if err != nil {
-		fmt.Fprintln(cmd.WriterOutput, err)
 		return err
 	}
 
@@ -399,7 +394,6 @@ func execRm(c *commandLine, args []string) error {
 
 	err = store.Remove(pwname)
 	if err != nil {
-		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		return err
 	}
 
@@ -425,7 +419,6 @@ func execMv(c *commandLine, args []string) error {
 
 	err := store.Move(source, dest)
 	if err != nil {
-		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		return err
 	}
 
@@ -474,7 +467,6 @@ func execCp(c *commandLine, args []string) error {
 
 	err = store.Copy(source, dest)
 	if err != nil {
-		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		return nil
 	}
 
@@ -494,7 +486,6 @@ func execShow(c *commandLine, args []string) error {
 	password, err := store.GetPassword(password)
 
 	if err != nil {
-		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		return err
 	}
 

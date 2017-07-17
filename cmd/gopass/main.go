@@ -28,7 +28,7 @@ func main() {
 
 	err := cli.Run(args, os.Stdout)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
 }
