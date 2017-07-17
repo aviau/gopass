@@ -148,31 +148,33 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 //RemoveDirectory removes the directory at the given path
 func (store *PasswordStore) RemoveDirectory(dirname string) error {
 	containsDirectory, directoryPath := store.ContainsDirectory(dirname)
-	if containsDirectory {
-		os.RemoveAll(directoryPath)
 
-		store.AddAndCommit(
-			fmt.Sprintf("Removed directory '%s' from the store", dirname),
-			directoryPath)
-
-		return nil
+	if !containsDirectory {
+		return fmt.Errorf("Could not find directory at path %s", directoryPath)
 	}
-	return fmt.Errorf("Could not find directory at path %s", directoryPath)
+
+	store.AddAndCommit(
+		fmt.Sprintf("Removed directory '%s' from the store", dirname),
+		directoryPath)
+
+	return nil
 }
 
 //RemovePassword removes the password at the given path
 func (store *PasswordStore) RemovePassword(pwname string) error {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
-	if containsPassword {
-		os.Remove(passwordPath)
 
-		store.AddAndCommit(
-			fmt.Sprintf("Removed password '%s' from the store", pwname),
-			passwordPath)
-
-		return nil
+	if !containsPassword {
+		return fmt.Errorf("Could not find password at path %s", passwordPath)
 	}
-	return fmt.Errorf("Could not find password at path %s", passwordPath)
+
+	os.Remove(passwordPath)
+
+	store.AddAndCommit(
+		fmt.Sprintf("Removed password '%s' from the store", pwname),
+		passwordPath)
+
+	return nil
 }
 
 //Move moves a passsword or directory from source to dest.
