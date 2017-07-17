@@ -85,7 +85,7 @@ func Run(args []string, writerOutput io.Writer) error {
 		return execCp(&c, args[1:])
 	case "mv":
 		return execMv(&c, args[1:])
-	case "rm":
+	case "rm", "remove", "delete":
 		return execRm(&c, args[1:])
 	case "generate":
 		return execGenerate(&c, args[1:])
