@@ -428,10 +428,14 @@ func execMv(c *commandLine, args []string) error {
 
 //execCp runs the "cp" command.
 func execCp(c *commandLine, args []string) error {
+	var recursive, r bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("cp", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass cp old-path new-path") }
+
+	fs.BoolVar(&recursive, "recursive", false, "")
+	fs.BoolVar(&r, "r", false, "")
 
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
@@ -441,6 +445,7 @@ func execCp(c *commandLine, args []string) error {
 		return err
 	}
 
+	recursive = recursive || r
 	force = force || f
 
 	store := getStore(c)
@@ -448,29 +453,51 @@ func execCp(c *commandLine, args []string) error {
 	source := fs.Arg(0)
 	dest := fs.Arg(1)
 
+	if strings.HasSuffix(dest, "/") {
+		_, sourceFile := filepath.Split(source)
+		dest = filepath.Join(dest, sourceFile)
+	}
+
 	if source == "" || dest == "" {
 		fmt.Fprintln(c.WriterOutput, "Error: Received empty source or dest argument")
 		return nil
 	}
 
-	if containsPassword, _ := store.ContainsPassword(dest); containsPassword {
-		if !force {
-			fmt.Fprintf(c.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
+	if sourceIsPassword, _ := store.ContainsPassword(source); sourceIsPassword {
+
+		if destAlreadyExists, _ := store.ContainsPassword(dest); destAlreadyExists {
+			if !force {
+				fmt.Fprintf(c.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
+				return nil
+			}
+		}
+
+		err = store.CopyPassword(source, dest)
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprintf(c.WriterOutput, "Copied password from '%s' to '%s'\n", source, dest)
+		return nil
+	}
+
+	if sourceIsDirectory, _ := store.ContainsDirectory(source); sourceIsDirectory {
+
+		if !recursive {
+			fmt.Fprintf(c.WriterOutput, "Error: %s is a directory, use -r to copy recursively\n", source)
 			return nil
 		}
-	}
 
-	if containsDirectory, _ := store.ContainsDirectory(dest); containsDirectory {
-		fmt.Fprintf(c.WriterOutput, "Error: %s is a directory.\n", dest)
+		err = store.CopyDirectory(source, dest)
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprintf(c.WriterOutput, "Copied directory from '%s' to '%s'\n", source, dest)
 		return nil
 	}
 
-	err = store.Copy(source, dest)
-	if err != nil {
-		return nil
-	}
-
-	fmt.Fprintf(c.WriterOutput, "Copied password/directory from '%s' to '%s'\n", source, dest)
+	fmt.Fprintf(c.WriterOutput, "Error: could not find source '%s' to copy \n", source)
 	return nil
 }
 

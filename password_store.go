@@ -211,30 +211,54 @@ func (store *PasswordStore) Move(source, dest string) error {
 	return fmt.Errorf("Could not find password or directory at path %s", path.Join(store.Path, source))
 }
 
-//Copy copies a password or directory from source to dest.
-func (store *PasswordStore) Copy(source, dest string) error {
+//CopyPassword copies a password from source to dest
+func (store *PasswordStore) CopyPassword(source, dest string) error {
+	containsPassword, sourcePasswordPath := store.ContainsPassword(source)
 
-	//Check if the path is a dir
-	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
-	if containsDirectory {
-		err := exec.Command("cp", "-r", sourceDirectoryPath, path.Join(store.Path, dest)).Run()
+	if !containsPassword {
+		return fmt.Errorf("Could not find password or at path %s", sourcePasswordPath)
+	}
+
+	// If the dest ends with a '/', then it is a directory.
+	var destPasswordPath string
+	if strings.HasSuffix(dest, "/") {
+		_, file := filepath.Split(sourcePasswordPath)
+		destPasswordPath = path.Join(store.Path, dest, file)
+	} else {
+		destPasswordPath = path.Join(store.Path, dest+".gpg")
+	}
+
+	err := gopassio.CopyFileContents(sourcePasswordPath, destPasswordPath)
+	if err != nil {
 		return err
 	}
 
-	//Check if the path is a password
-	containsPassword, sourcePasswordPath := store.ContainsPassword(source)
-	if containsPassword {
-		destPasswordPath := path.Join(store.Path, dest+".gpg")
-		gopassio.CopyFileContents(sourcePasswordPath, destPasswordPath)
+	store.AddAndCommit(
+		fmt.Sprintf("Copied Password '%s' to '%s'", source, dest),
+		destPasswordPath)
 
-		store.AddAndCommit(
-			fmt.Sprintf("Copied Password '%s' to '%s'", source, dest),
-			destPasswordPath)
+	return nil
+}
 
-		return nil
+//CopyDirectory copies a directory from source to dest
+func (store *PasswordStore) CopyDirectory(source, dest string) error {
+	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
+
+	if !containsDirectory {
+		return fmt.Errorf("Could not find directory at path %s", path.Join(store.Path, source))
 	}
 
-	return fmt.Errorf("Could not find password or directory at path %s", path.Join(store.Path, source))
+	destDirectoryPath := path.Join(store.Path, dest)
+	err := exec.Command("cp", "-r", sourceDirectoryPath, destDirectoryPath).Run()
+	if err != nil {
+		return err
+	}
+
+	store.AddAndCommit(
+		fmt.Sprintf("Copied directory '%s' to '%s'", source, dest),
+		destDirectoryPath)
+
+	return nil
 }
 
 //GetPassword returns a decrypted password
