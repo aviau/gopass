@@ -44,7 +44,7 @@ type commandLine struct {
 }
 
 //Run parses the arguments and executes the gopass CLI
-func Run(args []string, writerOutput io.Writer) {
+func Run(args []string, writerOutput io.Writer) error {
 	c := commandLine{}
 	c.WriterOutput = writerOutput
 
@@ -61,8 +61,8 @@ func Run(args []string, writerOutput io.Writer) {
 	fs.Parse(args)
 
 	if h || help {
-		execHelp(&c)
-		return
+		err := execHelp(&c)
+		return err
 	}
 
 	// Retrieve command name as first argument.
@@ -70,40 +70,40 @@ func Run(args []string, writerOutput io.Writer) {
 
 	switch cmd {
 	case "show":
-		execShow(&c, args[1:])
+		return execShow(&c, args[1:])
 	case "edit":
-		execEdit(&c, args[1:])
+		return execEdit(&c, args[1:])
 	case "insert", "add":
-		execInsert(&c, args[1:])
+		return execInsert(&c, args[1:])
 	case "find", "ls", "search", "list":
-		execFind(&c, args[1:])
+		return execFind(&c, args[1:])
 	case "":
-		execFind(&c, args)
+		return execFind(&c, args)
 	case "grep":
-		execGrep(&c, args[1:])
+		return execGrep(&c, args[1:])
 	case "cp":
-		execCp(&c, args[1:])
+		return execCp(&c, args[1:])
 	case "mv":
-		execMv(&c, args[1:])
+		return execMv(&c, args[1:])
 	case "rm":
-		execRm(&c, args[1:])
+		return execRm(&c, args[1:])
 	case "generate":
-		execGenerate(&c, args[1:])
+		return execGenerate(&c, args[1:])
 	case "git":
-		execGit(&c, args[1:])
+		return execGit(&c, args[1:])
 	case "help":
-		execHelp(&c)
+		return execHelp(&c)
 	case "init":
-		execInit(&c, args[1:])
+		return execInit(&c, args[1:])
 	case "version":
-		execVersion(&c)
+		return execVersion(&c)
 	default:
-		execShow(&c, args)
+		return execShow(&c, args)
 	}
 
 }
 
-func execHelp(c *commandLine) {
+func execHelp(c *commandLine) error {
 	fmt.Fprintln(c.WriterOutput, `Usage:
       init                  Initialize a new password store.
       ls                    List passwords.
@@ -120,13 +120,15 @@ func execHelp(c *commandLine) {
       help                  Show this text.
       version               Show version information.
 `)
+	return nil
 }
 
-func execVersion(c *commandLine) {
+func execVersion(c *commandLine) error {
 	fmt.Fprintf(c.WriterOutput, "gopass v%s\n", version.Version)
+	return nil
 }
 
-func execInit(c *commandLine, args []string) {
+func execInit(c *commandLine, args []string) error {
 	var path, p string
 
 	fs := flag.NewFlagSet("init", flag.ContinueOnError)
@@ -139,7 +141,7 @@ func execInit(c *commandLine, args []string) {
 	}
 	err := fs.Parse(args)
 	if err != nil {
-		return
+		return err
 	}
 
 	if p != "" {
@@ -149,12 +151,12 @@ func execInit(c *commandLine, args []string) {
 	path, err = filepath.Abs(path)
 	if err != nil {
 		fmt.Fprintln(c.WriterOutput, err)
-		return
+		return err
 	}
 
 	if fs.NArg() != 1 {
 		fs.Usage()
-		return
+		return nil
 	}
 
 	gpgID := fs.Arg(0)
@@ -163,14 +165,15 @@ func execInit(c *commandLine, args []string) {
 	err = store.Init(gpgID)
 	if err != nil {
 		fmt.Fprintln(c.WriterOutput, err)
-		return
+		return err
 	}
 
 	fmt.Fprintf(c.WriterOutput, "Sucessfully created Password Store at %s\n", path)
+	return nil
 }
 
 //execInsert runs the "insert" command.
-func execInsert(c *commandLine, args []string) {
+func execInsert(c *commandLine, args []string) error {
 	var multiline, m bool
 	var force, f bool
 
@@ -187,7 +190,7 @@ func execInsert(c *commandLine, args []string) {
 	}
 	err := fs.Parse(args)
 	if err != nil {
-		return
+		return err
 	}
 
 	multiline = multiline || m
@@ -202,7 +205,7 @@ func execInsert(c *commandLine, args []string) {
 	// Check if password already exists
 	if _, err := os.Stat(passwordPath); err == nil && !force {
 		fmt.Fprintf(c.WriterOutput, "Error: Password already exists at '%s', use -f to force\n", passwordPath)
-		return
+		return nil
 	}
 
 	var password string
@@ -242,14 +245,15 @@ func execInsert(c *commandLine, args []string) {
 	err = store.InsertPassword(pwname, password)
 	if err != nil {
 		fmt.Fprintln(c.WriterOutput, err)
-		return
+		return err
 	}
 
 	fmt.Fprintf(c.WriterOutput, "Password %s added to the store\n", pwname)
+	return nil
 }
 
 //execEdit rund the "edit" command.
-func execEdit(cmd *commandLine, args []string) {
+func execEdit(cmd *commandLine, args []string) error {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -261,7 +265,7 @@ func execEdit(cmd *commandLine, args []string) {
 
 	if err != nil {
 		fmt.Fprintf(cmd.WriterOutput, "Error: %s\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	file, _ := ioutil.TempFile(os.TempDir(), "gopass")
@@ -281,14 +285,15 @@ func execEdit(cmd *commandLine, args []string) {
 	err = store.InsertPassword(passname, password)
 	if err != nil {
 		fmt.Fprintln(cmd.WriterOutput, err)
-		os.Exit(1)
+		return err
 	}
 
 	fmt.Fprintf(cmd.WriterOutput, "Succesfully edited password '%s'\n", passname)
+	return nil
 }
 
 //execGenerate runs the "generate" command.
-func execGenerate(cmd *commandLine, args []string) {
+func execGenerate(cmd *commandLine, args []string) error {
 	var noSymbols, n bool
 	var force, f bool
 
@@ -305,7 +310,7 @@ func execGenerate(cmd *commandLine, args []string) {
 
 	err := fs.Parse(args)
 	if err != nil {
-		return
+		return err
 	}
 
 	noSymbols = noSymbols || n
@@ -315,7 +320,7 @@ func execGenerate(cmd *commandLine, args []string) {
 	passLength, err := strconv.ParseInt(fs.Arg(1), 0, 64)
 	if err != nil {
 		fmt.Fprintf(cmd.WriterOutput, "Second argument must be an int, got '%s'\n", fs.Arg(1))
-		os.Exit(1)
+		return err
 	}
 
 	runes := append(pwgen.Alpha, pwgen.Num...)
@@ -330,10 +335,11 @@ func execGenerate(cmd *commandLine, args []string) {
 	//TODO: Check if password already exists
 	store.InsertPassword(passName, password)
 	fmt.Fprintf(cmd.WriterOutput, "Password %s added to the store\n", passName)
+	return nil
 }
 
 //execRm runs the "rm" command.
-func execRm(c *commandLine, args []string) {
+func execRm(c *commandLine, args []string) error {
 	var recursive, r bool
 	var force, f bool
 
@@ -350,7 +356,7 @@ func execRm(c *commandLine, args []string) {
 
 	err := fs.Parse(args)
 	if err != nil {
-		return
+		return err
 	}
 
 	force = force || f
@@ -360,7 +366,7 @@ func execRm(c *commandLine, args []string) {
 	pwname := fs.Arg(0)
 	if pwname == "" {
 		fs.Usage()
-		return
+		return nil
 	}
 
 	if containsPassword, _ := store.ContainsPassword(pwname); !containsPassword {
@@ -369,38 +375,40 @@ func execRm(c *commandLine, args []string) {
 		if containsDirectory, _ := store.ContainsDirectory(pwname); !containsDirectory {
 			//Store does not contain directory nor password
 			fmt.Fprintf(c.WriterOutput, "Error: %s is not in the password store.\n", pwname)
-			return
+			return nil
 		}
 
 		//Store contains directory. -r flag is needed
 		if !(r || recursive) {
 			fmt.Fprintf(c.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
-			return
+			return nil
 		}
 
 		//Ask for confirmation to delete directory
 		if !force && !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
-			return
+			return nil
 		}
 
 	} else {
 		//Store contains the password
 		//Ask for confirmation to delete password
 		if !force && !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
-			return
+			return nil
 		}
 	}
 
 	err = store.Remove(pwname)
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
+		return err
 	} else {
 		fmt.Fprintln(c.WriterOutput, "Removed password/directory at path", fs.Arg(0))
+		return nil
 	}
 }
 
 //execMv runs the "mv" comand.
-func execMv(c *commandLine, args []string) {
+func execMv(c *commandLine, args []string) error {
 	fs := flag.NewFlagSet("mv", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass mv old-path new-path") }
 	fs.Parse(args)
@@ -412,19 +420,21 @@ func execMv(c *commandLine, args []string) {
 
 	if source == "" || dest == "" {
 		fmt.Fprintln(c.WriterOutput, "Error: Received empty source or dest argument")
-		os.Exit(1)
+		return nil
 	}
 
 	err := store.Move(source, dest)
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
+		return err
 	} else {
 		fmt.Fprintf(c.WriterOutput, "Moved password/directory from '%s' to '%s'\n", source, dest)
+		return nil
 	}
 }
 
 //execCp runs the "cp" command.
-func execCp(c *commandLine, args []string) {
+func execCp(c *commandLine, args []string) error {
 	var force, f bool
 
 	fs := flag.NewFlagSet("cp", flag.ExitOnError)
@@ -435,7 +445,7 @@ func execCp(c *commandLine, args []string) {
 
 	err := fs.Parse(args)
 	if err != nil {
-		return
+		return err
 	}
 
 	force = force || f
@@ -447,32 +457,33 @@ func execCp(c *commandLine, args []string) {
 
 	if source == "" || dest == "" {
 		fmt.Fprintln(c.WriterOutput, "Error: Received empty source or dest argument")
-		os.Exit(1)
+		return nil
 	}
 
 	if containsPassword, _ := store.ContainsPassword(dest); containsPassword {
 		if !force {
 			fmt.Fprintf(c.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
-			os.Exit(1)
+			return nil
 		}
 	}
 
 	if containsDirectory, _ := store.ContainsDirectory(dest); containsDirectory {
 		fmt.Fprintf(c.WriterOutput, "Error: %s is a directory.\n", dest)
-		os.Exit(1)
+		return nil
 	}
 
 	err = store.Copy(source, dest)
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
-		os.Exit(1)
+		return nil
 	} else {
 		fmt.Fprintf(c.WriterOutput, "Copied password/directory from '%s' to '%s'\n", source, dest)
+		return nil
 	}
 }
 
 //execShow runs the "show" command.
-func execShow(c *commandLine, args []string) {
+func execShow(c *commandLine, args []string) error {
 	fs := flag.NewFlagSet("show", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, `Usage: gopass show [pass-name]`) }
 	fs.Parse(args)
@@ -484,14 +495,15 @@ func execShow(c *commandLine, args []string) {
 
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	fmt.Fprintln(c.WriterOutput, password)
+	return nil
 }
 
 //execFind runs the "find" command.
-func execFind(c *commandLine, args []string) {
+func execFind(c *commandLine, args []string) error {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -515,10 +527,11 @@ func execFind(c *commandLine, args []string) {
 	find.Stdout = os.Stdout
 	find.Stderr = os.Stderr
 	find.Run()
+	return nil
 }
 
 //execGrep runs the "grep" command
-func execGrep(c *commandLine, args []string) {
+func execGrep(c *commandLine, args []string) error {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -542,10 +555,11 @@ func execGrep(c *commandLine, args []string) {
 			fmt.Fprintf(c.WriterOutput, "%s:\n%s", ansi.Color(password, "cyan+b"), output)
 		}
 	}
+	return nil
 }
 
 //execGit runs the "git" command
-func execGit(c *commandLine, args []string) {
+func execGit(c *commandLine, args []string) error {
 	store := getStore(c)
 
 	gitArgs := []string{
@@ -562,6 +576,7 @@ func execGit(c *commandLine, args []string) {
 	git.Stderr = os.Stderr
 	git.Stdin = os.Stdin
 	git.Run()
+	return nil
 }
 
 func getDefaultPasswordStoreDir(c *commandLine) string {
