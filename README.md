@@ -51,10 +51,10 @@ This new command should connect to a server using an encrypted rsa key.
 
 ### ``gopass rm``
 
-- [ ] ``gopass rm test.com`` removes the test.com.gpg file
-- [ ] ``gopass remove`` and ``gopass delete`` aliases
-- [ ] ``gopass rm -r folder`` (or ``--recursive``)  will remove a folder and all of it's content (not interactive!)
-- [ ] Ask for confirmation
+- [X] ``gopass rm test.com`` removes the test.com.gpg file
+- [X] ``gopass remove`` and ``gopass delete`` aliases
+- [X] ``gopass rm -r folder`` (or ``--recursive``)  will remove a folder and all of it's content (not interactive!)
+- [X] Ask for confirmation
 
 ### ``gopass find``
 
@@ -64,12 +64,12 @@ This new command should connect to a server using an encrypted rsa key.
 ### ``gopass cp``
 
 - [X] ``gopass cp old-path new-pah`` copies a password to a new path
-- [ ] Dont overwrite
+- [X] Dont overwrite
 
 ### ``gopass mv``
 
 - [X] ``gopass mv old-path new-path`` moves a password to a new path
-- [ ] Dont overwrite
+- [X] Dont overwrite
 
 ### ``gopass git``
 
