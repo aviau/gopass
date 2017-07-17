@@ -379,14 +379,14 @@ func execRm(c *commandLine, args []string) {
 		}
 
 		//Ask for confirmation to delete directory
-		if !force || !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
+		if !force && !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
 			return
 		}
 
 	} else {
 		//Store contains the password
 		//Ask for confirmation to delete password
-		if !force || !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
+		if !force && !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
 			return
 		}
 	}
