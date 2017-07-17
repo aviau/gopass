@@ -89,7 +89,7 @@ This new command should connect to a server using an encrypted rsa key.
 ### ``gopass generate``
 
 - [X] ``gopass generate [pass-name] [pass-length]`` Genrates a new password using of length pass-length and inserts it into pass-name.
-- [ ] ``--no-symbols, -n``
+- [X] ``--no-symbols, -n``
 - [ ] ``--clip, -c``
 - [ ] ``--in-place, -i``
 - [ ] ``--force, -f``
