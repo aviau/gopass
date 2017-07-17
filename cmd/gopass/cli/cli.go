@@ -401,10 +401,10 @@ func execRm(c *commandLine, args []string) error {
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		return err
-	} else {
-		fmt.Fprintln(c.WriterOutput, "Removed password/directory at path", fs.Arg(0))
-		return nil
 	}
+
+	fmt.Fprintln(c.WriterOutput, "Removed password/directory at path", fs.Arg(0))
+	return nil
 }
 
 //execMv runs the "mv" comand.
@@ -427,10 +427,10 @@ func execMv(c *commandLine, args []string) error {
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		return err
-	} else {
-		fmt.Fprintf(c.WriterOutput, "Moved password/directory from '%s' to '%s'\n", source, dest)
-		return nil
 	}
+
+	fmt.Fprintf(c.WriterOutput, "Moved password/directory from '%s' to '%s'\n", source, dest)
+	return nil
 }
 
 //execCp runs the "cp" command.
@@ -476,10 +476,10 @@ func execCp(c *commandLine, args []string) error {
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		return nil
-	} else {
-		fmt.Fprintf(c.WriterOutput, "Copied password/directory from '%s' to '%s'\n", source, dest)
-		return nil
 	}
+
+	fmt.Fprintf(c.WriterOutput, "Copied password/directory from '%s' to '%s'\n", source, dest)
+	return nil
 }
 
 //execShow runs the "show" command.
