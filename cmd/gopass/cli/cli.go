@@ -403,9 +403,20 @@ func execRm(c *commandLine, args []string) error {
 
 //execMv runs the "mv" comand.
 func execMv(c *commandLine, args []string) error {
+	var force, f bool
+
 	fs := flag.NewFlagSet("mv", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass mv old-path new-path") }
-	fs.Parse(args)
+
+	fs.BoolVar(&force, "force", false, "")
+	fs.BoolVar(&f, "f", false, "")
+
+	err := fs.Parse(args)
+	if err != nil {
+		return err
+	}
+
+	force = force || f
 
 	store := getStore(c)
 
@@ -417,12 +428,40 @@ func execMv(c *commandLine, args []string) error {
 		return nil
 	}
 
-	err := store.Move(source, dest)
-	if err != nil {
-		return err
+	// If the dest ends with a '/', then it is a directory.
+	if strings.HasSuffix(dest, "/") {
+		_, sourceFile := filepath.Split(source)
+		dest = filepath.Join(dest, sourceFile)
 	}
 
-	fmt.Fprintf(c.WriterOutput, "Moved password/directory from '%s' to '%s'\n", source, dest)
+	if sourceIsPassword, _ := store.ContainsPassword(source); sourceIsPassword {
+
+		if destAlreadyExists, _ := store.ContainsPassword(dest); destAlreadyExists {
+			if !force {
+				fmt.Fprintf(c.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
+				return nil
+			}
+		}
+
+		err = store.MovePassword(source, dest)
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprintf(c.WriterOutput, "Moved password from '%s' to '%s'\n", source, dest)
+		return nil
+	}
+
+	if sourceIsDirectory, _ := store.ContainsDirectory(source); sourceIsDirectory {
+		err = store.MoveDirectory(source, dest)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(c.WriterOutput, "Moved directory from '%s' to '%s'\n", source, dest)
+		return nil
+	}
+
+	fmt.Fprintf(c.WriterOutput, "Error: could not find source '%s' to copy \n", source)
 	return nil
 }
 

@@ -177,41 +177,56 @@ func (store *PasswordStore) RemovePassword(pwname string) error {
 	return nil
 }
 
-//Move moves a passsword or directory from source to dest.
-func (store *PasswordStore) Move(source, dest string) error {
-
-	//Check if the path is a dir
+//MoveDirectory moves a directory from source to dest
+func (store *PasswordStore) MoveDirectory(source, dest string) error {
 	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
-	if containsDirectory {
-		destDirectoryPath := path.Join(store.Path, dest)
-		err := os.Rename(sourceDirectoryPath, destDirectoryPath)
-		if err != nil {
-			return err
-		}
-
-		store.AddAndCommit(
-			fmt.Sprintf("Moved directory '%s' to '%s'", source, dest),
-			sourceDirectoryPath,
-			destDirectoryPath)
-
-		return nil
+	if !containsDirectory {
+		return fmt.Errorf("Could not find directory at path %s", sourceDirectoryPath)
 	}
 
-	//Check if the path is a password
+	destDirectoryPath := path.Join(store.Path, dest)
+
+	err := os.Rename(sourceDirectoryPath, destDirectoryPath)
+	if err != nil {
+		return err
+	}
+
+	store.AddAndCommit(
+		fmt.Sprintf("Moved directory '%s' to '%s'", source, dest),
+		sourceDirectoryPath,
+		destDirectoryPath)
+
+	return nil
+}
+
+//MovePassword moves a passsword or directory from source to dest.
+func (store *PasswordStore) MovePassword(source, dest string) error {
 	containsPassword, sourcePasswordPath := store.ContainsPassword(source)
-	if containsPassword {
-		destPasswordPath := path.Join(store.Path, dest+".gpg")
-		os.Rename(sourcePasswordPath, destPasswordPath)
 
-		store.AddAndCommit(
-			fmt.Sprintf("Moved Password '%s' to '%s'", source, dest),
-			sourcePasswordPath,
-			destPasswordPath)
-
-		return nil
+	if !containsPassword {
+		return fmt.Errorf("Could not find password path %s", sourcePasswordPath)
 	}
 
-	return fmt.Errorf("Could not find password or directory at path %s", path.Join(store.Path, source))
+	// If the dest ends with a '/', then it is a directory.
+	var destPasswordPath string
+	if strings.HasSuffix(dest, "/") {
+		_, file := filepath.Split(sourcePasswordPath)
+		destPasswordPath = path.Join(store.Path, dest, file)
+	} else {
+		destPasswordPath = path.Join(store.Path, dest+".gpg")
+	}
+
+	err := os.Rename(sourcePasswordPath, destPasswordPath)
+	if err != nil {
+		return err
+	}
+
+	store.AddAndCommit(
+		fmt.Sprintf("Moved Password '%s' to '%s'", source, dest),
+		sourcePasswordPath,
+		destPasswordPath)
+
+	return nil
 }
 
 //CopyPassword copies a password from source to dest
