@@ -62,7 +62,7 @@ _gopass()
 {
     COMPREPLY=()
     local cur="${COMP_WORDS[COMP_CWORD]}"
-    local commands="init ls find grep show insert generate edit rm mv cp connect git help version"
+    local commands="init ls find grep show insert generate edit rm mv cp git help version"
     if [[ $COMP_CWORD -gt 1 ]]; then
         local lastarg="${COMP_WORDS[$COMP_CWORD-1]}"
         COMPREPLY+=($(compgen -W "-h --help" -- ${cur}))
@@ -79,11 +79,10 @@ _gopass()
                 _gopass_complete_entries
                 ;;
             show|-*)
-                COMPREPLY+=($(compgen -W "-c --clip" -- ${cur}))
                 _gopass_complete_entries 1
                 ;;
             insert)
-                COMPREPLY+=($(compgen -W "-m --multiline" -- ${cur}))
+                COMPREPLY+=($(compgen -W "-m --multiline -f --force" -- ${cur}))
                 _gopass_complete_entries
                 ;;
             generate)
@@ -91,15 +90,15 @@ _gopass()
                 _gopass_complete_entries
                 ;;
             cp|mv)
-                #COMPREPLY+=($(compgen -W "-f --force" -- ${cur}))
+                COMPREPLY+=($(compgen -W "-f --force" -- ${cur}))
                 _gopass_complete_entries
                 ;;
             rm)
-                COMPREPLY+=($(compgen -W "-r --recursive" -- ${cur}))
+                COMPREPLY+=($(compgen -W "-r --recursive -f --force" -- ${cur}))
                 _gopass_complete_entries
                 ;;
             git)
-                COMPREPLY+=($(compgen -W "init push pull config log reflog rebase" -- ${cur}))
+                COMPREPLY+=($(compgen -W "init push pull config log reflog rebase status" -- ${cur}))
                 ;;
         esac
     else
