@@ -453,14 +453,15 @@ func execCp(c *commandLine, args []string) error {
 	source := fs.Arg(0)
 	dest := fs.Arg(1)
 
-	if strings.HasSuffix(dest, "/") {
-		_, sourceFile := filepath.Split(source)
-		dest = filepath.Join(dest, sourceFile)
-	}
-
 	if source == "" || dest == "" {
 		fmt.Fprintln(c.WriterOutput, "Error: Received empty source or dest argument")
 		return nil
+	}
+
+	// If the dest ends with a '/', then it is a directory.
+	if strings.HasSuffix(dest, "/") {
+		_, sourceFile := filepath.Split(source)
+		dest = filepath.Join(dest, sourceFile)
 	}
 
 	if sourceIsPassword, _ := store.ContainsPassword(source); sourceIsPassword {
