@@ -358,6 +358,10 @@ func execRm(c *commandLine, args []string) {
 	store := getStore(c)
 
 	pwname := fs.Arg(0)
+	if pwname == "" {
+		fs.Usage()
+		return
+	}
 
 	if containsPassword, _ := store.ContainsPassword(pwname); !containsPassword {
 		// Store does not contain password
