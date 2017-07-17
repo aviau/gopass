@@ -184,7 +184,10 @@ func (store *PasswordStore) Move(source, dest string) error {
 	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
 	if containsDirectory {
 		destDirectoryPath := path.Join(store.Path, dest)
-		os.Rename(sourceDirectoryPath, destDirectoryPath)
+		err := os.Rename(sourceDirectoryPath, destDirectoryPath)
+		if err != nil {
+			return err
+		}
 
 		store.AddAndCommit(
 			fmt.Sprintf("Moved directory '%s' to '%s'", source, dest),
