@@ -425,9 +425,20 @@ func execMv(c *commandLine, args []string) {
 
 //execCp runs the "cp" command.
 func execCp(c *commandLine, args []string) {
+	var force, f bool
+
 	fs := flag.NewFlagSet("cp", flag.ExitOnError)
 	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass cp old-path new-path") }
-	fs.Parse(args)
+
+	fs.BoolVar(&force, "force", false, "")
+	fs.BoolVar(&f, "f", false, "")
+
+	err := fs.Parse(args)
+	if err != nil {
+		return
+	}
+
+	force = force || f
 
 	store := getStore(c)
 
@@ -439,7 +450,19 @@ func execCp(c *commandLine, args []string) {
 		os.Exit(1)
 	}
 
-	err := store.Copy(source, dest)
+	if containsPassword, _ := store.ContainsPassword(dest); containsPassword {
+		if !force {
+			fmt.Fprintf(c.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
+			os.Exit(1)
+		}
+	}
+
+	if containsDirectory, _ := store.ContainsDirectory(dest); containsDirectory {
+		fmt.Fprintf(c.WriterOutput, "Error: %s is a directory.\n", dest)
+		os.Exit(1)
+	}
+
+	err = store.Copy(source, dest)
 	if err != nil {
 		fmt.Fprintf(c.WriterOutput, "Error: %s\n", err)
 		os.Exit(1)
