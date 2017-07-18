@@ -104,6 +104,11 @@ func (store *PasswordStore) Init(gpgID string) error {
 		return err
 	}
 
+	err = store.AddAndCommit("Initial commit", ".gpg-id")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
