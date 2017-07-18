@@ -264,6 +264,44 @@ func TestRemovePasswordDirectory(t *testing.T) {
 	)
 }
 
+func TestMovePassword(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	_, err = os.Create(testPasswordPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should have been created",
+	)
+
+	st.PasswordStore.MovePassword("test.com", "test2.com")
+
+	_, err = os.Stat(testPasswordPath)
+	assert.True(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should no longer exist",
+	)
+
+    destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
+	_, err = os.Stat(destPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test2.com.gpg should now",
+	)
+}
+
 func TestCopyPassword(t *testing.T) {
 	st, err := newPasswordStoreTest()
 	if err != nil {
