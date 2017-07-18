@@ -30,8 +30,8 @@ import (
 
 	"github.com/aviau/gopass"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
+	"github.com/aviau/gopass/cmd/gopass/internal/version"
 	"github.com/aviau/gopass/internal/pwgen"
-	"github.com/aviau/gopass/internal/version"
 	"github.com/mgutz/ansi"
 	"golang.org/x/crypto/ssh/terminal"
 )

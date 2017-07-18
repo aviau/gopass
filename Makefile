@@ -3,7 +3,7 @@ all: fmt gopass test vet lint
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go') Makefile
 VERSION := 1.0.5
-LDFLAGS=-ldflags "-X github.com/aviau/gopass/internal/version.Version=$(VERSION)"
+LDFLAGS=-ldflags "-X github.com/aviau/gopass/cmd/gopass/internal/version.Version=$(VERSION)"
 
 gopass: $(SOURCES)
 	go build -v ${LDFLAGS} -o gopass cmd/gopass/main.go
