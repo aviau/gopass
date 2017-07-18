@@ -145,37 +145,6 @@ func TestRemovePasswordDirectory(t *testing.T) {
 	)
 }
 
-func TestGetPasswordsList(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer st.Close()
-
-	_, err = os.Create(filepath.Join(st.StorePath, "test.com.gpg"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = os.Create(filepath.Join(st.StorePath, "test2.com.gpg"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = os.Create(filepath.Join(st.StorePath, "test3"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	passwords := st.PasswordStore.GetPasswordsList()
-	assert.Equal(
-		t,
-		passwords,
-		[]string{"test.com", "test2.com"},
-		"Password list should contain test.com and test2.com",
-	)
-}
-
 func TestCopyPassword(t *testing.T) {
 	st, err := newPasswordStoreTest()
 	if err != nil {
@@ -362,4 +331,35 @@ func TestContainsDirectoryTrailingSlash(t *testing.T) {
 
 	containsDirectory, _ = st.PasswordStore.ContainsDirectory("/dir///")
 	assert.True(t, containsDirectory, "The password store should contain dir")
+}
+
+func TestGetPasswordsList(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	_, err = os.Create(filepath.Join(st.StorePath, "test.com.gpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Create(filepath.Join(st.StorePath, "test2.com.gpg"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Create(filepath.Join(st.StorePath, "test3"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	passwords := st.PasswordStore.GetPasswordsList()
+	assert.Equal(
+		t,
+		passwords,
+		[]string{"test.com", "test2.com"},
+		"Password list should contain test.com and test2.com",
+	)
 }
