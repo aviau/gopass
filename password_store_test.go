@@ -50,5 +50,10 @@ func TestGetPasswordsList(t *testing.T) {
 
 	s := gopass.NewPasswordStore(dir)
 	passwords := s.GetPasswordsList()
-	assert.Equal(t, passwords, []string{"test.com", "test2.com"})
+	assert.Equal(
+		t,
+		passwords,
+		[]string{"test.com", "test2.com"},
+		"Password list should contain test.com and test2.com",
+	)
 }
