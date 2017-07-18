@@ -293,7 +293,7 @@ func TestMovePassword(t *testing.T) {
 		"test.com.gpg should no longer exist",
 	)
 
-    destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
+	destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
 	_, err = os.Stat(destPasswordPath)
 	assert.False(
 		t,
