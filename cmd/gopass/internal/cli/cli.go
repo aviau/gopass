@@ -29,9 +29,9 @@ import (
 	"strings"
 
 	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/cmd/gopass/internal/pwgen"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 	"github.com/aviau/gopass/cmd/gopass/internal/version"
-	"github.com/aviau/gopass/internal/pwgen"
 	"github.com/mgutz/ansi"
 	"golang.org/x/crypto/ssh/terminal"
 )
