@@ -198,10 +198,8 @@ func execInsert(c *commandLine, args []string) error {
 
 	store := getStore(c)
 
-	passwordPath := path.Join(store.Path, pwname+".gpg")
-
 	// Check if password already exists
-	if _, err := os.Stat(passwordPath); err == nil && !force {
+	if containsPassword, passwordPath := store.ContainsPassword(pwname); containsPassword && !force {
 		fmt.Fprintf(c.WriterOutput, "Error: Password already exists at '%s', use -f to force\n", passwordPath)
 		return nil
 	}
