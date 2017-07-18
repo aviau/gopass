@@ -309,3 +309,57 @@ func TestContainsPasswordDirectory(t *testing.T) {
 	containsPassword, _ = st.PasswordStore.ContainsPassword("test.com")
 	assert.False(t, containsPassword, "The password store should not a password named test.com")
 }
+
+func TestContainsDirectory(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")
+	assert.False(t, containsDirectory, "The password store should contain dir")
+
+	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	err = os.Mkdir(testDirectoryPath, 0700)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testDirectoryPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"the directory should have been created",
+	)
+
+	containsDirectory, _ = st.PasswordStore.ContainsDirectory("dir")
+	assert.True(t, containsDirectory, "The password store should contain dir")
+}
+
+func TestContainsDirectoryTrailingSlash(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")
+	assert.False(t, containsDirectory, "The password store should contain dir")
+
+	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	err = os.Mkdir(testDirectoryPath, 0700)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testDirectoryPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"the directory should have been created",
+	)
+
+	containsDirectory, _ = st.PasswordStore.ContainsDirectory("/dir///")
+	assert.True(t, containsDirectory, "The password store should contain dir")
+}
