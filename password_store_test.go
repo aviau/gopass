@@ -175,3 +175,83 @@ func TestGetPasswordsList(t *testing.T) {
 		"Password list should contain test.com and test2.com",
 	)
 }
+
+func TestCopyPassword(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	_, err = os.Create(testPasswordPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should have been created",
+	)
+
+	destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
+	_, err = os.Stat(destPasswordPath)
+	assert.True(
+		t,
+		os.IsNotExist(err),
+		"test2.com.gpg should not have been created yet",
+	)
+
+	st.PasswordStore.CopyPassword("test.com", "test2.com")
+	_, err = os.Stat(destPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg shoudl have been copied to test2.com.gpg",
+	)
+}
+
+func TestCopyPasswordInDirectory(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	_, err = os.Create(testPasswordPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should have been created",
+	)
+
+	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	err = os.Mkdir(testDirectoryPath, 0700)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	destPasswordPath := filepath.Join(st.StorePath, "dir", "test.com.gpg")
+	_, err = os.Stat(destPasswordPath)
+	assert.True(
+		t,
+		os.IsNotExist(err),
+		"test2.com.gpg should have been created yet",
+	)
+
+	st.PasswordStore.CopyPassword("test.com", "dir/")
+	_, err = os.Stat(destPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg shoudl have been copied to dir/test2.com.gpg",
+	)
+}
