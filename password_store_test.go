@@ -291,7 +291,7 @@ func TestContainsPasswordDirectory(t *testing.T) {
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
-	assert.False(t, containsPassword, "The password should not contain test.com")
+	assert.False(t, containsPassword, "The password store should not contain test.com")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "test.com")
 	err = os.Mkdir(testDirectoryPath, 0700)
