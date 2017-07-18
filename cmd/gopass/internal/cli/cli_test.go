@@ -23,8 +23,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/cmd/gopass/cli"
-	"github.com/aviau/gopass/version"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli"
+	"github.com/aviau/gopass/internal/version"
 )
 
 func TestVersion(t *testing.T) {

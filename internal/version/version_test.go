@@ -21,7 +21,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/version"
+	"github.com/aviau/gopass/internal/version"
 )
 
 func TestVersionNotUnknown(t *testing.T) {

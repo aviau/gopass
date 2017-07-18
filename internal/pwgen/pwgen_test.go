@@ -16,7 +16,7 @@
 package pwgen_test
 
 import (
-	"github.com/aviau/gopass/pwgen"
+	"github.com/aviau/gopass/internal/pwgen"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"

@@ -25,7 +25,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	gopassio "github.com/aviau/gopass/io"
+	gopassio "github.com/aviau/gopass/internal/io"
 )
 
 //PasswordStore represents a password store.
