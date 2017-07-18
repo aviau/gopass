@@ -26,30 +26,148 @@ import (
 	"github.com/aviau/gopass"
 )
 
+type passwordStoreTest struct {
+	PasswordStore *gopass.PasswordStore
+	StorePath     string
+}
+
+func newPasswordStoreTest() (*passwordStoreTest, error) {
+	storePath, err := ioutil.TempDir("", "gopass")
+	if err != nil {
+		return nil, err
+	}
+
+	passwordStore := gopass.NewPasswordStore(storePath)
+	passwordStore.UsesGit = false
+
+	err = passwordStore.Init("test")
+	if err != nil {
+		return nil, err
+	}
+
+	passwordStoreTest := passwordStoreTest{
+		PasswordStore: passwordStore,
+		StorePath:     storePath,
+	}
+
+	return &passwordStoreTest, nil
+}
+
+func (test *passwordStoreTest) Close() error {
+	err := os.RemoveAll(test.StorePath)
+	return err
+}
+
+func TestRemovePassword(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	_, err = os.Create(testPasswordPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should have been created",
+	)
+
+	st.PasswordStore.RemovePassword("test.com")
+	_, err = os.Stat(testPasswordPath)
+	assert.True(
+		t,
+		os.IsNotExist(err),
+		"test.com should have been removed",
+	)
+}
+
+func TestRemovePasswordTrailingSlash(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	_, err = os.Create(testPasswordPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should have been created",
+	)
+
+	st.PasswordStore.RemovePassword("test.com/")
+	_, err = os.Stat(testPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"RemovePassword with a trailing slash should not remove a password",
+	)
+}
+
+func TestRemovePasswordDirectory(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	testDirectoryPath := filepath.Join(st.StorePath, "test.com")
+	err = os.Mkdir(testDirectoryPath, 0700)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testDirectoryPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should have been created",
+	)
+
+	st.PasswordStore.RemovePassword("test.com")
+	_, err = os.Stat(testDirectoryPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"RemovePassword should not remove directories",
+	)
+}
+
 func TestGetPasswordsList(t *testing.T) {
-	dir, err := ioutil.TempDir("", "gopass")
+	st, err := newPasswordStoreTest()
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(dir)
+	defer st.Close()
 
-	_, err = os.Create(filepath.Join(dir, "test.com.gpg"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = os.Create(filepath.Join(dir, "test2.com.gpg"))
+	_, err = os.Create(filepath.Join(st.StorePath, "test.com.gpg"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Create(filepath.Join(dir, "test3"))
+	_, err = os.Create(filepath.Join(st.StorePath, "test2.com.gpg"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	s := gopass.NewPasswordStore(dir)
-	passwords := s.GetPasswordsList()
+	_, err = os.Create(filepath.Join(st.StorePath, "test3"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	passwords := st.PasswordStore.GetPasswordsList()
 	assert.Equal(
 		t,
 		passwords,
