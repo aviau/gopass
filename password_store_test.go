@@ -264,7 +264,7 @@ func TestContainsPassword(t *testing.T) {
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
-	assert.False(t, containsPassword, "The password should not contain test.com")
+	assert.False(t, containsPassword, "The password store should not contain test.com")
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
 	_, err = os.Create(testPasswordPath)
