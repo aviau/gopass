@@ -200,7 +200,7 @@ func execInsert(c *commandLine, args []string) error {
 
 	// Check if password already exists
 	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Password '%s' already esists. Would you like to overwrite? [y/n] ", pwname)) {
+		if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", pwname)) {
 			return nil
 		}
 	}
@@ -315,7 +315,7 @@ func execGenerate(cmd *commandLine, args []string) error {
 	store := getStore(cmd)
 
 	if containsPassword, _ := store.ContainsPassword(passName); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Password '%s' already esists. Would you like to overwrite? [y/n] ", passName)) {
+		if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", passName)) {
 			return nil
 		}
 	}
