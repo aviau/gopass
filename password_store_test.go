@@ -58,6 +58,39 @@ func (test *passwordStoreTest) Close() error {
 	return err
 }
 
+func TestRemoveDirectory(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	err = os.Mkdir(testDirectoryPath, 0700)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testDirectoryPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"dir should have been created",
+	)
+
+	err = st.PasswordStore.RemoveDirectory("dir")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testDirectoryPath)
+	assert.True(
+		t,
+		os.IsNotExist(err),
+		"dir should have been removed",
+	)
+}
+
 func TestRemovePassword(t *testing.T) {
 	st, err := newPasswordStoreTest()
 	if err != nil {

@@ -159,6 +159,11 @@ func (store *PasswordStore) RemoveDirectory(dirname string) error {
 		return fmt.Errorf("Could not find directory at path %s", directoryPath)
 	}
 
+	err := os.RemoveAll(directoryPath)
+	if err != nil {
+		return err
+	}
+
 	store.AddAndCommit(
 		fmt.Sprintf("Removed directory '%s' from the store", dirname),
 		directoryPath)
