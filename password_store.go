@@ -30,10 +30,11 @@ import (
 
 //PasswordStore represents a password store.
 type PasswordStore struct {
-	Path   string //path of the store
-	GitDir string //The path of the git directory
-	GPGBin string //The GPG binary to use
-	GPGID  string //The GPG ID used to encrypt the passwords
+	Path    string  //path of the store
+	GitDir  string  //The path of the git directory
+	GPGBin  string  //The GPG binary to use
+	GPGID   string  //The GPG ID used to encrypt the passwords
+	UsesGit bool    //Whether or not the store uses git
 }
 
 // NewPasswordStore returns a new password store.
@@ -361,6 +362,10 @@ func (store *PasswordStore) AddAndCommit(message string, paths ...string) error 
 
 //git executes a git command
 func (store *PasswordStore) git(args ...string) error {
+	if !store.UsesGit {
+		return nil
+	}
+
 	gitArgs := []string{
 		"--git-dir=" + store.GitDir,
 		"--work-tree=" + store.Path}
