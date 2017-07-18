@@ -199,9 +199,10 @@ func execInsert(c *commandLine, args []string) error {
 	store := getStore(c)
 
 	// Check if password already exists
-	if containsPassword, passwordPath := store.ContainsPassword(pwname); containsPassword && !force {
-		fmt.Fprintf(c.WriterOutput, "Error: Password already exists at '%s', use -f to force\n", passwordPath)
-		return nil
+	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword && !force {
+		if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Password '%s' already esists. Would you like to overwrite? [y/n] ", pwname)) {
+			return nil
+		}
 	}
 
 	var password string

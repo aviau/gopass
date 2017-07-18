@@ -22,7 +22,7 @@ This section was just added so that I could get an idea of where I am at.
 - [X] ``gopass insert test.com`` prompts for a password and creates a test.com.gpg file
 - [X] Multi-line support
 - [X] Create a git commit
-- [ ] Prompt before overwriting an existing password, unless --force or -f is specified.
+- [X] Prompt before overwriting an existing password, unless --force or -f is specified.
 - [ ] When inserting in a folder with a .gpg-id file, insert should use the .gpg-id file's key
 
 ### ``gopass show``
