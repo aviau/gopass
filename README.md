@@ -94,4 +94,4 @@ This new command should connect to a server using an encrypted rsa key.
 - [ ] ``--clip, -c``
 - [ ] ``--in-place, -i``
 - [X] ``--force, -f``
-- [ ] Prompt before overwriting an existing password, unless --force or -f is specified.
+- [X] Prompt before overwriting an existing password, unless --force or -f is specified.
