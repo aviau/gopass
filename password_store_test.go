@@ -255,3 +255,57 @@ func TestCopyPasswordInDirectory(t *testing.T) {
 		"test.com.gpg shoudl have been copied to dir/test2.com.gpg",
 	)
 }
+
+func TestContainsPassword(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
+	assert.False(t, containsPassword, "The password should not contain test.com")
+
+	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	_, err = os.Create(testPasswordPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testPasswordPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com.gpg should have been created",
+	)
+
+	containsPassword, _ = st.PasswordStore.ContainsPassword("test.com")
+	assert.True(t, containsPassword, "The password store should contain test.com")
+}
+
+func TestContainsPasswordDirectory(t *testing.T) {
+	st, err := newPasswordStoreTest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+
+	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
+	assert.False(t, containsPassword, "The password should not contain test.com")
+
+	testDirectoryPath := filepath.Join(st.StorePath, "test.com")
+	err = os.Mkdir(testDirectoryPath, 0700)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testDirectoryPath)
+	assert.False(
+		t,
+		os.IsNotExist(err),
+		"test.com directory should have been created",
+	)
+
+	containsPassword, _ = st.PasswordStore.ContainsPassword("test.com")
+	assert.False(t, containsPassword, "The password store should not a password named test.com")
+}
