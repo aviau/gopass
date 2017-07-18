@@ -86,7 +86,7 @@ _gopass()
                 _gopass_complete_entries
                 ;;
             generate)
-                COMPREPLY+=($(compgen -W "-n --no-symbols" -- ${cur}))
+                COMPREPLY+=($(compgen -W "-n --no-symbols -f --force" -- ${cur}))
                 _gopass_complete_entries
                 ;;
             cp|mv)

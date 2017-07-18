@@ -312,6 +312,16 @@ func execGenerate(cmd *commandLine, args []string) error {
 	force = force || f
 
 	passName := fs.Arg(0)
+
+	store := getStore(cmd)
+
+	if containsPassword, _ := store.ContainsPassword(passName); containsPassword {
+		if !force {
+			fmt.Fprintf(cmd.WriterOutput, "Error: '%s' already exists. Use -f to override.\n", passName)
+			return nil
+		}
+	}
+
 	passLength, err := strconv.ParseInt(fs.Arg(1), 0, 64)
 	if err != nil {
 		fmt.Fprintf(cmd.WriterOutput, "Second argument must be an int, got '%s'\n", fs.Arg(1))
@@ -325,10 +335,11 @@ func execGenerate(cmd *commandLine, args []string) error {
 
 	password := pwgen.RandSeq(int(passLength), runes)
 
-	store := getStore(cmd)
+	err = store.InsertPassword(passName, password)
+	if err != nil {
+		return err
+	}
 
-	//TODO: Check if password already exists
-	store.InsertPassword(passName, password)
 	fmt.Fprintf(cmd.WriterOutput, "Password %s added to the store\n", passName)
 	return nil
 }
