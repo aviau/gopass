@@ -166,7 +166,7 @@ func execInit(c *commandLine, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(c.WriterOutput, "Sucessfully created Password Store at %s\n", path)
+	fmt.Fprintf(c.WriterOutput, "Successfully created Password Store at %s\n", path)
 	return nil
 }
 
