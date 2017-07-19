@@ -298,7 +298,7 @@ func TestMovePassword(t *testing.T) {
 	assert.False(
 		t,
 		os.IsNotExist(err),
-		"test2.com.gpg should now",
+		"test2.com.gpg should now exist",
 	)
 }
 
