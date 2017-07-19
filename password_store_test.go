@@ -238,7 +238,7 @@ func TestMovePassword(t *testing.T) {
 	assert.Nil(t, err, "test2.com.gpg should now exist")
 }
 
-func TestMovePasswordDirectory(t *testing.T) {
+func TestMovePasswordInDirectory(t *testing.T) {
 	st, err := newPasswordStoreTest()
 	if err != nil {
 		t.Fatal(err)
