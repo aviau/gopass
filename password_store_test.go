@@ -72,11 +72,7 @@ func TestRemoveDirectory(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"dir should have been created",
-	)
+	assert.Nil(t, err, "dir should have been created")
 
 	err = st.PasswordStore.RemoveDirectory("dir")
 	if err != nil {
@@ -84,11 +80,7 @@ func TestRemoveDirectory(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"dir should have been removed",
-	)
+	assert.True(t, os.IsNotExist(err), "dir should have been removed")
 }
 
 func TestRemoveDirectoryTrailingSlash(t *testing.T) {
@@ -105,11 +97,7 @@ func TestRemoveDirectoryTrailingSlash(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"dir should have been created",
-	)
+	assert.Nil(t, err, "dir should have been created")
 
 	err = st.PasswordStore.RemoveDirectory("//dir///")
 	if err != nil {
@@ -117,11 +105,7 @@ func TestRemoveDirectoryTrailingSlash(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"dir should have been removed",
-	)
+	assert.True(t, os.IsNotExist(err), "dir should have been removed")
 }
 
 func TestRemoveDirectoryRecursive(t *testing.T) {
@@ -144,18 +128,10 @@ func TestRemoveDirectoryRecursive(t *testing.T) {
 	}
 
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"dir should have been created",
-	)
+	assert.Nil(t, err, "dir should have been created")
 
 	err = st.PasswordStore.RemoveDirectory("dir")
 	if err != nil {
@@ -163,18 +139,10 @@ func TestRemoveDirectoryRecursive(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"dir should have been removed",
-	)
+	assert.True(t, os.IsNotExist(err), "dir should have been removed")
 
 	_, err = os.Stat(testPasswordPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been removed",
-	)
+	assert.True(t, os.IsNotExist(err), "test.com.gpg should have been removed")
 }
 
 func TestRemovePassword(t *testing.T) {
@@ -191,19 +159,11 @@ func TestRemovePassword(t *testing.T) {
 	}
 
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	st.PasswordStore.RemovePassword("test.com")
 	_, err = os.Stat(testPasswordPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"test.com should have been removed",
-	)
+	assert.True(t, os.IsNotExist(err), "test.com should have been removed")
 }
 
 func TestRemovePasswordTrailingSlash(t *testing.T) {
@@ -220,19 +180,11 @@ func TestRemovePasswordTrailingSlash(t *testing.T) {
 	}
 
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	st.PasswordStore.RemovePassword("test.com/")
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"RemovePassword with a trailing slash should not remove a password",
-	)
+	assert.Nil(t, err, "RemovePassword with a trailing slash should not remove a password")
 }
 
 func TestRemovePasswordDirectory(t *testing.T) {
@@ -249,11 +201,7 @@ func TestRemovePasswordDirectory(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	st.PasswordStore.RemovePassword("test.com")
 	_, err = os.Stat(testDirectoryPath)
@@ -278,28 +226,16 @@ func TestMovePassword(t *testing.T) {
 	}
 
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	st.PasswordStore.MovePassword("test.com", "test2.com")
 
 	_, err = os.Stat(testPasswordPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should no longer exist",
-	)
+	assert.True(t, os.IsNotExist(err), "test.com.gpg should no longer exist")
 
 	destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
 	_, err = os.Stat(destPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test2.com.gpg should now exist",
-	)
+	assert.Nil(t, err, "test2.com.gpg should now exist")
 }
 
 func TestMovePasswordDirectory(t *testing.T) {
@@ -358,27 +294,15 @@ func TestCopyPassword(t *testing.T) {
 	}
 
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
 	_, err = os.Stat(destPasswordPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"test2.com.gpg should not have been created yet",
-	)
+	assert.True(t, os.IsNotExist(err), "test2.com.gpg should not have been created yet")
 
 	st.PasswordStore.CopyPassword("test.com", "test2.com")
 	_, err = os.Stat(destPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg shoudl have been copied to test2.com.gpg",
-	)
+	assert.Nil(t, err, "test.com.gpg shoudl have been copied to test2.com.gpg")
 }
 
 func TestCopyPasswordInDirectory(t *testing.T) {
@@ -395,11 +319,7 @@ func TestCopyPasswordInDirectory(t *testing.T) {
 	}
 
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
 	err = os.Mkdir(testDirectoryPath, 0700)
@@ -409,19 +329,11 @@ func TestCopyPasswordInDirectory(t *testing.T) {
 
 	destPasswordPath := filepath.Join(st.StorePath, "dir", "test.com.gpg")
 	_, err = os.Stat(destPasswordPath)
-	assert.True(
-		t,
-		os.IsNotExist(err),
-		"test2.com.gpg should have been created yet",
-	)
+	assert.True(t, os.IsNotExist(err), "test2.com.gpg should have been created yet")
 
 	st.PasswordStore.CopyPassword("test.com", "dir/")
 	_, err = os.Stat(destPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg shoudl have been copied to dir/test2.com.gpg",
-	)
+	assert.Nil(t, err, "test.com.gpg shoudl have been copied to dir/test2.com.gpg")
 }
 
 func TestContainsPassword(t *testing.T) {
@@ -441,11 +353,7 @@ func TestContainsPassword(t *testing.T) {
 	}
 
 	_, err = os.Stat(testPasswordPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com.gpg should have been created",
-	)
+	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	containsPassword, _ = st.PasswordStore.ContainsPassword("test.com")
 	assert.True(t, containsPassword, "The password store should contain test.com")
@@ -468,11 +376,7 @@ func TestContainsPasswordDirectory(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"test.com directory should have been created",
-	)
+	assert.Nil(t, err, "test.com directory should have been created")
 
 	containsPassword, _ = st.PasswordStore.ContainsPassword("test.com")
 	assert.False(t, containsPassword, "The password store should not a password named test.com")
@@ -495,11 +399,7 @@ func TestContainsDirectory(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"the directory should have been created",
-	)
+	assert.Nil(t, err, "the directory should have been created")
 
 	containsDirectory, _ = st.PasswordStore.ContainsDirectory("dir")
 	assert.True(t, containsDirectory, "The password store should contain dir")
@@ -522,11 +422,7 @@ func TestContainsDirectoryTrailingSlash(t *testing.T) {
 	}
 
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"the directory should have been created",
-	)
+	assert.Nil(t, err, "the directory should have been created")
 
 	containsDirectory, _ = st.PasswordStore.ContainsDirectory("/dir///")
 	assert.True(t, containsDirectory, "The password store should contain dir")
