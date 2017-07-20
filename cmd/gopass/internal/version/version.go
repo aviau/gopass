@@ -17,5 +17,5 @@ package version
 
 var (
 	//Version is the current gopass version
-	Version = "UNKNOWN"
+	Version = "1.0.6"
 )

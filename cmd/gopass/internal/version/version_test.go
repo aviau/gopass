@@ -24,10 +24,6 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/version"
 )
 
-func TestVersionNotUnknown(t *testing.T) {
-	assert.NotEqual(t, version.Version, "UNKNOWN")
-}
-
 func TestVersionNoLetters(t *testing.T) {
 	for _, character := range version.Version {
 		assert.False(t, unicode.IsLetter(character))
