@@ -18,40 +18,40 @@
 package gopass_test
 
 import (
-	"io/ioutil"
 	"os"
+	"path/filepath"
+	"testing"
 
-	"github.com/aviau/gopass"
+	"github.com/stretchr/testify/assert"
 )
 
-type passwordStoreTest struct {
-	PasswordStore *gopass.PasswordStore
-	StorePath     string
-}
-
-func newPasswordStoreTest() (*passwordStoreTest, error) {
-	storePath, err := ioutil.TempDir("", "gopass")
+func TestGetPasswordsList(t *testing.T) {
+	st, err := newPasswordStoreTest()
 	if err != nil {
-		return nil, err
+		t.Fatal(err)
 	}
+	defer st.Close()
 
-	passwordStore := gopass.NewPasswordStore(storePath)
-	passwordStore.UsesGit = false
-
-	err = passwordStore.Init("test")
+	_, err = os.Create(filepath.Join(st.StorePath, "test.com.gpg"))
 	if err != nil {
-		return nil, err
+		t.Fatal(err)
 	}
 
-	passwordStoreTest := passwordStoreTest{
-		PasswordStore: passwordStore,
-		StorePath:     storePath,
+	_, err = os.Create(filepath.Join(st.StorePath, "test2.com.gpg"))
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	return &passwordStoreTest, nil
-}
+	_, err = os.Create(filepath.Join(st.StorePath, "test3"))
+	if err != nil {
+		t.Fatal(err)
+	}
 
-func (test *passwordStoreTest) Close() error {
-	err := os.RemoveAll(test.StorePath)
-	return err
+	passwords := st.PasswordStore.GetPasswordsList()
+	assert.Equal(
+		t,
+		passwords,
+		[]string{"test.com", "test2.com"},
+		"Password list should contain test.com and test2.com",
+	)
 }
