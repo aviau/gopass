@@ -1,3 +1,5 @@
+//   Copyright (C) 2017 Alexandre Viau <alexandre@alexandreviau.net>
+//
 //   This file is part of gopass.
 //
 //    gopass is free software: you can redistribute it and/or modify
