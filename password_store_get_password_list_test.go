@@ -26,13 +26,10 @@ import (
 )
 
 func TestGetPasswordsList(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
-	_, err = os.Create(filepath.Join(st.StorePath, "test.com.gpg"))
+	_, err := os.Create(filepath.Join(st.StorePath, "test.com.gpg"))
 	if err != nil {
 		t.Fatal(err)
 	}

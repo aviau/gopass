@@ -26,14 +26,11 @@ import (
 )
 
 func TestCopyPassword(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
-	_, err = os.Create(testPasswordPath)
+	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,14 +48,11 @@ func TestCopyPassword(t *testing.T) {
 }
 
 func TestCopyPasswordInDirectory(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
-	_, err = os.Create(testPasswordPath)
+	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
 	}

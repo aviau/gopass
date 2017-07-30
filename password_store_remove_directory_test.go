@@ -26,14 +26,11 @@ import (
 )
 
 func TestRemoveDirectory(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err = os.Mkdir(testDirectoryPath, 0700)
+	err := os.Mkdir(testDirectoryPath, 0700)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,14 +48,11 @@ func TestRemoveDirectory(t *testing.T) {
 }
 
 func TestRemoveDirectoryTrailingSlash(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err = os.Mkdir(testDirectoryPath, 0700)
+	err := os.Mkdir(testDirectoryPath, 0700)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,14 +70,11 @@ func TestRemoveDirectoryTrailingSlash(t *testing.T) {
 }
 
 func TestRemoveDirectoryRecursive(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err = os.Mkdir(testDirectoryPath, 0700)
+	err := os.Mkdir(testDirectoryPath, 0700)
 	if err != nil {
 		t.Fatal(err)
 	}

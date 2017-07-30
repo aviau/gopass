@@ -26,14 +26,11 @@ import (
 )
 
 func TestMovePassword(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
-	_, err = os.Create(testPasswordPath)
+	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,14 +49,11 @@ func TestMovePassword(t *testing.T) {
 }
 
 func TestMovePasswordInDirectory(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
-	_, err = os.Create(testPasswordPath)
+	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
 	}

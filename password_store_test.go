@@ -20,6 +20,7 @@ package gopass_test
 import (
 	"io/ioutil"
 	"os"
+	"testing"
 
 	"github.com/aviau/gopass"
 )
@@ -27,12 +28,13 @@ import (
 type passwordStoreTest struct {
 	PasswordStore *gopass.PasswordStore
 	StorePath     string
+	t *testing.T
 }
 
-func newPasswordStoreTest() (*passwordStoreTest, error) {
+func newPasswordStoreTest(t *testing.T) *passwordStoreTest {
 	storePath, err := ioutil.TempDir("", "gopass")
 	if err != nil {
-		return nil, err
+		t.Fatal(err)
 	}
 
 	passwordStore := gopass.NewPasswordStore(storePath)
@@ -40,7 +42,7 @@ func newPasswordStoreTest() (*passwordStoreTest, error) {
 
 	err = passwordStore.Init("test")
 	if err != nil {
-		return nil, err
+		t.Fatal(err)
 	}
 
 	passwordStoreTest := passwordStoreTest{
@@ -48,10 +50,12 @@ func newPasswordStoreTest() (*passwordStoreTest, error) {
 		StorePath:     storePath,
 	}
 
-	return &passwordStoreTest, nil
+	return &passwordStoreTest
 }
 
-func (test *passwordStoreTest) Close() error {
+func (test *passwordStoreTest) Close() {
 	err := os.RemoveAll(test.StorePath)
-	return err
+	if err != nil {
+		test.t.Fatal(err)
+	}
 }

@@ -26,17 +26,14 @@ import (
 )
 
 func TestContainsDirectory(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")
 	assert.False(t, containsDirectory, "The password store should contain dir")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err = os.Mkdir(testDirectoryPath, 0700)
+	err := os.Mkdir(testDirectoryPath, 0700)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,17 +46,14 @@ func TestContainsDirectory(t *testing.T) {
 }
 
 func TestContainsDirectoryTrailingSlash(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")
 	assert.False(t, containsDirectory, "The password store should contain dir")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err = os.Mkdir(testDirectoryPath, 0700)
+	err := os.Mkdir(testDirectoryPath, 0700)
 	if err != nil {
 		t.Fatal(err)
 	}

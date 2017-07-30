@@ -26,17 +26,14 @@ import (
 )
 
 func TestContainsPassword(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
 	assert.False(t, containsPassword, "The password store should not contain test.com")
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
-	_, err = os.Create(testPasswordPath)
+	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,17 +46,14 @@ func TestContainsPassword(t *testing.T) {
 }
 
 func TestContainsPasswordDirectory(t *testing.T) {
-	st, err := newPasswordStoreTest()
-	if err != nil {
-		t.Fatal(err)
-	}
+	st := newPasswordStoreTest(t)
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
 	assert.False(t, containsPassword, "The password store should not contain test.com")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "test.com")
-	err = os.Mkdir(testDirectoryPath, 0700)
+	err := os.Mkdir(testDirectoryPath, 0700)
 	if err != nil {
 		t.Fatal(err)
 	}
