@@ -22,40 +22,18 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/aviau/gopass"
 )
 
-type passwordStoreTest struct {
-	PasswordStore *gopass.PasswordStore
-	StorePath     string
-	t             *testing.T
-}
-
-func newPasswordStoreTest(t *testing.T) *passwordStoreTest {
+func TestNewPasswordStoreUsesGit(t *testing.T) {
 	storePath, err := ioutil.TempDir("", "gopass")
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer os.RemoveAll(storePath)
 
 	passwordStore := gopass.NewPasswordStore(storePath)
-	passwordStore.UsesGit = false
-
-	err = passwordStore.Init("test")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	passwordStoreTest := passwordStoreTest{
-		PasswordStore: passwordStore,
-		StorePath:     storePath,
-	}
-
-	return &passwordStoreTest
-}
-
-func (test *passwordStoreTest) Close() {
-	err := os.RemoveAll(test.StorePath)
-	if err != nil {
-		test.t.Fatal(err)
-	}
+	assert.True(t, passwordStore.UsesGit, "UsesGit should be true by default")
 }

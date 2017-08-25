@@ -43,6 +43,7 @@ type PasswordStore struct {
 func NewPasswordStore(storePath string) *PasswordStore {
 	s := PasswordStore{}
 	s.Path = storePath
+	s.UsesGit = true
 	s.GitDir = path.Join(s.Path, ".git")
 
 	// Find the GPG bin
