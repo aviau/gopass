@@ -5,6 +5,10 @@ Password management should be simple and follow Unix philosophy. With ``gopass``
 
 ``gopass`` makes managing these individual password files extremely easy. All passwords live in ``~/.password-store``, and gopass provides some nice commands for adding, editing, generating, and retrieving passwords. It's capable of temporarily putting passwords on your clipboard and tracking password changes using git.
 
+## Install
+
+gopass is available in official Debian repositories. Install it with ``apt-get install gopass``.
+
 ## Project Status
 
 This section was just added so that I could get an idea of where I am at.
