@@ -18,8 +18,8 @@
 package pwgen
 
 import (
-	"math/rand"
-	"time"
+	"crypto/rand"
+	"math/big"
 )
 
 //Alpha is a-Z and A-Z
@@ -33,10 +33,13 @@ var Symbols = []rune("!#$%&'()*+,-./:;<=>?@[]^_`{|}~")
 
 //RandSeq returns a random sequence of lenght n
 func RandSeq(n int, runes []rune) string {
-	rand.Seed(time.Now().UTC().UnixNano())
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = runes[rand.Intn(len(runes))]
+		randomInt, err := rand.Int(rand.Reader, big.NewInt(int64(len(runes))))
+		if err != nil {
+			panic(err)
+		}
+		b[i] = runes[randomInt.Int64()]
 	}
 	return string(b)
 }
