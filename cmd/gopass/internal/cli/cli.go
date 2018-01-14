@@ -31,6 +31,7 @@ import (
 	"strings"
 
 	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/clipboard"
 	"github.com/aviau/gopass/cmd/gopass/internal/pwgen"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 	"github.com/aviau/gopass/cmd/gopass/internal/version"
@@ -553,21 +554,44 @@ func execCp(c *commandLine, args []string) error {
 }
 
 //execShow runs the "show" command.
-func execShow(c *commandLine, args []string) error {
+func execShow(cmd *commandLine, args []string) error {
+	var clip, c bool
+
 	fs := flag.NewFlagSet("show", flag.ExitOnError)
-	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, `Usage: gopass show [pass-name]`) }
-	fs.Parse(args)
-	password := fs.Arg(0)
+	fs.Usage = func() { fmt.Fprintln(cmd.WriterOutput, `Usage: gopass show [pass-name]`) }
 
-	store := getStore(c)
+	fs.BoolVar(&clip, "clip", false, "")
+	fs.BoolVar(&c, "c", false, "")
 
-	password, err := store.GetPassword(password)
-
+	err := fs.Parse(args)
 	if err != nil {
 		return err
 	}
 
-	fmt.Fprintln(c.WriterOutput, password)
+	clip = clip || c
+
+	password := fs.Arg(0)
+
+	store := getStore(cmd)
+
+	password, err = store.GetPassword(password)
+	if err != nil {
+		return err
+	}
+
+	if clip {
+		firstPasswordLine := strings.Split(password, "\n")[0]
+
+		err = clipboard.CopyToClipboard(firstPasswordLine)
+		if err != nil {
+			return err
+		}
+
+		fmt.Fprintln(cmd.WriterOutput, "the first line of the password was copied to clipboard.")
+	} else {
+		fmt.Fprintln(cmd.WriterOutput, password)
+	}
+
 	return nil
 }
 

@@ -32,7 +32,8 @@ This section was just added so that I could get an idea of where I am at.
 ### ``gopass show``
 
 - [X] ``gopass show test.com`` will display the content of test.com.gpg
-- [ ] ``--clip, -c`` copies the first line to the clipboard
+- [X] ``--clip, -c`` copies the first line to the clipboard
+- [ ] ``--clip, -c`` clears after a while
 - [ ] ``--password``, and ``--username`` options.
 
 Accepted format:
