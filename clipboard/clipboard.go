@@ -18,8 +18,7 @@ func CopyToClipboard(s string) error {
 		return err
 	}
 
-	err = xclip.Start()
-	if err != nil {
+	if err := xclip.Start(); err != nil {
 		return err
 	}
 
@@ -28,8 +27,7 @@ func CopyToClipboard(s string) error {
 		return err
 	}
 
-	err = stdin.Close()
-	if err != nil {
+	if err := stdin.Close(); err != nil {
 		return err
 	}
 

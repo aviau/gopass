@@ -142,8 +142,8 @@ func execInit(c *commandLine, args []string) error {
 	fs.Usage = func() {
 		fmt.Fprintln(c.WriterOutput, `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`)
 	}
-	err := fs.Parse(args)
-	if err != nil {
+
+	if err := fs.Parse(args); err != nil {
 		return err
 	}
 
@@ -151,7 +151,7 @@ func execInit(c *commandLine, args []string) error {
 		path = p
 	}
 
-	path, err = filepath.Abs(path)
+	path, err := filepath.Abs(path)
 	if err != nil {
 		return err
 	}
@@ -164,8 +164,7 @@ func execInit(c *commandLine, args []string) error {
 	gpgID := fs.Arg(0)
 
 	store := gopass.NewPasswordStore(path)
-	err = store.Init(gpgID)
-	if err != nil {
+	if err := store.Init(gpgID); err != nil {
 		return err
 	}
 
@@ -242,8 +241,7 @@ func execInsert(c *commandLine, args []string) error {
 		}
 	}
 
-	err = store.InsertPassword(pwname, password)
-	if err != nil {
+	if err := store.InsertPassword(pwname, password); err != nil {
 		return err
 	}
 
@@ -280,8 +278,7 @@ func execEdit(cmd *commandLine, args []string) error {
 	pwText, _ := ioutil.ReadFile(file.Name())
 	password = string(pwText)
 
-	err = store.InsertPassword(passname, password)
-	if err != nil {
+	if err := store.InsertPassword(passname, password); err != nil {
 		return err
 	}
 
@@ -336,8 +333,7 @@ func execGenerate(cmd *commandLine, args []string) error {
 
 	password := pwgen.RandSeq(int(passLength), runes)
 
-	err = store.InsertPassword(passName, password)
-	if err != nil {
+	if err := store.InsertPassword(passName, password); err != nil {
 		return err
 	}
 
@@ -385,8 +381,7 @@ func execRm(c *commandLine, args []string) error {
 			}
 		}
 
-		err = store.RemovePassword(pwname)
-		if err != nil {
+		if err := store.RemovePassword(pwname); err != nil {
 			return err
 		}
 
@@ -403,8 +398,7 @@ func execRm(c *commandLine, args []string) error {
 			}
 		}
 
-		err = store.RemoveDirectory(pwname)
-		if err != nil {
+		if err := store.RemoveDirectory(pwname); err != nil {
 			return err
 		}
 	}
@@ -423,8 +417,7 @@ func execMv(c *commandLine, args []string) error {
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
 
-	err := fs.Parse(args)
-	if err != nil {
+	if err := fs.Parse(args); err != nil {
 		return err
 	}
 
@@ -455,8 +448,7 @@ func execMv(c *commandLine, args []string) error {
 			}
 		}
 
-		err = store.MovePassword(source, dest)
-		if err != nil {
+		if err := store.MovePassword(source, dest); err != nil {
 			return err
 		}
 
@@ -465,8 +457,7 @@ func execMv(c *commandLine, args []string) error {
 	}
 
 	if sourceIsDirectory, _ := store.ContainsDirectory(source); sourceIsDirectory {
-		err = store.MoveDirectory(source, dest)
-		if err != nil {
+		if err := store.MoveDirectory(source, dest); err != nil {
 			return err
 		}
 		fmt.Fprintf(c.WriterOutput, "Moved directory from '%s' to '%s'\n", source, dest)
@@ -491,8 +482,7 @@ func execCp(c *commandLine, args []string) error {
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
 
-	err := fs.Parse(args)
-	if err != nil {
+	if err := fs.Parse(args); err != nil {
 		return err
 	}
 
@@ -524,8 +514,7 @@ func execCp(c *commandLine, args []string) error {
 			}
 		}
 
-		err = store.CopyPassword(source, dest)
-		if err != nil {
+		if err := store.CopyPassword(source, dest); err != nil {
 			return err
 		}
 
@@ -540,8 +529,7 @@ func execCp(c *commandLine, args []string) error {
 			return nil
 		}
 
-		err = store.CopyDirectory(source, dest)
-		if err != nil {
+		if err := store.CopyDirectory(source, dest); err != nil {
 			return err
 		}
 
@@ -563,8 +551,7 @@ func execShow(cmd *commandLine, args []string) error {
 	fs.BoolVar(&clip, "clip", false, "")
 	fs.BoolVar(&c, "c", false, "")
 
-	err := fs.Parse(args)
-	if err != nil {
+	if err := fs.Parse(args); err != nil {
 		return err
 	}
 
@@ -574,7 +561,7 @@ func execShow(cmd *commandLine, args []string) error {
 
 	store := getStore(cmd)
 
-	password, err = store.GetPassword(password)
+	password, err := store.GetPassword(password)
 	if err != nil {
 		return err
 	}
@@ -582,8 +569,7 @@ func execShow(cmd *commandLine, args []string) error {
 	if clip {
 		firstPasswordLine := strings.Split(password, "\n")[0]
 
-		err = clipboard.CopyToClipboard(firstPasswordLine)
-		if err != nil {
+		if err := clipboard.CopyToClipboard(firstPasswordLine); err != nil {
 			return err
 		}
 

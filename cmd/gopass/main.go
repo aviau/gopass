@@ -28,8 +28,7 @@ func main() {
 	// Retrieve args and Shift binary name off argument list.
 	args := os.Args[1:]
 
-	err := cli.Run(args, os.Stdout)
-	if err != nil {
+	if err := cli.Run(args, os.Stdout); err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}

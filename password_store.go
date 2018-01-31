@@ -48,8 +48,7 @@ func NewPasswordStore(storePath string) *PasswordStore {
 
 	// Find the GPG bin
 	which := exec.Command("which", "gpg2")
-	err := which.Run()
-	if err == nil {
+	if err := which.Run(); err == nil {
 		s.GPGBin = "gpg2"
 	} else {
 		s.GPGBin = "gpg"
@@ -78,8 +77,7 @@ func (store *PasswordStore) Init(gpgID string) error {
 		//Error during os.Stat
 		if os.IsNotExist(err) {
 			//Path does not exist, create it
-			err = os.Mkdir(store.Path, 0700)
-			if err != nil {
+			if err := os.Mkdir(store.Path, 0700); err != nil {
 				return err
 			}
 		} else {
@@ -103,13 +101,11 @@ func (store *PasswordStore) Init(gpgID string) error {
 	gpgIDFile.WriteString(gpgID + "\n")
 	store.GPGID = gpgID
 
-	err = store.git("init")
-	if err != nil {
+	if err := store.git("init"); err != nil {
 		return err
 	}
 
-	err = store.AddAndCommit("Initial commit", ".gpg-id")
-	if err != nil {
+	if err := store.AddAndCommit("Initial commit", ".gpg-id"); err != nil {
 		return err
 	}
 
