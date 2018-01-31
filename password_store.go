@@ -144,7 +144,7 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	output, err := gpg.CombinedOutput()
 
 	if err != nil {
-		return fmt.Errorf("Error: %s" + string(output))
+		return fmt.Errorf("Error: %s", string(output))
 	}
 
 	store.AddAndCommit(
