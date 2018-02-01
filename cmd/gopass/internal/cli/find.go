@@ -19,7 +19,6 @@ package cli
 
 import (
 	"flag"
-	"os"
 	"os/exec"
 	"strings"
 )
@@ -46,8 +45,8 @@ func execFind(cmd *commandLine, args []string) error {
 		pattern,
 		store.Path)
 
-	find.Stdout = os.Stdout
-	find.Stderr = os.Stderr
+	find.Stdout = cmd.WriterOutput
+	find.Stderr = cmd.WriterError
 	find.Run()
 	return nil
 }

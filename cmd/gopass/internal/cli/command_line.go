@@ -29,6 +29,19 @@ type commandLine struct {
 	Path         string    //Path to the password store
 	Editor       string    //Text editor to use
 	WriterOutput io.Writer //The writer to use for output
+	WriterError  io.Writer //The writer to use for errors
+	ReaderInput  io.Reader //The reader to use for input
+}
+
+func newCommandline(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *commandLine {
+	c := commandLine{
+		Path:         path,
+		Editor:       editor,
+		WriterOutput: writerOutput,
+		WriterError:  writerError,
+		ReaderInput:  readerInput,
+	}
+	return &c
 }
 
 func (c *commandLine) getDefaultPasswordStoreDir() string {

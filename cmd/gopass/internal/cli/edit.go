@@ -46,9 +46,9 @@ func execEdit(cmd *commandLine, args []string) error {
 	ioutil.WriteFile(file.Name(), []byte(password), 0600)
 
 	editor := exec.Command(cmd.getEditor(), file.Name())
-	editor.Stdout = os.Stdout
-	editor.Stdin = os.Stdin
-	editor.Stderr = os.Stderr
+	editor.Stdout = cmd.WriterOutput
+	editor.Stderr = cmd.WriterError
+	editor.Stdin = cmd.ReaderInput
 	editor.Run()
 
 	pwText, _ := ioutil.ReadFile(file.Name())

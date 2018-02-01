@@ -18,7 +18,6 @@
 package cli
 
 import (
-	"os"
 	"os/exec"
 )
 
@@ -36,9 +35,9 @@ func execGit(cmd *commandLine, args []string) error {
 		"git",
 		gitArgs...)
 
-	git.Stdout = os.Stdout
-	git.Stderr = os.Stderr
-	git.Stdin = os.Stdin
+	git.Stdout = cmd.WriterOutput
+	git.Stderr = cmd.WriterError
+	git.Stdin = cmd.ReaderInput
 	git.Run()
 	return nil
 }

@@ -32,7 +32,7 @@ import (
 func TestVersion(t *testing.T) {
 	var writer bytes.Buffer
 
-	cli.Run([]string{"version"}, &writer)
+	cli.Run([]string{"version"}, &writer, &writer, nil)
 
 	assert.Equal(t,
 		writer.String(),
@@ -42,64 +42,64 @@ func TestVersion(t *testing.T) {
 func TestHelp(t *testing.T) {
 	var writer bytes.Buffer
 
-	cli.Run([]string{"help"}, &writer)
+	cli.Run([]string{"help"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage"))
 
 	writer.Reset()
 
-	cli.Run([]string{"--help"}, &writer)
+	cli.Run([]string{"--help"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage"))
 
 	writer.Reset()
 
-	cli.Run([]string{"-h"}, &writer)
+	cli.Run([]string{"-h"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage"))
 }
 
 func TestInitHelp(t *testing.T) {
 	var writer bytes.Buffer
 
-	cli.Run([]string{"init", "--help"}, &writer)
+	cli.Run([]string{"init", "--help"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass init"))
 
 	writer.Reset()
 
-	cli.Run([]string{"init", "-h"}, &writer)
+	cli.Run([]string{"init", "-h"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass init"))
 }
 
 func TestInsertHelp(t *testing.T) {
 	var writer bytes.Buffer
 
-	cli.Run([]string{"insert", "--help"}, &writer)
+	cli.Run([]string{"insert", "--help"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass insert"))
 
 	writer.Reset()
 
-	cli.Run([]string{"insert", "-h"}, &writer)
+	cli.Run([]string{"insert", "-h"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass insert"))
 }
 
 func TestGenerateHelp(t *testing.T) {
 	var writer bytes.Buffer
 
-	cli.Run([]string{"generate", "--help"}, &writer)
+	cli.Run([]string{"generate", "--help"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass generate"))
 
 	writer.Reset()
 
-	cli.Run([]string{"generate", "-h"}, &writer)
+	cli.Run([]string{"generate", "-h"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass generate"))
 }
 
 func TestRmHelp(t *testing.T) {
 	var writer bytes.Buffer
 
-	cli.Run([]string{"rm", "--help"}, &writer)
+	cli.Run([]string{"rm", "--help"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass rm"))
 
 	writer.Reset()
 
-	cli.Run([]string{"rm", "-h"}, &writer)
+	cli.Run([]string{"rm", "-h"}, &writer, &writer, nil)
 	assert.True(t, strings.Contains(writer.String(), "Usage: gopass rm"))
 }

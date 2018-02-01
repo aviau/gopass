@@ -23,24 +23,26 @@ import (
 )
 
 //Run parses the arguments and executes the gopass CLI
-func Run(args []string, writerOutput io.Writer) error {
-	c := commandLine{}
-	c.WriterOutput = writerOutput
+func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInput io.Reader) error {
 
 	//Parse the common flags
 	var h, help bool
+	var path string
+	var editor string
 
 	fs := flag.NewFlagSet("default", flag.ExitOnError)
-	fs.StringVar(&c.Path, "PASSWORD_STORE_DIR", "", "Path to the password store")
-	fs.StringVar(&c.Editor, "EDITOR", "", "Text editor to use")
+	fs.StringVar(&path, "PASSWORD_STORE_DIR", "", "Path to the password store")
+	fs.StringVar(&editor, "EDITOR", "", "Text editor to use")
 
 	fs.BoolVar(&help, "help", false, "")
 	fs.BoolVar(&h, "h", false, "")
 
 	fs.Parse(args)
 
+	c := newCommandline(path, editor, writerOutput, writerError, readerInput)
+
 	if h || help {
-		err := execHelp(&c)
+		err := execHelp(c)
 		return err
 	}
 
@@ -49,35 +51,35 @@ func Run(args []string, writerOutput io.Writer) error {
 
 	switch cmd {
 	case "show":
-		return execShow(&c, args[1:])
+		return execShow(c, args[1:])
 	case "edit":
-		return execEdit(&c, args[1:])
+		return execEdit(c, args[1:])
 	case "insert", "add":
-		return execInsert(&c, args[1:])
+		return execInsert(c, args[1:])
 	case "find", "ls", "search", "list":
-		return execFind(&c, args[1:])
+		return execFind(c, args[1:])
 	case "":
-		return execFind(&c, args)
+		return execFind(c, args)
 	case "grep":
-		return execGrep(&c, args[1:])
+		return execGrep(c, args[1:])
 	case "cp", "copy":
-		return execCp(&c, args[1:])
+		return execCp(c, args[1:])
 	case "mv", "rename":
-		return execMv(&c, args[1:])
+		return execMv(c, args[1:])
 	case "rm", "remove", "delete":
-		return execRm(&c, args[1:])
+		return execRm(c, args[1:])
 	case "generate":
-		return execGenerate(&c, args[1:])
+		return execGenerate(c, args[1:])
 	case "git":
-		return execGit(&c, args[1:])
+		return execGit(c, args[1:])
 	case "help":
-		return execHelp(&c)
+		return execHelp(c)
 	case "init":
-		return execInit(&c, args[1:])
+		return execInit(c, args[1:])
 	case "version":
-		return execVersion(&c)
+		return execVersion(c)
 	default:
-		return execShow(&c, args)
+		return execShow(c, args)
 	}
 
 }
