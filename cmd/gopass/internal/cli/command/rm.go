@@ -20,6 +20,7 @@ package command
 import (
 	"flag"
 	"fmt"
+
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 )

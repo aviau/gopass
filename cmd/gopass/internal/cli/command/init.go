@@ -20,9 +20,10 @@ package command
 import (
 	"flag"
 	"fmt"
+	"path/filepath"
+
 	"github.com/aviau/gopass"
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
-	"path/filepath"
 )
 
 //ExecInit runs the "init" command.

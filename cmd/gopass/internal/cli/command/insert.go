@@ -20,12 +20,14 @@ package command
 import (
 	"flag"
 	"fmt"
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
-	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
-	"golang.org/x/crypto/ssh/terminal"
 	"io/ioutil"
 	"os"
 	"os/exec"
+
+	"golang.org/x/crypto/ssh/terminal"
+
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 )
 
 //ExecInsert runs the "insert" command.

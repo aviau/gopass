@@ -20,9 +20,10 @@ package command
 import (
 	"flag"
 	"fmt"
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"path/filepath"
 	"strings"
+
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
 //ExecMv runs the "mv" comand.

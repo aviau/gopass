@@ -20,10 +20,12 @@ package command
 import (
 	"flag"
 	"fmt"
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
-	"github.com/mgutz/ansi"
 	"regexp"
 	"strings"
+
+	"github.com/mgutz/ansi"
+
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
 //ExecGrep runs the "grep" command.

@@ -18,10 +18,11 @@
 package config
 
 import (
-	"github.com/aviau/gopass"
 	"io"
 	"os"
 	"path"
+
+	"github.com/aviau/gopass"
 )
 
 //CliConfig holds options from the main parser.

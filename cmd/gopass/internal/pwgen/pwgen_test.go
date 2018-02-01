@@ -18,10 +18,12 @@
 package pwgen_test
 
 import (
-	"github.com/aviau/gopass/cmd/gopass/internal/pwgen"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/aviau/gopass/cmd/gopass/internal/pwgen"
 )
 
 func TestLength(t *testing.T) {

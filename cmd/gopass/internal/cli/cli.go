@@ -19,9 +19,10 @@ package cli
 
 import (
 	"flag"
+	"io"
+
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
-	"io"
 )
 
 //Run parses the arguments and executes the gopass CLI

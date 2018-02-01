@@ -19,6 +19,7 @@ package command
 
 import (
 	"fmt"
+
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 

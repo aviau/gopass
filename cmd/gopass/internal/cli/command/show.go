@@ -20,9 +20,10 @@ package command
 import (
 	"flag"
 	"fmt"
+	"strings"
+
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"github.com/aviau/gopass/internal/clipboard"
-	"strings"
 )
 
 //ExecShow runs the "show" command.

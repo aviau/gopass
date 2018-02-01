@@ -20,10 +20,11 @@ package command
 import (
 	"flag"
 	"fmt"
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"io/ioutil"
 	"os"
 	"os/exec"
+
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
 //ExecEdit runs the "edit" command.

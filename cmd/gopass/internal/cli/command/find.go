@@ -19,9 +19,10 @@ package command
 
 import (
 	"flag"
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"os/exec"
 	"strings"
+
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
 //ExecFind runs the "find" command.

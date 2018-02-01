@@ -18,8 +18,9 @@
 package command
 
 import (
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"os/exec"
+
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
 //ExecGit runs the "git" command.
