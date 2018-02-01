@@ -20,18 +20,7 @@ package cli
 import (
 	"flag"
 	"io"
-	"os"
-	"path"
-
-	"github.com/aviau/gopass"
 )
-
-//commandLine holds options from the main parser
-type commandLine struct {
-	Path         string    //Path to the password store
-	Editor       string    //Text editor to use
-	WriterOutput io.Writer //The writer to use for output
-}
 
 //Run parses the arguments and executes the gopass CLI
 func Run(args []string, writerOutput io.Writer) error {
@@ -91,37 +80,4 @@ func Run(args []string, writerOutput io.Writer) error {
 		return execShow(&c, args)
 	}
 
-}
-
-func getDefaultPasswordStoreDir(c *commandLine) string {
-	//Look for the store path in the commandLine,
-	// env var, or default to $HOME/.password-store
-	storePath := c.Path
-	if storePath == "" {
-		storePath = os.Getenv("PASSWORD_STORE_DIR")
-		if storePath == "" {
-			storePath = path.Join(os.Getenv("HOME"), ".password-store")
-		}
-	}
-	return storePath
-}
-
-func getEditor(c *commandLine) string {
-	// Look for the editor to use in the commandLine,
-	// env var, or default to editor.
-	editor := c.Editor
-	if editor == "" {
-		editor = os.Getenv("EDITOR")
-		if editor == "" {
-			editor = "editor"
-		}
-	}
-	return editor
-}
-
-//getStore finds and returns the PasswordStore
-func getStore(c *commandLine) *gopass.PasswordStore {
-	storePath := getDefaultPasswordStoreDir(c)
-	s := gopass.NewPasswordStore(storePath)
-	return s
 }

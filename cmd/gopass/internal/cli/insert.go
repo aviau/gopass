@@ -28,7 +28,7 @@ import (
 )
 
 //execInsert runs the "insert" command.
-func execInsert(c *commandLine, args []string) error {
+func execInsert(cmd *commandLine, args []string) error {
 	var multiline, m bool
 	var force, f bool
 
@@ -41,7 +41,7 @@ func execInsert(c *commandLine, args []string) error {
 	fs.BoolVar(&f, "f", false, "")
 
 	fs.Usage = func() {
-		fmt.Fprintln(c.WriterOutput, `Usage: gopass insert [ --multiline, -m ] [ --force, -f ] pass-name`)
+		fmt.Fprintln(cmd.WriterOutput, `Usage: gopass insert [ --multiline, -m ] [ --force, -f ] pass-name`)
 	}
 	err := fs.Parse(args)
 	if err != nil {
@@ -53,11 +53,11 @@ func execInsert(c *commandLine, args []string) error {
 
 	pwname := fs.Arg(0)
 
-	store := getStore(c)
+	store := cmd.getStore()
 
 	// Check if password already exists
 	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", pwname)) {
+		if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", pwname)) {
 			return nil
 		}
 	}
@@ -68,7 +68,7 @@ func execInsert(c *commandLine, args []string) error {
 		file, _ := ioutil.TempFile(os.TempDir(), "gopass")
 		defer os.Remove(file.Name())
 
-		editor := exec.Command(getEditor(c), file.Name())
+		editor := exec.Command(cmd.getEditor(), file.Name())
 		editor.Stdout = os.Stdout
 		editor.Stdin = os.Stdin
 		editor.Run()
@@ -78,19 +78,19 @@ func execInsert(c *commandLine, args []string) error {
 	} else {
 		fd := int(os.Stdin.Fd())
 		for {
-			fmt.Fprintln(c.WriterOutput, "Enter password:")
+			fmt.Fprintln(cmd.WriterOutput, "Enter password:")
 			try1, _ := terminal.ReadPassword(fd)
-			fmt.Fprintln(c.WriterOutput)
+			fmt.Fprintln(cmd.WriterOutput)
 
-			fmt.Fprintln(c.WriterOutput, "Enter confirmation:")
+			fmt.Fprintln(cmd.WriterOutput, "Enter confirmation:")
 			try2, _ := terminal.ReadPassword(fd)
-			fmt.Fprintln(c.WriterOutput)
+			fmt.Fprintln(cmd.WriterOutput)
 
 			if string(try1) == string(try2) {
 				password = string(try1)
 				break
 			} else {
-				fmt.Fprintln(c.WriterOutput, "Passwords did not match, try again...")
+				fmt.Fprintln(cmd.WriterOutput, "Passwords did not match, try again...")
 			}
 
 		}
@@ -100,6 +100,6 @@ func execInsert(c *commandLine, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(c.WriterOutput, "Password %s added to the store\n", pwname)
+	fmt.Fprintf(cmd.WriterOutput, "Password %s added to the store\n", pwname)
 	return nil
 }

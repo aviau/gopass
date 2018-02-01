@@ -25,11 +25,11 @@ import (
 )
 
 //execFind runs the "find" command.
-func execFind(c *commandLine, args []string) error {
+func execFind(cmd *commandLine, args []string) error {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := getStore(c)
+	store := cmd.getStore()
 
 	terms := fs.Args()
 	pattern := "*" + strings.Join(terms, "*|*") + "*"

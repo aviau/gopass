@@ -24,13 +24,13 @@ import (
 )
 
 //execRm runs the "rm" command.
-func execRm(c *commandLine, args []string) error {
+func execRm(cmd *commandLine, args []string) error {
 	var recursive, r bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("rm", flag.ContinueOnError)
 	fs.Usage = func() {
-		fmt.Fprintln(c.WriterOutput, "Usage: gopass rm pass-name")
+		fmt.Fprintln(cmd.WriterOutput, "Usage: gopass rm pass-name")
 	}
 
 	fs.BoolVar(&recursive, "recursive", false, "")
@@ -47,7 +47,7 @@ func execRm(c *commandLine, args []string) error {
 	force = force || f
 	recursive = recursive || r
 
-	store := getStore(c)
+	store := cmd.getStore()
 
 	pwname := fs.Arg(0)
 	if pwname == "" {
@@ -58,7 +58,7 @@ func execRm(c *commandLine, args []string) error {
 	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword {
 
 		if !force {
-			if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
+			if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
 				return nil
 			}
 		}
@@ -70,12 +70,12 @@ func execRm(c *commandLine, args []string) error {
 	} else if containsDirectory, _ := store.ContainsDirectory(pwname); containsDirectory {
 
 		if !recursive {
-			fmt.Fprintf(c.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
+			fmt.Fprintf(cmd.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
 			return nil
 		}
 
 		if !force {
-			if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
+			if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
 				return nil
 			}
 		}
@@ -85,6 +85,6 @@ func execRm(c *commandLine, args []string) error {
 		}
 	}
 
-	fmt.Fprintln(c.WriterOutput, "Removed password/directory at path", fs.Arg(0))
+	fmt.Fprintln(cmd.WriterOutput, "Removed password/directory at path", fs.Arg(0))
 	return nil
 }

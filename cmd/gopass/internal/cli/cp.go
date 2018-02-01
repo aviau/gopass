@@ -25,12 +25,12 @@ import (
 )
 
 //execCp runs the "cp" command.
-func execCp(c *commandLine, args []string) error {
+func execCp(cmd *commandLine, args []string) error {
 	var recursive, r bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("cp", flag.ExitOnError)
-	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass cp old-path new-path") }
+	fs.Usage = func() { fmt.Fprintln(cmd.WriterOutput, "Usage: gopass cp old-path new-path") }
 
 	fs.BoolVar(&recursive, "recursive", false, "")
 	fs.BoolVar(&r, "r", false, "")
@@ -45,13 +45,13 @@ func execCp(c *commandLine, args []string) error {
 	recursive = recursive || r
 	force = force || f
 
-	store := getStore(c)
+	store := cmd.getStore()
 
 	source := fs.Arg(0)
 	dest := fs.Arg(1)
 
 	if source == "" || dest == "" {
-		fmt.Fprintln(c.WriterOutput, "Error: Received empty source or dest argument")
+		fmt.Fprintln(cmd.WriterOutput, "Error: Received empty source or dest argument")
 		return nil
 	}
 
@@ -65,7 +65,7 @@ func execCp(c *commandLine, args []string) error {
 
 		if destAlreadyExists, _ := store.ContainsPassword(dest); destAlreadyExists {
 			if !force {
-				fmt.Fprintf(c.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
+				fmt.Fprintf(cmd.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
 				return nil
 			}
 		}
@@ -74,14 +74,14 @@ func execCp(c *commandLine, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(c.WriterOutput, "Copied password from '%s' to '%s'\n", source, dest)
+		fmt.Fprintf(cmd.WriterOutput, "Copied password from '%s' to '%s'\n", source, dest)
 		return nil
 	}
 
 	if sourceIsDirectory, _ := store.ContainsDirectory(source); sourceIsDirectory {
 
 		if !recursive {
-			fmt.Fprintf(c.WriterOutput, "Error: %s is a directory, use -r to copy recursively\n", source)
+			fmt.Fprintf(cmd.WriterOutput, "Error: %s is a directory, use -r to copy recursively\n", source)
 			return nil
 		}
 
@@ -89,10 +89,10 @@ func execCp(c *commandLine, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(c.WriterOutput, "Copied directory from '%s' to '%s'\n", source, dest)
+		fmt.Fprintf(cmd.WriterOutput, "Copied directory from '%s' to '%s'\n", source, dest)
 		return nil
 	}
 
-	fmt.Fprintf(c.WriterOutput, "Error: could not find source '%s' to copy \n", source)
+	fmt.Fprintf(cmd.WriterOutput, "Error: could not find source '%s' to copy \n", source)
 	return nil
 }

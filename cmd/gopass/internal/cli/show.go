@@ -42,7 +42,7 @@ func execShow(cmd *commandLine, args []string) error {
 
 	password := fs.Arg(0)
 
-	store := getStore(cmd)
+	store := cmd.getStore()
 
 	password, err := store.GetPassword(password)
 	if err != nil {

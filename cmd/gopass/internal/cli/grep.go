@@ -26,13 +26,13 @@ import (
 )
 
 //execGrep runs the "grep" command
-func execGrep(c *commandLine, args []string) error {
+func execGrep(cmd *commandLine, args []string) error {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)
 
 	pattern, _ := regexp.CompilePOSIX(fs.Arg(0))
 
-	store := getStore(c)
+	store := cmd.getStore()
 
 	passwords := store.GetPasswordsList()
 
@@ -47,7 +47,7 @@ func execGrep(c *commandLine, args []string) error {
 			}
 		}
 		if output != "" {
-			fmt.Fprintf(c.WriterOutput, "%s:\n%s", ansi.Color(password, "cyan+b"), output)
+			fmt.Fprintf(cmd.WriterOutput, "%s:\n%s", ansi.Color(password, "cyan+b"), output)
 		}
 	}
 	return nil

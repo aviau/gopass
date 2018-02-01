@@ -30,7 +30,7 @@ func execEdit(cmd *commandLine, args []string) error {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := getStore(cmd)
+	store := cmd.getStore()
 
 	passname := fs.Arg(0)
 
@@ -45,7 +45,7 @@ func execEdit(cmd *commandLine, args []string) error {
 
 	ioutil.WriteFile(file.Name(), []byte(password), 0600)
 
-	editor := exec.Command(getEditor(cmd), file.Name())
+	editor := exec.Command(cmd.getEditor(), file.Name())
 	editor.Stdout = os.Stdout
 	editor.Stdin = os.Stdin
 	editor.Stderr = os.Stderr

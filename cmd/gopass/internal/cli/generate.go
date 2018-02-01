@@ -51,7 +51,7 @@ func execGenerate(cmd *commandLine, args []string) error {
 
 	passName := fs.Arg(0)
 
-	store := getStore(cmd)
+	store := cmd.getStore()
 
 	if containsPassword, _ := store.ContainsPassword(passName); containsPassword && !force {
 		if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", passName)) {

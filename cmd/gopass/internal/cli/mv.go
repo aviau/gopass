@@ -25,11 +25,11 @@ import (
 )
 
 //execMv runs the "mv" comand.
-func execMv(c *commandLine, args []string) error {
+func execMv(cmd *commandLine, args []string) error {
 	var force, f bool
 
 	fs := flag.NewFlagSet("mv", flag.ExitOnError)
-	fs.Usage = func() { fmt.Fprintln(c.WriterOutput, "Usage: gopass mv old-path new-path") }
+	fs.Usage = func() { fmt.Fprintln(cmd.WriterOutput, "Usage: gopass mv old-path new-path") }
 
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
@@ -40,13 +40,13 @@ func execMv(c *commandLine, args []string) error {
 
 	force = force || f
 
-	store := getStore(c)
+	store := cmd.getStore()
 
 	source := fs.Arg(0)
 	dest := fs.Arg(1)
 
 	if source == "" || dest == "" {
-		fmt.Fprintln(c.WriterOutput, "Error: Received empty source or dest argument")
+		fmt.Fprintln(cmd.WriterOutput, "Error: Received empty source or dest argument")
 		return nil
 	}
 
@@ -60,7 +60,7 @@ func execMv(c *commandLine, args []string) error {
 
 		if destAlreadyExists, _ := store.ContainsPassword(dest); destAlreadyExists {
 			if !force {
-				fmt.Fprintf(c.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
+				fmt.Fprintf(cmd.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
 				return nil
 			}
 		}
@@ -69,7 +69,7 @@ func execMv(c *commandLine, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(c.WriterOutput, "Moved password from '%s' to '%s'\n", source, dest)
+		fmt.Fprintf(cmd.WriterOutput, "Moved password from '%s' to '%s'\n", source, dest)
 		return nil
 	}
 
@@ -77,10 +77,10 @@ func execMv(c *commandLine, args []string) error {
 		if err := store.MoveDirectory(source, dest); err != nil {
 			return err
 		}
-		fmt.Fprintf(c.WriterOutput, "Moved directory from '%s' to '%s'\n", source, dest)
+		fmt.Fprintf(cmd.WriterOutput, "Moved directory from '%s' to '%s'\n", source, dest)
 		return nil
 	}
 
-	fmt.Fprintf(c.WriterOutput, "Error: could not find source '%s' to copy \n", source)
+	fmt.Fprintf(cmd.WriterOutput, "Error: could not find source '%s' to copy \n", source)
 	return nil
 }

@@ -23,8 +23,8 @@ import (
 )
 
 //execGit runs the "git" command
-func execGit(c *commandLine, args []string) error {
-	store := getStore(c)
+func execGit(cmd *commandLine, args []string) error {
+	store := cmd.getStore()
 
 	gitArgs := []string{
 		"--git-dir=" + store.GitDir,
