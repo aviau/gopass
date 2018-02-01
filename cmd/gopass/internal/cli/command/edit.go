@@ -60,6 +60,6 @@ func ExecEdit(cfg *config.CliConfig, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Succesfully edited password \"%s\"\n", passname)
+	fmt.Fprintf(cfg.WriterOutput, "Succesfully edited password \"%s\".\n", passname)
 	return nil
 }
