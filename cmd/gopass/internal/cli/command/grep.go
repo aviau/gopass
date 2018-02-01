@@ -15,24 +15,25 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"flag"
 	"fmt"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"github.com/mgutz/ansi"
 	"regexp"
 	"strings"
 )
 
-//execGrep runs the "grep" command
-func execGrep(cmd *commandLine, args []string) error {
+//ExecGrep runs the "grep" command.
+func ExecGrep(cfg *config.CliConfig, args []string) error {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)
 
 	pattern, _ := regexp.CompilePOSIX(fs.Arg(0))
 
-	store := cmd.getStore()
+	store := cfg.GetStore()
 
 	passwords := store.GetPasswordsList()
 
@@ -47,7 +48,7 @@ func execGrep(cmd *commandLine, args []string) error {
 			}
 		}
 		if output != "" {
-			fmt.Fprintf(cmd.WriterOutput, "%s:\n%s", ansi.Color(password, "cyan+b"), output)
+			fmt.Fprintf(cfg.WriterOutput, "%s:\n%s", ansi.Color(password, "cyan+b"), output)
 		}
 	}
 	return nil

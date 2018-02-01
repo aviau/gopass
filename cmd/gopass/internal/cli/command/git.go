@@ -15,15 +15,16 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"os/exec"
 )
 
-//execGit runs the "git" command
-func execGit(cmd *commandLine, args []string) error {
-	store := cmd.getStore()
+//ExecGit runs the "git" command.
+func ExecGit(cfg *config.CliConfig, args []string) error {
+	store := cfg.GetStore()
 
 	gitArgs := []string{
 		"--git-dir=" + store.GitDir,
@@ -35,9 +36,9 @@ func execGit(cmd *commandLine, args []string) error {
 		"git",
 		gitArgs...)
 
-	git.Stdout = cmd.WriterOutput
-	git.Stderr = cmd.WriterError
-	git.Stdin = cmd.ReaderInput
+	git.Stdout = cfg.WriterOutput
+	git.Stderr = cfg.WriterError
+	git.Stdin = cfg.ReaderInput
 	git.Run()
 	return nil
 }

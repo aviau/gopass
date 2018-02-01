@@ -15,22 +15,23 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"flag"
 	"fmt"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"io/ioutil"
 	"os"
 	"os/exec"
 )
 
-//execEdit rund the "edit" command.
-func execEdit(cmd *commandLine, args []string) error {
+//ExecEdit runs the "edit" command.
+func ExecEdit(cfg *config.CliConfig, args []string) error {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := cmd.getStore()
+	store := cfg.GetStore()
 
 	passname := fs.Arg(0)
 
@@ -45,10 +46,10 @@ func execEdit(cmd *commandLine, args []string) error {
 
 	ioutil.WriteFile(file.Name(), []byte(password), 0600)
 
-	editor := exec.Command(cmd.getEditor(), file.Name())
-	editor.Stdout = cmd.WriterOutput
-	editor.Stderr = cmd.WriterError
-	editor.Stdin = cmd.ReaderInput
+	editor := exec.Command(cfg.GetEditor(), file.Name())
+	editor.Stdout = cfg.WriterOutput
+	editor.Stderr = cfg.WriterError
+	editor.Stdin = cfg.ReaderInput
 	editor.Run()
 
 	pwText, _ := ioutil.ReadFile(file.Name())
@@ -58,6 +59,6 @@ func execEdit(cmd *commandLine, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cmd.WriterOutput, "Succesfully edited password '%s'\n", passname)
+	fmt.Fprintf(cfg.WriterOutput, "Succesfully edited password '%s'\n", passname)
 	return nil
 }

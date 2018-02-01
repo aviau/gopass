@@ -15,11 +15,12 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"flag"
 	"fmt"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 	"golang.org/x/crypto/ssh/terminal"
 	"io/ioutil"
@@ -27,8 +28,8 @@ import (
 	"os/exec"
 )
 
-//execInsert runs the "insert" command.
-func execInsert(cmd *commandLine, args []string) error {
+//ExecInsert runs the "insert" command.
+func ExecInsert(cfg *config.CliConfig, args []string) error {
 	var multiline, m bool
 	var force, f bool
 
@@ -41,7 +42,7 @@ func execInsert(cmd *commandLine, args []string) error {
 	fs.BoolVar(&f, "f", false, "")
 
 	fs.Usage = func() {
-		fmt.Fprintln(cmd.WriterOutput, `Usage: gopass insert [ --multiline, -m ] [ --force, -f ] pass-name`)
+		fmt.Fprintln(cfg.WriterOutput, `Usage: gopass insert [ --multiline, -m ] [ --force, -f ] pass-name`)
 	}
 	err := fs.Parse(args)
 	if err != nil {
@@ -53,11 +54,11 @@ func execInsert(cmd *commandLine, args []string) error {
 
 	pwname := fs.Arg(0)
 
-	store := cmd.getStore()
+	store := cfg.GetStore()
 
 	// Check if password already exists
 	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", pwname)) {
+		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", pwname)) {
 			return nil
 		}
 	}
@@ -68,7 +69,7 @@ func execInsert(cmd *commandLine, args []string) error {
 		file, _ := ioutil.TempFile(os.TempDir(), "gopass")
 		defer os.Remove(file.Name())
 
-		editor := exec.Command(cmd.getEditor(), file.Name())
+		editor := exec.Command(cfg.GetEditor(), file.Name())
 		editor.Stdout = os.Stdout
 		editor.Stdin = os.Stdin
 		editor.Run()
@@ -78,19 +79,19 @@ func execInsert(cmd *commandLine, args []string) error {
 	} else {
 		fd := int(os.Stdin.Fd())
 		for {
-			fmt.Fprintln(cmd.WriterOutput, "Enter password:")
+			fmt.Fprintln(cfg.WriterOutput, "Enter password:")
 			try1, _ := terminal.ReadPassword(fd)
-			fmt.Fprintln(cmd.WriterOutput)
+			fmt.Fprintln(cfg.WriterOutput)
 
-			fmt.Fprintln(cmd.WriterOutput, "Enter confirmation:")
+			fmt.Fprintln(cfg.WriterOutput, "Enter confirmation:")
 			try2, _ := terminal.ReadPassword(fd)
-			fmt.Fprintln(cmd.WriterOutput)
+			fmt.Fprintln(cfg.WriterOutput)
 
 			if string(try1) == string(try2) {
 				password = string(try1)
 				break
 			} else {
-				fmt.Fprintln(cmd.WriterOutput, "Passwords did not match, try again...")
+				fmt.Fprintln(cfg.WriterOutput, "Passwords did not match, try again...")
 			}
 
 		}
@@ -100,6 +101,6 @@ func execInsert(cmd *commandLine, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cmd.WriterOutput, "Password %s added to the store\n", pwname)
+	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store\n", pwname)
 	return nil
 }

@@ -15,22 +15,23 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"flag"
 	"fmt"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 )
 
-//execRm runs the "rm" command.
-func execRm(cmd *commandLine, args []string) error {
+//ExecRm runs the "rm" command.
+func ExecRm(cfg *config.CliConfig, args []string) error {
 	var recursive, r bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("rm", flag.ContinueOnError)
 	fs.Usage = func() {
-		fmt.Fprintln(cmd.WriterOutput, "Usage: gopass rm pass-name")
+		fmt.Fprintln(cfg.WriterOutput, "Usage: gopass rm pass-name")
 	}
 
 	fs.BoolVar(&recursive, "recursive", false, "")
@@ -47,7 +48,7 @@ func execRm(cmd *commandLine, args []string) error {
 	force = force || f
 	recursive = recursive || r
 
-	store := cmd.getStore()
+	store := cfg.GetStore()
 
 	pwname := fs.Arg(0)
 	if pwname == "" {
@@ -58,7 +59,7 @@ func execRm(cmd *commandLine, args []string) error {
 	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword {
 
 		if !force {
-			if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
+			if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
 				return nil
 			}
 		}
@@ -70,12 +71,12 @@ func execRm(cmd *commandLine, args []string) error {
 	} else if containsDirectory, _ := store.ContainsDirectory(pwname); containsDirectory {
 
 		if !recursive {
-			fmt.Fprintf(cmd.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
+			fmt.Fprintf(cfg.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
 			return nil
 		}
 
 		if !force {
-			if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
+			if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
 				return nil
 			}
 		}
@@ -85,6 +86,6 @@ func execRm(cmd *commandLine, args []string) error {
 		}
 	}
 
-	fmt.Fprintln(cmd.WriterOutput, "Removed password/directory at path", fs.Arg(0))
+	fmt.Fprintln(cfg.WriterOutput, "Removed password/directory at path", fs.Arg(0))
 	return nil
 }

@@ -15,52 +15,52 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"flag"
 	"fmt"
-	"github.com/aviau/gopass"
-	"path/filepath"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/internal/clipboard"
+	"strings"
 )
 
-func execInit(cmd *commandLine, args []string) error {
-	var path, p string
+//ExecShow runs the "show" command.
+func ExecShow(cfg *config.CliConfig, args []string) error {
+	var clip, c bool
 
-	fs := flag.NewFlagSet("init", flag.ContinueOnError)
+	fs := flag.NewFlagSet("show", flag.ExitOnError)
+	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput, `Usage: gopass show [pass-name]`) }
 
-	fs.StringVar(&path, "path", cmd.getDefaultPasswordStoreDir(), "")
-	fs.StringVar(&p, "p", "", "")
-
-	fs.Usage = func() {
-		fmt.Fprintln(cmd.WriterOutput, `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`)
-	}
+	fs.BoolVar(&clip, "clip", false, "")
+	fs.BoolVar(&c, "c", false, "")
 
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 
-	if p != "" {
-		path = p
-	}
+	clip = clip || c
 
-	path, err := filepath.Abs(path)
+	password := fs.Arg(0)
+
+	store := cfg.GetStore()
+
+	password, err := store.GetPassword(password)
 	if err != nil {
 		return err
 	}
 
-	if fs.NArg() != 1 {
-		fs.Usage()
-		return nil
+	if clip {
+		firstPasswordLine := strings.Split(password, "\n")[0]
+
+		if err := clipboard.CopyToClipboard(firstPasswordLine); err != nil {
+			return err
+		}
+
+		fmt.Fprintln(cfg.WriterOutput, "the first line of the password was copied to clipboard.")
+	} else {
+		fmt.Fprintln(cfg.WriterOutput, password)
 	}
 
-	gpgID := fs.Arg(0)
-
-	store := gopass.NewPasswordStore(path)
-	if err := store.Init(gpgID); err != nil {
-		return err
-	}
-
-	fmt.Fprintf(cmd.WriterOutput, "Successfully created Password Store at %s\n", path)
 	return nil
 }

@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package config
 
 import (
 	"github.com/aviau/gopass"
@@ -24,8 +24,8 @@ import (
 	"path"
 )
 
-//commandLine holds options from the main parser
-type commandLine struct {
+//CliConfig holds options from the main parser.
+type CliConfig struct {
 	Path         string    //Path to the password store
 	Editor       string    //Text editor to use
 	WriterOutput io.Writer //The writer to use for output
@@ -33,21 +33,23 @@ type commandLine struct {
 	ReaderInput  io.Reader //The reader to use for input
 }
 
-func newCommandline(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *commandLine {
-	c := commandLine{
+//NewCliConfig creates a CliConfig.
+func NewCliConfig(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *CliConfig {
+	cfg := CliConfig{
 		Path:         path,
 		Editor:       editor,
 		WriterOutput: writerOutput,
 		WriterError:  writerError,
 		ReaderInput:  readerInput,
 	}
-	return &c
+	return &cfg
 }
 
-func (c *commandLine) getDefaultPasswordStoreDir() string {
+//GetDefaultPasswordStoreDir returns the default password store directory.
+func (cfg *CliConfig) GetDefaultPasswordStoreDir() string {
 	//Look for the store path in the commandLine,
 	// env var, or default to $HOME/.password-store
-	storePath := c.Path
+	storePath := cfg.Path
 	if storePath == "" {
 		storePath = os.Getenv("PASSWORD_STORE_DIR")
 		if storePath == "" {
@@ -57,10 +59,11 @@ func (c *commandLine) getDefaultPasswordStoreDir() string {
 	return storePath
 }
 
-func (c *commandLine) getEditor() string {
+//GetEditor returns the configured editor.
+func (cfg *CliConfig) GetEditor() string {
 	// Look for the editor to use in the commandLine,
 	// env var, or default to editor.
-	editor := c.Editor
+	editor := cfg.Editor
 	if editor == "" {
 		editor = os.Getenv("EDITOR")
 		if editor == "" {
@@ -70,9 +73,9 @@ func (c *commandLine) getEditor() string {
 	return editor
 }
 
-//getStore finds and returns the PasswordStore
-func (c *commandLine) getStore() *gopass.PasswordStore {
-	storePath := c.getDefaultPasswordStoreDir()
+//GetStore finds and returns the PasswordStore.
+func (cfg *CliConfig) GetStore() *gopass.PasswordStore {
+	storePath := cfg.GetDefaultPasswordStoreDir()
 	s := gopass.NewPasswordStore(storePath)
 	return s
 }

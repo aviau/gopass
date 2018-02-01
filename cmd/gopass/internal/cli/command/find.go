@@ -15,20 +15,21 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"flag"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"os/exec"
 	"strings"
 )
 
-//execFind runs the "find" command.
-func execFind(cmd *commandLine, args []string) error {
+//ExecFind runs the "find" command.
+func ExecFind(cfg *config.CliConfig, args []string) error {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := cmd.getStore()
+	store := cfg.GetStore()
 
 	terms := fs.Args()
 	pattern := "*" + strings.Join(terms, "*|*") + "*"
@@ -45,8 +46,8 @@ func execFind(cmd *commandLine, args []string) error {
 		pattern,
 		store.Path)
 
-	find.Stdout = cmd.WriterOutput
-	find.Stderr = cmd.WriterError
+	find.Stdout = cfg.WriterOutput
+	find.Stderr = cfg.WriterError
 	find.Run()
 	return nil
 }

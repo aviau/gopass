@@ -15,14 +15,16 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"fmt"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"github.com/aviau/gopass/cmd/gopass/internal/version"
 )
 
-func execVersion(c *commandLine) error {
-	fmt.Fprintf(c.WriterOutput, "gopass v%s\n", version.Version)
+//ExecVersion runs the "version" command.
+func ExecVersion(cfg *config.CliConfig) error {
+	fmt.Fprintf(cfg.WriterOutput, "gopass v%s\n", version.Version)
 	return nil
 }

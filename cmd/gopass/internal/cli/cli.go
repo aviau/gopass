@@ -19,6 +19,8 @@ package cli
 
 import (
 	"flag"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"io"
 )
 
@@ -39,10 +41,10 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 
 	fs.Parse(args)
 
-	c := newCommandline(path, editor, writerOutput, writerError, readerInput)
+	cfg := config.NewCliConfig(path, editor, writerOutput, writerError, readerInput)
 
 	if h || help {
-		err := execHelp(c)
+		err := command.ExecHelp(cfg)
 		return err
 	}
 
@@ -51,35 +53,35 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 
 	switch cmd {
 	case "show":
-		return execShow(c, args[1:])
+		return command.ExecShow(cfg, args[1:])
 	case "edit":
-		return execEdit(c, args[1:])
+		return command.ExecEdit(cfg, args[1:])
 	case "insert", "add":
-		return execInsert(c, args[1:])
+		return command.ExecInsert(cfg, args[1:])
 	case "find", "ls", "search", "list":
-		return execFind(c, args[1:])
+		return command.ExecFind(cfg, args[1:])
 	case "":
-		return execFind(c, args)
+		return command.ExecFind(cfg, args)
 	case "grep":
-		return execGrep(c, args[1:])
+		return command.ExecGrep(cfg, args[1:])
 	case "cp", "copy":
-		return execCp(c, args[1:])
+		return command.ExecCp(cfg, args[1:])
 	case "mv", "rename":
-		return execMv(c, args[1:])
+		return command.ExecMv(cfg, args[1:])
 	case "rm", "remove", "delete":
-		return execRm(c, args[1:])
+		return command.ExecRm(cfg, args[1:])
 	case "generate":
-		return execGenerate(c, args[1:])
+		return command.ExecGenerate(cfg, args[1:])
 	case "git":
-		return execGit(c, args[1:])
+		return command.ExecGit(cfg, args[1:])
 	case "help":
-		return execHelp(c)
+		return command.ExecHelp(cfg)
 	case "init":
-		return execInit(c, args[1:])
+		return command.ExecInit(cfg, args[1:])
 	case "version":
-		return execVersion(c)
+		return command.ExecVersion(cfg)
 	default:
-		return execShow(c, args)
+		return command.ExecShow(cfg, args)
 	}
 
 }

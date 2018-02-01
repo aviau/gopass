@@ -15,24 +15,25 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package command
 
 import (
 	"flag"
 	"fmt"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 	"github.com/aviau/gopass/cmd/gopass/internal/pwgen"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 	"strconv"
 )
 
-//execGenerate runs the "generate" command.
-func execGenerate(cmd *commandLine, args []string) error {
+//ExecGenerate runs the "generate" command.
+func ExecGenerate(cfg *config.CliConfig, args []string) error {
 	var noSymbols, n bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("generate", flag.ContinueOnError)
 	fs.Usage = func() {
-		fmt.Fprintln(cmd.WriterOutput, `Usage: gopass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
+		fmt.Fprintln(cfg.WriterOutput, `Usage: gopass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
 	}
 
 	fs.BoolVar(&noSymbols, "no-symbols", false, "")
@@ -51,17 +52,17 @@ func execGenerate(cmd *commandLine, args []string) error {
 
 	passName := fs.Arg(0)
 
-	store := cmd.getStore()
+	store := cfg.GetStore()
 
 	if containsPassword, _ := store.ContainsPassword(passName); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(cmd.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", passName)) {
+		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", passName)) {
 			return nil
 		}
 	}
 
 	passLength, err := strconv.ParseInt(fs.Arg(1), 0, 64)
 	if err != nil {
-		fmt.Fprintf(cmd.WriterOutput, "Second argument must be an int, got '%s'\n", fs.Arg(1))
+		fmt.Fprintf(cfg.WriterOutput, "Second argument must be an int, got '%s'\n", fs.Arg(1))
 		return err
 	}
 
@@ -76,6 +77,6 @@ func execGenerate(cmd *commandLine, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cmd.WriterOutput, "Password %s added to the store\n", passName)
+	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store\n", passName)
 	return nil
 }
