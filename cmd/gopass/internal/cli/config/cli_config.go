@@ -27,8 +27,8 @@ import (
 
 //CliConfig holds options from the main parser.
 type CliConfig struct {
-	Path         string    //Path to the password store
-	Editor       string    //Text editor to use
+	path         string    //Path to the password store
+	editor       string    //Text editor to use
 	WriterOutput io.Writer //The writer to use for output
 	WriterError  io.Writer //The writer to use for errors
 	ReaderInput  io.Reader //The reader to use for input
@@ -37,8 +37,8 @@ type CliConfig struct {
 //NewCliConfig creates a CliConfig.
 func NewCliConfig(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *CliConfig {
 	cfg := CliConfig{
-		Path:         path,
-		Editor:       editor,
+		path:         path,
+		editor:       editor,
 		WriterOutput: writerOutput,
 		WriterError:  writerError,
 		ReaderInput:  readerInput,
@@ -50,7 +50,7 @@ func NewCliConfig(path, editor string, writerOutput, writerError io.Writer, read
 func (cfg *CliConfig) GetDefaultPasswordStoreDir() string {
 	//Look for the store path in the commandLine,
 	// env var, or default to $HOME/.password-store
-	storePath := cfg.Path
+	storePath := cfg.path
 	if storePath == "" {
 		storePath = os.Getenv("PASSWORD_STORE_DIR")
 		if storePath == "" {
@@ -64,7 +64,7 @@ func (cfg *CliConfig) GetDefaultPasswordStoreDir() string {
 func (cfg *CliConfig) GetEditor() string {
 	// Look for the editor to use in the commandLine,
 	// env var, or default to editor.
-	editor := cfg.Editor
+	editor := cfg.editor
 	if editor == "" {
 		editor = os.Getenv("EDITOR")
 		if editor == "" {
