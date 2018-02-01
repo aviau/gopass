@@ -20,34 +20,37 @@ all: fmt gopass test vet lint
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go') Makefile
 
+GO_IMPORT_PATH := github.com/aviau/gopass
+
 gopass: $(SOURCES)
-	go build -v -o gopass cmd/gopass/main.go
+	go build -v -o gopass ${GO_IMPORT_PATH}/cmd/gopass
 
 .PHONY: test
 test:
-	go test -v ./...
+	go test -v ${GO_IMPORT_PATH}/...
 
 .PHONY: install
 install:
-	go install ./...
+	go install ${GO_IMPORT_PATH}/...
 
 .PHONY: clean
 clean:
 	rm -rf gopass
 
 .PHONY: vet
-vet:
-	go vet -v ./...
+vet: install
+	go get github.com/stretchr/testify/assert
+	go vet -v ${GO_IMPORT_PATH}/...
 
 .PHONY: lint
 lint:
-	golint ./...
+	golint ${GO_IMPORT_PATH}/...
 
 .PHONY: fmt
 fmt:
-	go fmt ./...
+	go fmt ${GO_IMPORT_PATH}/...
 
 
 .PHONY: get-deps
 get-deps:
-	go get -t ./...
+	go get -t ${GO_IMPORT_PATH}/...

@@ -15,51 +15,55 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package command
+package init
 
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"os/exec"
+	"path/filepath"
 
+	"github.com/aviau/gopass"
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
-//ExecEdit runs the "edit" command.
-func ExecEdit(cfg *config.CliConfig, args []string) error {
-	fs := flag.NewFlagSet("edit", flag.ExitOnError)
-	fs.Parse(args)
+//ExecInit runs the "init" command.
+func ExecInit(cfg *config.CliConfig, args []string) error {
+	var path, p string
 
-	store := cfg.GetStore()
+	fs := flag.NewFlagSet("init", flag.ContinueOnError)
 
-	passname := fs.Arg(0)
+	fs.StringVar(&path, "path", cfg.GetDefaultPasswordStoreDir(), "")
+	fs.StringVar(&p, "p", "", "")
 
-	password, err := store.GetPassword(passname)
+	fs.Usage = func() {
+		fmt.Fprintln(cfg.WriterOutput, `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`)
+	}
 
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	if p != "" {
+		path = p
+	}
+
+	path, err := filepath.Abs(path)
 	if err != nil {
 		return err
 	}
 
-	file, _ := ioutil.TempFile(os.TempDir(), "gopass")
-	defer os.Remove(file.Name())
+	if fs.NArg() != 1 {
+		fs.Usage()
+		return nil
+	}
 
-	ioutil.WriteFile(file.Name(), []byte(password), 0600)
+	gpgID := fs.Arg(0)
 
-	editor := exec.Command(cfg.GetEditor(), file.Name())
-	editor.Stdout = cfg.WriterOutput
-	editor.Stderr = cfg.WriterError
-	editor.Stdin = cfg.ReaderInput
-	editor.Run()
-
-	pwText, _ := ioutil.ReadFile(file.Name())
-	password = string(pwText)
-
-	if err := store.InsertPassword(passname, password); err != nil {
+	store := gopass.NewPasswordStore(path)
+	if err := store.Init(gpgID); err != nil {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Succesfully edited password \"%s\".\n", passname)
+	fmt.Fprintf(cfg.WriterOutput, "Successfully created Password Store at \"%s\".\n", path)
 	return nil
 }

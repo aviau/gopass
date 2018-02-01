@@ -21,7 +21,20 @@ import (
 	"flag"
 	"io"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
+	cmd_cp "github.com/aviau/gopass/cmd/gopass/internal/cli/command/cp"
+	cmd_edit "github.com/aviau/gopass/cmd/gopass/internal/cli/command/edit"
+	cmd_find "github.com/aviau/gopass/cmd/gopass/internal/cli/command/find"
+	cmd_generate "github.com/aviau/gopass/cmd/gopass/internal/cli/command/generate"
+	cmd_git "github.com/aviau/gopass/cmd/gopass/internal/cli/command/git"
+	cmd_grep "github.com/aviau/gopass/cmd/gopass/internal/cli/command/grep"
+	cmd_help "github.com/aviau/gopass/cmd/gopass/internal/cli/command/help"
+	cmd_init "github.com/aviau/gopass/cmd/gopass/internal/cli/command/init"
+	cmd_insert "github.com/aviau/gopass/cmd/gopass/internal/cli/command/insert"
+	cmd_mv "github.com/aviau/gopass/cmd/gopass/internal/cli/command/mv"
+	cmd_rm "github.com/aviau/gopass/cmd/gopass/internal/cli/command/rm"
+	cmd_show "github.com/aviau/gopass/cmd/gopass/internal/cli/command/show"
+	cmd_version "github.com/aviau/gopass/cmd/gopass/internal/cli/command/version"
+
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
@@ -45,7 +58,7 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 	cfg := config.NewCliConfig(path, editor, writerOutput, writerError, readerInput)
 
 	if h || help {
-		err := command.ExecHelp(cfg)
+		err := cmd_help.ExecHelp(cfg)
 		return err
 	}
 
@@ -54,35 +67,35 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 
 	switch cmd {
 	case "show":
-		return command.ExecShow(cfg, args[1:])
+		return cmd_show.ExecShow(cfg, args[1:])
 	case "edit":
-		return command.ExecEdit(cfg, args[1:])
+		return cmd_edit.ExecEdit(cfg, args[1:])
 	case "insert", "add":
-		return command.ExecInsert(cfg, args[1:])
+		return cmd_insert.ExecInsert(cfg, args[1:])
 	case "find", "ls", "search", "list":
-		return command.ExecFind(cfg, args[1:])
+		return cmd_find.ExecFind(cfg, args[1:])
 	case "":
-		return command.ExecFind(cfg, args)
+		return cmd_find.ExecFind(cfg, args)
 	case "grep":
-		return command.ExecGrep(cfg, args[1:])
+		return cmd_grep.ExecGrep(cfg, args[1:])
 	case "cp", "copy":
-		return command.ExecCp(cfg, args[1:])
+		return cmd_cp.ExecCp(cfg, args[1:])
 	case "mv", "rename":
-		return command.ExecMv(cfg, args[1:])
+		return cmd_mv.ExecMv(cfg, args[1:])
 	case "rm", "remove", "delete":
-		return command.ExecRm(cfg, args[1:])
+		return cmd_rm.ExecRm(cfg, args[1:])
 	case "generate":
-		return command.ExecGenerate(cfg, args[1:])
+		return cmd_generate.ExecGenerate(cfg, args[1:])
 	case "git":
-		return command.ExecGit(cfg, args[1:])
+		return cmd_git.ExecGit(cfg, args[1:])
 	case "help":
-		return command.ExecHelp(cfg)
+		return cmd_help.ExecHelp(cfg)
 	case "init":
-		return command.ExecInit(cfg, args[1:])
+		return cmd_init.ExecInit(cfg, args[1:])
 	case "version":
-		return command.ExecVersion(cfg)
+		return cmd_version.ExecVersion(cfg)
 	default:
-		return command.ExecShow(cfg, args)
+		return cmd_show.ExecShow(cfg, args)
 	}
 
 }

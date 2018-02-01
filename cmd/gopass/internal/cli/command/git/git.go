@@ -15,40 +15,31 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package command
+package git
 
 import (
-	"flag"
 	"os/exec"
-	"strings"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
 )
 
-//ExecFind runs the "find" command.
-func ExecFind(cfg *config.CliConfig, args []string) error {
-	fs := flag.NewFlagSet("find", flag.ExitOnError)
-	fs.Parse(args)
-
+//ExecGit runs the "git" command.
+func ExecGit(cfg *config.CliConfig, args []string) error {
 	store := cfg.GetStore()
 
-	terms := fs.Args()
-	pattern := "*" + strings.Join(terms, "*|*") + "*"
+	gitArgs := []string{
+		"--git-dir=" + store.GitDir,
+		"--work-tree=" + store.Path}
 
-	find := exec.Command(
-		"tree",
-		"-C",
-		"-l",
-		"--noreport",
-		"--prune",       // tree>=1.5
-		"--matchdirs",   // tree>=1.7
-		"--ignore-case", // tree>=1.7
-		"-P",
-		pattern,
-		store.Path)
+	gitArgs = append(gitArgs, args...)
 
-	find.Stdout = cfg.WriterOutput
-	find.Stderr = cfg.WriterError
-	find.Run()
+	git := exec.Command(
+		"git",
+		gitArgs...)
+
+	git.Stdout = cfg.WriterOutput
+	git.Stderr = cfg.WriterError
+	git.Stdin = cfg.ReaderInput
+	git.Run()
 	return nil
 }
