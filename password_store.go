@@ -105,7 +105,7 @@ func (store *PasswordStore) Init(gpgID string) error {
 		return err
 	}
 
-	return store.AddAndCommit("Initial commit", ".gpg-id")
+	return store.AddAndCommit("initial commit", ".gpg-id")
 }
 
 //InsertPassword inserts a new password or overwrites an existing one
@@ -196,7 +196,7 @@ func (store *PasswordStore) MoveDirectory(source, dest string) error {
 	}
 
 	store.AddAndCommit(
-		fmt.Sprintf("Moved directory '%s' to '%s'", source, dest),
+		fmt.Sprintf("moved directory \"%s\" to \"%s\"", source, dest),
 		sourceDirectoryPath,
 		destDirectoryPath)
 
@@ -225,7 +225,7 @@ func (store *PasswordStore) MovePassword(source, dest string) error {
 	}
 
 	store.AddAndCommit(
-		fmt.Sprintf("Moved Password '%s' to '%s'", source, dest),
+		fmt.Sprintf("moved Password \"%s\" to \"%s\"", source, dest),
 		sourcePasswordPath,
 		destPasswordPath)
 
@@ -254,7 +254,7 @@ func (store *PasswordStore) CopyPassword(source, dest string) error {
 	}
 
 	store.AddAndCommit(
-		fmt.Sprintf("Copied Password '%s' to '%s'", source, dest),
+		fmt.Sprintf("copied Password \"%s\" to \"%s\"", source, dest),
 		destPasswordPath)
 
 	return nil
