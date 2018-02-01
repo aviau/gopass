@@ -64,6 +64,6 @@ func ExecInit(cfg *config.CliConfig, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Successfully created Password Store at %s\n", path)
+	fmt.Fprintf(cfg.WriterOutput, "Successfully created Password Store at %s.\n", path)
 	return nil
 }

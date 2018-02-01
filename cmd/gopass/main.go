@@ -29,7 +29,7 @@ func main() {
 	args := os.Args[1:]
 
 	if err := cli.Run(args, os.Stdout, os.Stderr, os.Stdin); err != nil {
-		fmt.Printf("Error: %s\n", err)
+		fmt.Printf("Error: %s.\n", err)
 		os.Exit(1)
 	}
 }

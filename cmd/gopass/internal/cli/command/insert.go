@@ -103,6 +103,6 @@ func ExecInsert(cfg *config.CliConfig, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store\n", pwname)
+	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store.\n", pwname)
 	return nil
 }

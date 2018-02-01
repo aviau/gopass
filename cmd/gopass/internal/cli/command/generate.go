@@ -63,8 +63,7 @@ func ExecGenerate(cfg *config.CliConfig, args []string) error {
 
 	passLength, err := strconv.ParseInt(fs.Arg(1), 0, 64)
 	if err != nil {
-		fmt.Fprintf(cfg.WriterOutput, "Second argument must be an int, got '%s'\n", fs.Arg(1))
-		return err
+		return fmt.Errorf("second argument must be an int, got \"%s\"", fs.Arg(1))
 	}
 
 	runes := append(pwgen.Alpha, pwgen.Num...)
@@ -78,6 +77,6 @@ func ExecGenerate(cfg *config.CliConfig, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store\n", passName)
+	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store.\n", passName)
 	return nil
 }

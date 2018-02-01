@@ -72,8 +72,7 @@ func ExecRm(cfg *config.CliConfig, args []string) error {
 	} else if containsDirectory, _ := store.ContainsDirectory(pwname); containsDirectory {
 
 		if !recursive {
-			fmt.Fprintf(cfg.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
-			return nil
+			return fmt.Errorf("%s is a directory, use -r to remove recursively", pwname)
 		}
 
 		if !force {
@@ -87,6 +86,6 @@ func ExecRm(cfg *config.CliConfig, args []string) error {
 		}
 	}
 
-	fmt.Fprintln(cfg.WriterOutput, "Removed password/directory at path", fs.Arg(0))
+	fmt.Fprintf(cfg.WriterOutput, "Removed password/directory at path %s.\n", fs.Arg(0))
 	return nil
 }

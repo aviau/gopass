@@ -53,8 +53,7 @@ func ExecCp(cfg *config.CliConfig, args []string) error {
 	dest := fs.Arg(1)
 
 	if source == "" || dest == "" {
-		fmt.Fprintln(cfg.WriterOutput, "Error: Received empty source or dest argument")
-		return nil
+		return fmt.Errorf("received empty source or dest argument")
 	}
 
 	// If the dest ends with a '/', then it is a directory.
@@ -67,8 +66,7 @@ func ExecCp(cfg *config.CliConfig, args []string) error {
 
 		if destAlreadyExists, _ := store.ContainsPassword(dest); destAlreadyExists {
 			if !force {
-				fmt.Fprintf(cfg.WriterOutput, "Error: destination %s already exists. Use -f to override\n", dest)
-				return nil
+				return fmt.Errorf("destination %s already exists. Use -f to override", dest)
 			}
 		}
 
@@ -76,25 +74,23 @@ func ExecCp(cfg *config.CliConfig, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(cfg.WriterOutput, "Copied password from '%s' to '%s'\n", source, dest)
+		fmt.Fprintf(cfg.WriterOutput, "Copied password from '%s' to '%s'.\n", source, dest)
 		return nil
 	}
 
 	if sourceIsDirectory, _ := store.ContainsDirectory(source); sourceIsDirectory {
 
 		if !recursive {
-			fmt.Fprintf(cfg.WriterOutput, "Error: %s is a directory, use -r to copy recursively\n", source)
-			return nil
+			return fmt.Errorf("%s is a directory, use -r to copy recursively", source)
 		}
 
 		if err := store.CopyDirectory(source, dest); err != nil {
 			return err
 		}
 
-		fmt.Fprintf(cfg.WriterOutput, "Copied directory from '%s' to '%s'\n", source, dest)
+		fmt.Fprintf(cfg.WriterOutput, "Copied directory from \"%s\" to \"%s\".\n", source, dest)
 		return nil
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Error: could not find source '%s' to copy \n", source)
-	return nil
+	return fmt.Errorf("could not find source \"%s\" to copy", source)
 }
