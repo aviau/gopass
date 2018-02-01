@@ -61,7 +61,7 @@ func ExecMv(cfg *config.CliConfig, args []string) error {
 
 		if destAlreadyExists, _ := store.ContainsPassword(dest); destAlreadyExists {
 			if !force {
-				return fmt.Errorf("destination %s already exists. Use -f to override", dest)
+				return fmt.Errorf("destination \"%s\" already exists. Use -f to override", dest)
 			}
 		}
 

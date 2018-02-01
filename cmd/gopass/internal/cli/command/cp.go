@@ -66,7 +66,7 @@ func ExecCp(cfg *config.CliConfig, args []string) error {
 
 		if destAlreadyExists, _ := store.ContainsPassword(dest); destAlreadyExists {
 			if !force {
-				return fmt.Errorf("destination %s already exists. Use -f to override", dest)
+				return fmt.Errorf("destination \"%s\" already exists. Use -f to override", dest)
 			}
 		}
 
@@ -74,14 +74,14 @@ func ExecCp(cfg *config.CliConfig, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(cfg.WriterOutput, "Copied password from '%s' to '%s'.\n", source, dest)
+		fmt.Fprintf(cfg.WriterOutput, "Copied password from \"%s\" to \"%s\".\n", source, dest)
 		return nil
 	}
 
 	if sourceIsDirectory, _ := store.ContainsDirectory(source); sourceIsDirectory {
 
 		if !recursive {
-			return fmt.Errorf("%s is a directory, use -r to copy recursively", source)
+			return fmt.Errorf("\"%s\" is a directory, use -r to copy recursively", source)
 		}
 
 		if err := store.CopyDirectory(source, dest); err != nil {

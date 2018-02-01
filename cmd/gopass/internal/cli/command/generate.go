@@ -56,7 +56,7 @@ func ExecGenerate(cfg *config.CliConfig, args []string) error {
 	store := cfg.GetStore()
 
 	if containsPassword, _ := store.ContainsPassword(passName); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", passName)) {
+		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password \"%s\" already exists. Would you like to overwrite? [y/n] ", passName)) {
 			return nil
 		}
 	}
@@ -77,6 +77,6 @@ func ExecGenerate(cfg *config.CliConfig, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store.\n", passName)
+	fmt.Fprintf(cfg.WriterOutput, "Password \"%s\" added to the store.\n", passName)
 	return nil
 }

@@ -60,7 +60,7 @@ func ExecInsert(cfg *config.CliConfig, args []string) error {
 
 	// Check if password already exists
 	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password '%s' already exists. Would you like to overwrite? [y/n] ", pwname)) {
+		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password \"%s\" already exists. Would you like to overwrite? [y/n] ", pwname)) {
 			return nil
 		}
 	}
@@ -103,6 +103,6 @@ func ExecInsert(cfg *config.CliConfig, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Password %s added to the store.\n", pwname)
+	fmt.Fprintf(cfg.WriterOutput, "Password \"%s\" added to the store.\n", pwname)
 	return nil
 }

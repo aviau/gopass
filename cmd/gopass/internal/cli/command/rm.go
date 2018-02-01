@@ -72,11 +72,11 @@ func ExecRm(cfg *config.CliConfig, args []string) error {
 	} else if containsDirectory, _ := store.ContainsDirectory(pwname); containsDirectory {
 
 		if !recursive {
-			return fmt.Errorf("%s is a directory, use -r to remove recursively", pwname)
+			return fmt.Errorf("\"%s\" is a directory, use -r to remove recursively", pwname)
 		}
 
 		if !force {
-			if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
+			if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Are you sure you would like to delete \"%s\" recursively? [y/n] ", pwname)) {
 				return nil
 			}
 		}
@@ -86,6 +86,6 @@ func ExecRm(cfg *config.CliConfig, args []string) error {
 		}
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Removed password/directory at path %s.\n", fs.Arg(0))
+	fmt.Fprintf(cfg.WriterOutput, "Removed password/directory at path \"%s\".\n", fs.Arg(0))
 	return nil
 }
