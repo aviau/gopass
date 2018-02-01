@@ -20,7 +20,7 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"github.com/aviau/gopass/clipboard"
+	"github.com/aviau/gopass/internal/clipboard"
 	"strings"
 )
 
