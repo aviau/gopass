@@ -1,0 +1,90 @@
+//    Copyright (C) 2018 Alexandre Viau <alexandre@alexandreviau.net>
+//
+//    This file is part of gopass.
+//
+//    gopass is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    gopass is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
+
+package cli
+
+import (
+	"flag"
+	"fmt"
+	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
+)
+
+//execRm runs the "rm" command.
+func execRm(c *commandLine, args []string) error {
+	var recursive, r bool
+	var force, f bool
+
+	fs := flag.NewFlagSet("rm", flag.ContinueOnError)
+	fs.Usage = func() {
+		fmt.Fprintln(c.WriterOutput, "Usage: gopass rm pass-name")
+	}
+
+	fs.BoolVar(&recursive, "recursive", false, "")
+	fs.BoolVar(&r, "r", false, "")
+
+	fs.BoolVar(&force, "force", false, "")
+	fs.BoolVar(&f, "f", false, "")
+
+	err := fs.Parse(args)
+	if err != nil {
+		return err
+	}
+
+	force = force || f
+	recursive = recursive || r
+
+	store := getStore(c)
+
+	pwname := fs.Arg(0)
+	if pwname == "" {
+		fs.Usage()
+		return nil
+	}
+
+	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword {
+
+		if !force {
+			if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s? [y/n] ", pwname)) {
+				return nil
+			}
+		}
+
+		if err := store.RemovePassword(pwname); err != nil {
+			return err
+		}
+
+	} else if containsDirectory, _ := store.ContainsDirectory(pwname); containsDirectory {
+
+		if !recursive {
+			fmt.Fprintf(c.WriterOutput, "Error: %s is a directory, use -r to remove recursively\n", pwname)
+			return nil
+		}
+
+		if !force {
+			if !gopass_terminal.AskYesNo(c.WriterOutput, fmt.Sprintf("Are you sure you would like to delete %s recursively? [y/n] ", pwname)) {
+				return nil
+			}
+		}
+
+		if err := store.RemoveDirectory(pwname); err != nil {
+			return err
+		}
+	}
+
+	fmt.Fprintln(c.WriterOutput, "Removed password/directory at path", fs.Arg(0))
+	return nil
+}
