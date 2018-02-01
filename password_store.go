@@ -154,8 +154,7 @@ func (store *PasswordStore) RemoveDirectory(dirname string) error {
 		return fmt.Errorf("could not find directory at path \"%s\"", directoryPath)
 	}
 
-	err := os.RemoveAll(directoryPath)
-	if err != nil {
+	if err := os.RemoveAll(directoryPath); err != nil {
 		return err
 	}
 
@@ -192,8 +191,7 @@ func (store *PasswordStore) MoveDirectory(source, dest string) error {
 
 	destDirectoryPath := path.Join(store.Path, dest)
 
-	err := os.Rename(sourceDirectoryPath, destDirectoryPath)
-	if err != nil {
+	if err := os.Rename(sourceDirectoryPath, destDirectoryPath); err != nil {
 		return err
 	}
 
@@ -222,8 +220,7 @@ func (store *PasswordStore) MovePassword(source, dest string) error {
 		destPasswordPath = path.Join(store.Path, dest+".gpg")
 	}
 
-	err := os.Rename(sourcePasswordPath, destPasswordPath)
-	if err != nil {
+	if err := os.Rename(sourcePasswordPath, destPasswordPath); err != nil {
 		return err
 	}
 
@@ -252,8 +249,7 @@ func (store *PasswordStore) CopyPassword(source, dest string) error {
 		destPasswordPath = path.Join(store.Path, dest+".gpg")
 	}
 
-	err := gopassio.CopyFileContents(sourcePasswordPath, destPasswordPath)
-	if err != nil {
+	if err := gopassio.CopyFileContents(sourcePasswordPath, destPasswordPath); err != nil {
 		return err
 	}
 
@@ -273,8 +269,7 @@ func (store *PasswordStore) CopyDirectory(source, dest string) error {
 	}
 
 	destDirectoryPath := path.Join(store.Path, dest)
-	err := exec.Command("cp", "-r", sourceDirectoryPath, destDirectoryPath).Run()
-	if err != nil {
+	if err := exec.Command("cp", "-r", sourceDirectoryPath, destDirectoryPath).Run(); err != nil {
 		return err
 	}
 
@@ -379,9 +374,7 @@ func (store *PasswordStore) git(args ...string) error {
 	git.Stderr = os.Stderr
 	git.Stdin = os.Stdin
 
-	err := git.Run()
-
-	if err != nil {
+	if err := git.Run(); err != nil {
 		fmt.Println(err.Error())
 		return fmt.Errorf("git error: \"%s\"", err.Error())
 	}
