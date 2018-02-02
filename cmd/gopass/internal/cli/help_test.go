@@ -28,12 +28,18 @@ func TestHelp(t *testing.T) {
 	cliTest := newCliTest()
 	cliTest.Run([]string{"help"})
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
 
 	cliTest = newCliTest()
 	cliTest.Run([]string{"--help"})
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
 
 	cliTest = newCliTest()
 	cliTest.Run([]string{"-h"})
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
 }
