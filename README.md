@@ -1,4 +1,8 @@
 # gopass
+
+[![Build Status](https://travis-ci.org/aviau/gopass.svg?branch=master)](https://travis-ci.org/aviau/gopass)
+
+
 [Pass](http://www.passwordstore.org/) implementation in Go.
 
 Password management should be simple and follow Unix philosophy. With ``gopass``, each password lives inside of a ``gpg`` encrypted file whose filename is the title of the website or resource that requires the password. These encrypted files may be organized into meaningful folder hierarchies, copied from computer to computer, and, in general, manipulated using standard command line file management utilities.
