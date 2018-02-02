@@ -3,6 +3,11 @@ language: go
 install:
   - make get-deps
   - go get -u github.com/golang/lint/golint
+  - go get -u github.com/mattn/goveralls
+
+script:
+  - make
+  - $GOPATH/bin/goveralls -service=travis-ci
 
 notifications:
   email: false

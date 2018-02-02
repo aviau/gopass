@@ -1,6 +1,7 @@
 # gopass
 
 [![Build Status](https://travis-ci.org/aviau/gopass.svg?branch=master)](https://travis-ci.org/aviau/gopass)
+[![Coverage Status](https://coveralls.io/repos/github/aviau/gopass/badge.svg?branch=master)](https://coveralls.io/github/aviau/gopass?branch=master)
 
 
 [Pass](http://www.passwordstore.org/) implementation in Go.
