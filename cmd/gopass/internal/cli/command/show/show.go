@@ -18,6 +18,7 @@
 package show
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"strings"
@@ -45,6 +46,10 @@ func ExecShow(cfg *config.CliConfig, args []string) error {
 	clip = clip || c
 
 	password := fs.Arg(0)
+
+	if password == "" {
+		return errors.New("missing password name")
+	}
 
 	store := cfg.GetStore()
 

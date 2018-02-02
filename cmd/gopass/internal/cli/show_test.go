@@ -33,3 +33,11 @@ func TestShowHelp(t *testing.T) {
 	cliTest.Run([]string{"show", "-h"})
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass show"))
 }
+
+func TestShowMissingPassword(t *testing.T) {
+	cliTest := newCliTest()
+	err := cliTest.Run([]string{"show"})
+	assert.EqualError(t, err, "missing password name")
+	assert.Equal(t, cliTest.OutputWriter.String(), "")
+	assert.Equal(t, cliTest.ErrorWriter.String(), "")
+}
