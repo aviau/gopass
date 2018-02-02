@@ -30,16 +30,14 @@ func TestRemoveDirectory(t *testing.T) {
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err := os.Mkdir(testDirectoryPath, 0700)
-	if err != nil {
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Stat(testDirectoryPath)
+	_, err := os.Stat(testDirectoryPath)
 	assert.Nil(t, err, "dir should have been created")
 
-	err = st.PasswordStore.RemoveDirectory("dir")
-	if err != nil {
+	if err := st.PasswordStore.RemoveDirectory("dir"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -52,16 +50,14 @@ func TestRemoveDirectoryTrailingSlash(t *testing.T) {
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err := os.Mkdir(testDirectoryPath, 0700)
-	if err != nil {
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Stat(testDirectoryPath)
+	_, err := os.Stat(testDirectoryPath)
 	assert.Nil(t, err, "dir should have been created")
 
-	err = st.PasswordStore.RemoveDirectory("//dir///")
-	if err != nil {
+	if err := st.PasswordStore.RemoveDirectory("//dir///"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -74,13 +70,12 @@ func TestRemoveDirectoryRecursive(t *testing.T) {
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err := os.Mkdir(testDirectoryPath, 0700)
-	if err != nil {
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
 	testPasswordPath := filepath.Join(testDirectoryPath, "test.com.gpg")
-	_, err = os.Create(testPasswordPath)
+	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,8 +86,7 @@ func TestRemoveDirectoryRecursive(t *testing.T) {
 	_, err = os.Stat(testDirectoryPath)
 	assert.Nil(t, err, "dir should have been created")
 
-	err = st.PasswordStore.RemoveDirectory("dir")
-	if err != nil {
+	if err := st.PasswordStore.RemoveDirectory("dir"); err != nil {
 		t.Fatal(err)
 	}
 

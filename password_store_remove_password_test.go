@@ -66,12 +66,11 @@ func TestRemovePasswordDirectory(t *testing.T) {
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.StorePath, "test.com")
-	err := os.Mkdir(testDirectoryPath, 0700)
-	if err != nil {
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Stat(testDirectoryPath)
+	_, err := os.Stat(testDirectoryPath)
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	st.PasswordStore.RemovePassword("test.com")

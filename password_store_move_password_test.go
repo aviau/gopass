@@ -75,8 +75,7 @@ func TestMovePasswordInDirectory(t *testing.T) {
 	_, err = os.Stat(destinationPath)
 	assert.True(t, os.IsNotExist(err), "destination path should not exist yet")
 
-	err = st.PasswordStore.MovePassword("test.com", "dir/")
-	if err != nil {
+	if err = st.PasswordStore.MovePassword("test.com", "dir/"); err != nil {
 		t.Fatal(err)
 	}
 

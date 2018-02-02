@@ -33,12 +33,11 @@ func TestContainsDirectory(t *testing.T) {
 	assert.False(t, containsDirectory, "The password store should contain dir")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err := os.Mkdir(testDirectoryPath, 0700)
-	if err != nil {
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Stat(testDirectoryPath)
+	_, err := os.Stat(testDirectoryPath)
 	assert.Nil(t, err, "the directory should have been created")
 
 	containsDirectory, _ = st.PasswordStore.ContainsDirectory("dir")
@@ -53,12 +52,11 @@ func TestContainsDirectoryTrailingSlash(t *testing.T) {
 	assert.False(t, containsDirectory, "The password store should contain dir")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err := os.Mkdir(testDirectoryPath, 0700)
-	if err != nil {
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Stat(testDirectoryPath)
+	_, err := os.Stat(testDirectoryPath)
 	assert.Nil(t, err, "the directory should have been created")
 
 	containsDirectory, _ = st.PasswordStore.ContainsDirectory("/dir///")

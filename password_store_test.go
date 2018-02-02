@@ -40,8 +40,7 @@ func newPasswordStoreTest(t *testing.T) *passwordStoreTest {
 	passwordStore := gopass.NewPasswordStore(storePath)
 	passwordStore.UsesGit = false
 
-	err = passwordStore.Init("test")
-	if err != nil {
+	if err := passwordStore.Init("test"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -54,8 +53,7 @@ func newPasswordStoreTest(t *testing.T) *passwordStoreTest {
 }
 
 func (test *passwordStoreTest) Close() {
-	err := os.RemoveAll(test.StorePath)
-	if err != nil {
+	if err := os.RemoveAll(test.StorePath); err != nil {
 		test.t.Fatal(err)
 	}
 }

@@ -61,8 +61,7 @@ func TestCopyPasswordInDirectory(t *testing.T) {
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
 	testDirectoryPath := filepath.Join(st.StorePath, "dir")
-	err = os.Mkdir(testDirectoryPath, 0700)
-	if err != nil {
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
