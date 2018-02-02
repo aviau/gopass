@@ -23,11 +23,11 @@ import (
 	"path/filepath"
 
 	"github.com/aviau/gopass"
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecInit runs the "init" command.
-func ExecInit(cfg *config.CliConfig, args []string) error {
+func ExecInit(cfg *command.Config, args []string) error {
 	var path, p string
 
 	fs := flag.NewFlagSet("init", flag.ContinueOnError)

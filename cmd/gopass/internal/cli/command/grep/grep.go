@@ -25,11 +25,11 @@ import (
 
 	"github.com/mgutz/ansi"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecGrep runs the "grep" command.
-func ExecGrep(cfg *config.CliConfig, args []string) error {
+func ExecGrep(cfg *command.Config, args []string) error {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)
 

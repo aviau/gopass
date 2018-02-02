@@ -35,7 +35,7 @@ import (
 	cmd_show "github.com/aviau/gopass/cmd/gopass/internal/cli/command/show"
 	cmd_version "github.com/aviau/gopass/cmd/gopass/internal/cli/command/version"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //Run parses the arguments and executes the gopass CLI
@@ -55,7 +55,7 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 
 	fs.Parse(args)
 
-	cfg := config.NewCliConfig(path, editor, writerOutput, writerError, readerInput)
+	cfg := command.NewConfig(path, editor, writerOutput, writerError, readerInput)
 
 	if h || help {
 		err := cmd_help.ExecHelp(cfg)

@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package config
+package command
 
 import (
 	"io"
@@ -25,8 +25,8 @@ import (
 	"github.com/aviau/gopass"
 )
 
-//CliConfig holds options from the main parser.
-type CliConfig struct {
+//Config contains everything that commands need to run.
+type Config struct {
 	path         string    //Path to the password store
 	editor       string    //Text editor to use
 	WriterOutput io.Writer //The writer to use for output
@@ -34,9 +34,9 @@ type CliConfig struct {
 	ReaderInput  io.Reader //The reader to use for input
 }
 
-//NewCliConfig creates a CliConfig.
-func NewCliConfig(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *CliConfig {
-	cfg := CliConfig{
+//NewConfig creates a Config.
+func NewConfig(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *Config {
+	cfg := Config{
 		path:         path,
 		editor:       editor,
 		WriterOutput: writerOutput,
@@ -47,7 +47,7 @@ func NewCliConfig(path, editor string, writerOutput, writerError io.Writer, read
 }
 
 //GetDefaultPasswordStoreDir returns the default password store directory.
-func (cfg *CliConfig) GetDefaultPasswordStoreDir() string {
+func (cfg *Config) GetDefaultPasswordStoreDir() string {
 	//Look for the store path in the commandLine,
 	// env var, or default to $HOME/.password-store
 	storePath := cfg.path
@@ -61,7 +61,7 @@ func (cfg *CliConfig) GetDefaultPasswordStoreDir() string {
 }
 
 //GetEditor returns the configured editor.
-func (cfg *CliConfig) GetEditor() string {
+func (cfg *Config) GetEditor() string {
 	// Look for the editor to use in the commandLine,
 	// env var, or default to editor.
 	editor := cfg.editor
@@ -75,7 +75,7 @@ func (cfg *CliConfig) GetEditor() string {
 }
 
 //GetStore finds and returns the PasswordStore.
-func (cfg *CliConfig) GetStore() *gopass.PasswordStore {
+func (cfg *Config) GetStore() *gopass.PasswordStore {
 	storePath := cfg.GetDefaultPasswordStoreDir()
 	s := gopass.NewPasswordStore(storePath)
 	return s

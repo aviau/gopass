@@ -23,11 +23,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecMv runs the "mv" comand.
-func ExecMv(cfg *config.CliConfig, args []string) error {
+func ExecMv(cfg *command.Config, args []string) error {
 	var force, f bool
 
 	fs := flag.NewFlagSet("mv", flag.ExitOnError)

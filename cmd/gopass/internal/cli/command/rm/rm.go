@@ -21,12 +21,12 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 )
 
 //ExecRm runs the "rm" command.
-func ExecRm(cfg *config.CliConfig, args []string) error {
+func ExecRm(cfg *command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool
 

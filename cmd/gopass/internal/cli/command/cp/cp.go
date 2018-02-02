@@ -23,11 +23,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecCp runs the "cp" command.
-func ExecCp(cfg *config.CliConfig, args []string) error {
+func ExecCp(cfg *command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool
 

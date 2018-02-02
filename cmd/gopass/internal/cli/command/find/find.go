@@ -22,11 +22,11 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecFind runs the "find" command.
-func ExecFind(cfg *config.CliConfig, args []string) error {
+func ExecFind(cfg *command.Config, args []string) error {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 

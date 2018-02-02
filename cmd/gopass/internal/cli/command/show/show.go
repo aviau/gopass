@@ -23,12 +23,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	"github.com/aviau/gopass/internal/clipboard"
 )
 
 //ExecShow runs the "show" command.
-func ExecShow(cfg *config.CliConfig, args []string) error {
+func ExecShow(cfg *command.Config, args []string) error {
 	var clip, c bool
 
 	fs := flag.NewFlagSet("show", flag.ContinueOnError)

@@ -20,11 +20,11 @@ package git
 import (
 	"os/exec"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecGit runs the "git" command.
-func ExecGit(cfg *config.CliConfig, args []string) error {
+func ExecGit(cfg *command.Config, args []string) error {
 	store := cfg.GetStore()
 
 	gitArgs := []string{

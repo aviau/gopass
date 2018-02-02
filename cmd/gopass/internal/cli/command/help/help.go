@@ -20,11 +20,11 @@ package help
 import (
 	"fmt"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecHelp runs the "help" command.
-func ExecHelp(cfg *config.CliConfig) error {
+func ExecHelp(cfg *command.Config) error {
 	fmt.Fprintln(cfg.WriterOutput, `Usage:
       init                  Initialize a new password store.
       ls                    List passwords.

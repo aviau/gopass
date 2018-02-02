@@ -22,13 +22,13 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 	"github.com/aviau/gopass/internal/pwgen"
 )
 
 //ExecGenerate runs the "generate" command.
-func ExecGenerate(cfg *config.CliConfig, args []string) error {
+func ExecGenerate(cfg *command.Config, args []string) error {
 	var noSymbols, n bool
 	var force, f bool
 

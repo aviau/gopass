@@ -24,11 +24,11 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
 //ExecEdit runs the "edit" command.
-func ExecEdit(cfg *config.CliConfig, args []string) error {
+func ExecEdit(cfg *command.Config, args []string) error {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 

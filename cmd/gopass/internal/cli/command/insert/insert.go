@@ -26,12 +26,12 @@ import (
 
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 )
 
 //ExecInsert runs the "insert" command.
-func ExecInsert(cfg *config.CliConfig, args []string) error {
+func ExecInsert(cfg *command.Config, args []string) error {
 	var multiline, m bool
 	var force, f bool
 

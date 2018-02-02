@@ -20,12 +20,12 @@ package version
 import (
 	"fmt"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/config"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	"github.com/aviau/gopass/cmd/gopass/internal/version"
 )
 
 //ExecVersion runs the "version" command.
-func ExecVersion(cfg *config.CliConfig) error {
+func ExecVersion(cfg *command.Config) error {
 	fmt.Fprintf(cfg.WriterOutput, "gopass v%s\n", version.Version)
 	return nil
 }
