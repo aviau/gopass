@@ -18,7 +18,6 @@
 package cli
 
 import (
-	"flag"
 	"io"
 
 	cmd_cp "github.com/aviau/gopass/cmd/gopass/internal/cli/command/cp"
@@ -36,35 +35,38 @@ import (
 	cmd_version "github.com/aviau/gopass/cmd/gopass/internal/cli/command/version"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
+
+	"github.com/jessevdk/go-flags"
 )
 
 //Run parses the arguments and executes the gopass CLI
 func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInput io.Reader) error {
 
-	//Parse the common flags
-	var h, help bool
-	var path string
-	var editor string
+	var opts struct {
+		Help             bool   `short:"h" long:"help" description:"Display gopass usage"`
+		Editor           string `long:"EDITOR" description:"Text editor to use"`
+		PasswordStoreDir string `long:"PASSWORD_STORE_DIR" env:"PASSWORD_STORE_DIR" description:"Path to the password store"`
+	}
 
-	fs := flag.NewFlagSet("default", flag.ExitOnError)
-	fs.StringVar(&path, "PASSWORD_STORE_DIR", "", "Path to the password store")
-	fs.StringVar(&editor, "EDITOR", "", "Text editor to use")
+	parser := flags.NewParser(&opts, flags.IgnoreUnknown)
 
-	fs.BoolVar(&help, "help", false, "")
-	fs.BoolVar(&h, "h", false, "")
+	cmdArgs, _ := parser.ParseArgs(args)
 
-	fs.Parse(args)
+	cfg := command.NewConfig(opts.PasswordStoreDir, opts.Editor, writerOutput, writerError, readerInput)
 
-	cfg := command.NewConfig(path, editor, writerOutput, writerError, readerInput)
-
-	if h || help {
+	if opts.Help {
 		err := cmd_help.ExecHelp(cfg)
 		return err
 	}
 
 	// Retrieve command name as first argument.
-	cmd := fs.Arg(0)
+	cmd := cmdArgs[0]
 
+	return runCommand(cfg, cmd, args)
+}
+
+//Run parses the arguments and executes the gopass CLI
+func runCommand(cfg *command.Config, cmd string, args []string) error {
 	switch cmd {
 	case "show":
 		return cmd_show.ExecShow(cfg, args[1:])
@@ -97,5 +99,4 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 	default:
 		return cmd_show.ExecShow(cfg, args)
 	}
-
 }
