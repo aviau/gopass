@@ -23,7 +23,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/pwgen"
+	"github.com/aviau/gopass/internal/pwgen"
 )
 
 func TestLength(t *testing.T) {
