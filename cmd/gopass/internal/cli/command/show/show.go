@@ -30,8 +30,10 @@ import (
 func ExecShow(cfg *config.CliConfig, args []string) error {
 	var clip, c bool
 
-	fs := flag.NewFlagSet("show", flag.ExitOnError)
-	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput, `Usage: gopass show [pass-name]`) }
+	fs := flag.NewFlagSet("show", flag.ContinueOnError)
+	fs.Usage = func() {
+		fmt.Fprintln(cfg.WriterOutput, "Usage: gopass show [pass-name]")
+	}
 
 	fs.BoolVar(&clip, "clip", false, "")
 	fs.BoolVar(&c, "c", false, "")
