@@ -1,4 +1,4 @@
-//    Copyright (C) 2018 Alexandre Viau <alexandre@alexandreviau.net>
+//    Copyright (C) 2017-2018 Alexandre Viau <alexandre@alexandreviau.net>
 //
 //    This file is part of gopass.
 //
@@ -18,21 +18,22 @@
 package cli_test
 
 import (
-	"bytes"
+	"strings"
+	"testing"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli"
+	"github.com/stretchr/testify/assert"
 )
 
-type cliTest struct {
-	OutputWriter bytes.Buffer
-	ErrorWriter  bytes.Buffer
-}
+func TestHelp(t *testing.T) {
+	cliTest := newCliTest()
+	cliTest.Run([]string{"help"})
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
 
-func newCliTest() *cliTest {
-	cliTest := cliTest{}
-	return &cliTest
-}
+	cliTest = newCliTest()
+	cliTest.Run([]string{"--help"})
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
 
-func (cliTest *cliTest) Run(args []string) error {
-	return cli.Run(args, &cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
+	cliTest = newCliTest()
+	cliTest.Run([]string{"-h"})
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
 }
