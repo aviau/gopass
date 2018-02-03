@@ -66,44 +66,43 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 }
 
 func runCommand(cfg *command.Config, cmdAndArgs []string) error {
+
 	cmd := ""
-	args := cmdAndArgs
 	if len(cmdAndArgs) > 0 {
 		cmd = cmdAndArgs[0]
-		args = cmdAndArgs[1:]
 	}
 
 	switch cmd {
 	case "show":
-		return cmd_show.ExecShow(cfg, args)
+		return cmd_show.ExecShow(cfg, cmdAndArgs[1:])
 	case "edit":
-		return cmd_edit.ExecEdit(cfg, args)
+		return cmd_edit.ExecEdit(cfg, cmdAndArgs[1:])
 	case "insert", "add":
-		return cmd_insert.ExecInsert(cfg, args)
+		return cmd_insert.ExecInsert(cfg, cmdAndArgs[1:])
 	case "find", "ls", "search", "list":
-		return cmd_find.ExecFind(cfg, args)
+		return cmd_find.ExecFind(cfg, cmdAndArgs[1:])
 	case "":
-		return cmd_find.ExecFind(cfg, args)
+		return cmd_find.ExecFind(cfg, cmdAndArgs)
 	case "grep":
-		return cmd_grep.ExecGrep(cfg, args)
+		return cmd_grep.ExecGrep(cfg, cmdAndArgs[1:])
 	case "cp", "copy":
-		return cmd_cp.ExecCp(cfg, args)
+		return cmd_cp.ExecCp(cfg, cmdAndArgs[1:])
 	case "mv", "rename":
-		return cmd_mv.ExecMv(cfg, args)
+		return cmd_mv.ExecMv(cfg, cmdAndArgs[1:])
 	case "rm", "remove", "delete":
-		return cmd_rm.ExecRm(cfg, args)
+		return cmd_rm.ExecRm(cfg, cmdAndArgs[1:])
 	case "generate":
-		return cmd_generate.ExecGenerate(cfg, args)
+		return cmd_generate.ExecGenerate(cfg, cmdAndArgs[1:])
 	case "git":
-		return cmd_git.ExecGit(cfg, args)
+		return cmd_git.ExecGit(cfg, cmdAndArgs[1:])
 	case "help":
 		return cmd_help.ExecHelp(cfg)
 	case "init":
-		return cmd_init.ExecInit(cfg, args)
+		return cmd_init.ExecInit(cfg, cmdAndArgs[1:])
 	case "version":
 		return cmd_version.ExecVersion(cfg)
 	default:
-		return cmd_show.ExecShow(cfg, args)
+		return cmd_show.ExecShow(cfg, cmdAndArgs)
 	}
 
 }
