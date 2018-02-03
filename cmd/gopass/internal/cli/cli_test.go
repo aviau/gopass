@@ -19,6 +19,7 @@ package cli_test
 
 import (
 	"bytes"
+	"testing"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli"
 )
@@ -26,13 +27,19 @@ import (
 type cliTest struct {
 	OutputWriter bytes.Buffer
 	ErrorWriter  bytes.Buffer
+	t            *testing.T
 }
 
-func newCliTest() *cliTest {
-	cliTest := cliTest{}
+func newCliTest(t *testing.T) *cliTest {
+	cliTest := cliTest{
+		t: t,
+	}
 	return &cliTest
 }
 
 func (cliTest *cliTest) Run(args []string) error {
 	return cli.Run(args, &cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
+}
+
+func (cliTest *cliTest) Close() {
 }

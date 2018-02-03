@@ -23,10 +23,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/aviau/gopass/internal/gopasstest"
 )
 
 func TestCopyPassword(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
@@ -48,7 +50,7 @@ func TestCopyPassword(t *testing.T) {
 }
 
 func TestCopyPasswordInDirectory(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")

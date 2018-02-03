@@ -23,10 +23,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/aviau/gopass/internal/gopasstest"
 )
 
 func TestGetPasswordsList(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	_, err := os.Create(filepath.Join(st.StorePath, "test.com.gpg"))

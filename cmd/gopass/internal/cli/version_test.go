@@ -27,7 +27,9 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	cliTest := newCliTest()
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	cliTest.Run([]string{"version"})
 
 	assert.Equal(t,

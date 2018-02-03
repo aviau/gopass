@@ -25,8 +25,10 @@ import (
 )
 
 func TestCliPassesFirstArgNotFlag(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	// This test verifies that flags are not passed to runCommand.
-	cliTest := newCliTest()
 	cliTest.Run([]string{"-EDITOR=test", "rm"})
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
 }

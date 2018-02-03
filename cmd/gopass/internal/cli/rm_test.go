@@ -24,12 +24,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRmHelp(t *testing.T) {
-	cliTest := newCliTest()
-	cliTest.Run([]string{"rm", "--help"})
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+func TestRmDashDashHelp(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
 
-	cliTest = newCliTest()
+	cliTest.Run([]string{"rm", "--help"})
+
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+}
+
+func TestRmDashH(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	cliTest.Run([]string{"rm", "-h"})
+
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
 }
