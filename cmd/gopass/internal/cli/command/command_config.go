@@ -27,18 +27,14 @@ import (
 
 //Config contains everything that commands need to run.
 type Config struct {
-	path         string    //Path to the password store
-	editor       string    //Text editor to use
 	WriterOutput io.Writer //The writer to use for output
 	WriterError  io.Writer //The writer to use for errors
 	ReaderInput  io.Reader //The reader to use for input
 }
 
 //NewConfig creates a Config.
-func NewConfig(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *Config {
+func NewConfig(writerOutput, writerError io.Writer, readerInput io.Reader) *Config {
 	cfg := Config{
-		path:         path,
-		editor:       editor,
 		WriterOutput: writerOutput,
 		WriterError:  writerError,
 		ReaderInput:  readerInput,
@@ -48,28 +44,18 @@ func NewConfig(path, editor string, writerOutput, writerError io.Writer, readerI
 
 //GetDefaultPasswordStoreDir returns the default password store directory.
 func (cfg *Config) GetDefaultPasswordStoreDir() string {
-	//Look for the store path in the commandLine,
-	// env var, or default to $HOME/.password-store
-	storePath := cfg.path
+	storePath := os.Getenv("PASSWORD_STORE_DIR")
 	if storePath == "" {
-		storePath = os.Getenv("PASSWORD_STORE_DIR")
-		if storePath == "" {
-			storePath = path.Join(os.Getenv("HOME"), ".password-store")
-		}
+		storePath = path.Join(os.Getenv("HOME"), ".password-store")
 	}
 	return storePath
 }
 
 //GetEditor returns the configured editor.
 func (cfg *Config) GetEditor() string {
-	// Look for the editor to use in the commandLine,
-	// env var, or default to editor.
-	editor := cfg.editor
+	editor := os.Getenv("EDITOR")
 	if editor == "" {
-		editor = os.Getenv("EDITOR")
-		if editor == "" {
-			editor = "editor"
-		}
+		editor = "editor"
 	}
 	return editor
 }

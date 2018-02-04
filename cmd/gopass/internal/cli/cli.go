@@ -18,7 +18,6 @@
 package cli
 
 import (
-	"flag"
 	"io"
 
 	cmd_cp "github.com/aviau/gopass/cmd/gopass/internal/cli/command/cp"
@@ -40,29 +39,10 @@ import (
 
 //Run parses the arguments and executes the gopass CLI
 func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInput io.Reader) error {
-	var h, help bool
-	var path string
-	var editor string
 
-	fs := flag.NewFlagSet("default", flag.ExitOnError)
-	fs.StringVar(&path, "PASSWORD_STORE_DIR", "", "Path to the password store")
-	fs.StringVar(&editor, "EDITOR", "", "Text editor to use")
+	cfg := command.NewConfig(writerOutput, writerError, readerInput)
 
-	fs.BoolVar(&help, "help", false, "")
-	fs.BoolVar(&h, "h", false, "")
-
-	fs.Parse(args)
-
-	cfg := command.NewConfig(path, editor, writerOutput, writerError, readerInput)
-
-	if h || help {
-		err := cmd_help.ExecHelp(cfg)
-		return err
-	}
-
-	cmdAndArgs := fs.Args()
-
-	return runCommand(cfg, cmdAndArgs)
+	return runCommand(cfg, args)
 }
 
 func runCommand(cfg *command.Config, cmdAndArgs []string) error {
@@ -95,7 +75,7 @@ func runCommand(cfg *command.Config, cmdAndArgs []string) error {
 		return cmd_generate.ExecGenerate(cfg, cmdAndArgs[1:])
 	case "git":
 		return cmd_git.ExecGit(cfg, cmdAndArgs[1:])
-	case "help":
+	case "help", "-h", "--help":
 		return cmd_help.ExecHelp(cfg)
 	case "init":
 		return cmd_init.ExecInit(cfg, cmdAndArgs[1:])
