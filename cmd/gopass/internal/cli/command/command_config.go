@@ -42,8 +42,8 @@ func NewConfig(writerOutput, writerError io.Writer, readerInput io.Reader) *Conf
 	return &cfg
 }
 
-//GetDefaultPasswordStoreDir returns the default password store directory.
-func (cfg *Config) GetDefaultPasswordStoreDir() string {
+//PasswordStoreDir returns the password store directory.
+func (cfg *Config) PasswordStoreDir() string {
 	storePath := os.Getenv("PASSWORD_STORE_DIR")
 	if storePath == "" {
 		storePath = path.Join(os.Getenv("HOME"), ".password-store")
@@ -51,8 +51,8 @@ func (cfg *Config) GetDefaultPasswordStoreDir() string {
 	return storePath
 }
 
-//GetEditor returns the configured editor.
-func (cfg *Config) GetEditor() string {
+//Editor returns the configured editor.
+func (cfg *Config) Editor() string {
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
 		editor = "editor"
@@ -60,9 +60,9 @@ func (cfg *Config) GetEditor() string {
 	return editor
 }
 
-//GetStore finds and returns the PasswordStore.
-func (cfg *Config) GetStore() *gopass.PasswordStore {
-	storePath := cfg.GetDefaultPasswordStoreDir()
+//PasswordStore returns the PasswordStore.
+func (cfg *Config) PasswordStore() *gopass.PasswordStore {
+	storePath := cfg.PasswordStoreDir()
 	s := gopass.NewPasswordStore(storePath)
 	return s
 }

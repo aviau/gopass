@@ -32,7 +32,7 @@ func ExecInit(cfg *command.Config, args []string) error {
 
 	fs := flag.NewFlagSet("init", flag.ContinueOnError)
 
-	fs.StringVar(&path, "path", cfg.GetDefaultPasswordStoreDir(), "")
+	fs.StringVar(&path, "path", cfg.PasswordStoreDir(), "")
 	fs.StringVar(&p, "p", "", "")
 
 	fs.Usage = func() {

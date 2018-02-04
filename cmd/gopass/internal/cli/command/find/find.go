@@ -30,7 +30,7 @@ func ExecFind(cfg *command.Config, args []string) error {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	terms := fs.Args()
 	pattern := "*" + strings.Join(terms, "*|*") + "*"

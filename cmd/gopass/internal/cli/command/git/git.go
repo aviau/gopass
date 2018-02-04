@@ -25,7 +25,7 @@ import (
 
 //ExecGit runs the "git" command.
 func ExecGit(cfg *command.Config, args []string) error {
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	gitArgs := []string{
 		"--git-dir=" + store.GitDir,

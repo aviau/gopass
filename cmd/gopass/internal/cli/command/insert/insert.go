@@ -56,7 +56,7 @@ func ExecInsert(cfg *command.Config, args []string) error {
 
 	pwname := fs.Arg(0)
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	// Check if password already exists
 	if containsPassword, _ := store.ContainsPassword(pwname); containsPassword && !force {
@@ -71,7 +71,7 @@ func ExecInsert(cfg *command.Config, args []string) error {
 		file, _ := ioutil.TempFile(os.TempDir(), "gopass")
 		defer os.Remove(file.Name())
 
-		editor := exec.Command(cfg.GetEditor(), file.Name())
+		editor := exec.Command(cfg.Editor(), file.Name())
 		editor.Stdout = os.Stdout
 		editor.Stdin = os.Stdin
 		editor.Run()

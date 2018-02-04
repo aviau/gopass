@@ -47,7 +47,7 @@ func ExecCp(cfg *command.Config, args []string) error {
 	recursive = recursive || r
 	force = force || f
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	source := fs.Arg(0)
 	dest := fs.Arg(1)

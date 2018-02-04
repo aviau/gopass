@@ -51,7 +51,7 @@ func ExecShow(cfg *command.Config, args []string) error {
 		return errors.New("missing password name")
 	}
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	password, err := store.GetPassword(password)
 	if err != nil {

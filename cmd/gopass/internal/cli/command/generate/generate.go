@@ -53,7 +53,7 @@ func ExecGenerate(cfg *command.Config, args []string) error {
 
 	passName := fs.Arg(0)
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	if containsPassword, _ := store.ContainsPassword(passName); containsPassword && !force {
 		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password \"%s\" already exists. Would you like to overwrite? [y/n] ", passName)) {

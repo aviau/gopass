@@ -49,7 +49,7 @@ func ExecRm(cfg *command.Config, args []string) error {
 	force = force || f
 	recursive = recursive || r
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	pwname := fs.Arg(0)
 	if pwname == "" {

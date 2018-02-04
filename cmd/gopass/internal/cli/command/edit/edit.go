@@ -32,7 +32,7 @@ func ExecEdit(cfg *command.Config, args []string) error {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	passname := fs.Arg(0)
 
@@ -47,7 +47,7 @@ func ExecEdit(cfg *command.Config, args []string) error {
 
 	ioutil.WriteFile(file.Name(), []byte(password), 0600)
 
-	editor := exec.Command(cfg.GetEditor(), file.Name())
+	editor := exec.Command(cfg.Editor(), file.Name())
 	editor.Stdout = cfg.WriterOutput
 	editor.Stderr = cfg.WriterError
 	editor.Stdin = cfg.ReaderInput

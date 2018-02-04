@@ -42,7 +42,7 @@ func ExecMv(cfg *command.Config, args []string) error {
 
 	force = force || f
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	source := fs.Arg(0)
 	dest := fs.Arg(1)

@@ -35,7 +35,7 @@ func ExecGrep(cfg *command.Config, args []string) error {
 
 	pattern, _ := regexp.CompilePOSIX(fs.Arg(0))
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	passwords := store.GetPasswordsList()
 
