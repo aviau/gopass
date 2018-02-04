@@ -45,7 +45,7 @@ func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInp
 	return runCommand(cfg, args)
 }
 
-func runCommand(cfg *command.Config, cmdAndArgs []string) error {
+func runCommand(cfg command.Config, cmdAndArgs []string) error {
 
 	cmd := ""
 	if len(cmdAndArgs) > 0 {

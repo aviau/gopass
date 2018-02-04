@@ -26,7 +26,7 @@ import (
 )
 
 //ExecFind runs the "find" command.
-func ExecFind(cfg *command.Config, args []string) error {
+func ExecFind(cfg command.Config, args []string) error {
 	fs := flag.NewFlagSet("find", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -47,8 +47,8 @@ func ExecFind(cfg *command.Config, args []string) error {
 		pattern,
 		store.Path)
 
-	find.Stdout = cfg.WriterOutput
-	find.Stderr = cfg.WriterError
+	find.Stdout = cfg.WriterOutput()
+	find.Stderr = cfg.WriterError()
 	find.Run()
 	return nil
 }

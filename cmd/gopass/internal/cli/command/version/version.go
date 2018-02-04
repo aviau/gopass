@@ -25,7 +25,7 @@ import (
 )
 
 //ExecVersion runs the "version" command.
-func ExecVersion(cfg *command.Config) error {
-	fmt.Fprintf(cfg.WriterOutput, "gopass v%s\n", version.Version)
+func ExecVersion(cfg command.Config) error {
+	fmt.Fprintf(cfg.WriterOutput(), "gopass v%s\n", version.Version)
 	return nil
 }

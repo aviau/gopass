@@ -24,7 +24,7 @@ import (
 )
 
 //ExecGit runs the "git" command.
-func ExecGit(cfg *command.Config, args []string) error {
+func ExecGit(cfg command.Config, args []string) error {
 	store := cfg.PasswordStore()
 
 	gitArgs := []string{
@@ -37,9 +37,9 @@ func ExecGit(cfg *command.Config, args []string) error {
 		"git",
 		gitArgs...)
 
-	git.Stdout = cfg.WriterOutput
-	git.Stderr = cfg.WriterError
-	git.Stdin = cfg.ReaderInput
+	git.Stdout = cfg.WriterOutput()
+	git.Stderr = cfg.WriterError()
+	git.Stdin = cfg.ReaderInput()
 	git.Run()
 	return nil
 }

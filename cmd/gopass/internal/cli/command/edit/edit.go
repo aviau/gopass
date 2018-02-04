@@ -28,7 +28,7 @@ import (
 )
 
 //ExecEdit runs the "edit" command.
-func ExecEdit(cfg *command.Config, args []string) error {
+func ExecEdit(cfg command.Config, args []string) error {
 	fs := flag.NewFlagSet("edit", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -48,9 +48,9 @@ func ExecEdit(cfg *command.Config, args []string) error {
 	ioutil.WriteFile(file.Name(), []byte(password), 0600)
 
 	editor := exec.Command(cfg.Editor(), file.Name())
-	editor.Stdout = cfg.WriterOutput
-	editor.Stderr = cfg.WriterError
-	editor.Stdin = cfg.ReaderInput
+	editor.Stdout = cfg.WriterOutput()
+	editor.Stderr = cfg.WriterError()
+	editor.Stdin = cfg.ReaderInput()
 	editor.Run()
 
 	pwText, _ := ioutil.ReadFile(file.Name())
@@ -60,6 +60,6 @@ func ExecEdit(cfg *command.Config, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Succesfully edited password \"%s\".\n", passname)
+	fmt.Fprintf(cfg.WriterOutput(), "Succesfully edited password \"%s\".\n", passname)
 	return nil
 }

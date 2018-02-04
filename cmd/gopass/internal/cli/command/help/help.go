@@ -24,8 +24,8 @@ import (
 )
 
 //ExecHelp runs the "help" command.
-func ExecHelp(cfg *command.Config) error {
-	fmt.Fprintln(cfg.WriterOutput, `Usage:
+func ExecHelp(cfg command.Config) error {
+	fmt.Fprintln(cfg.WriterOutput(), `Usage:
       init                  Initialize a new password store.
       ls                    List passwords.
       find                  List passwords that match a string.

@@ -27,12 +27,12 @@ import (
 )
 
 //ExecCp runs the "cp" command.
-func ExecCp(cfg *command.Config, args []string) error {
+func ExecCp(cfg command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("cp", flag.ExitOnError)
-	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput, "Usage: gopass cp old-path new-path") }
+	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass cp old-path new-path") }
 
 	fs.BoolVar(&recursive, "recursive", false, "")
 	fs.BoolVar(&r, "r", false, "")
@@ -74,7 +74,7 @@ func ExecCp(cfg *command.Config, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(cfg.WriterOutput, "Copied password from \"%s\" to \"%s\".\n", source, dest)
+		fmt.Fprintf(cfg.WriterOutput(), "Copied password from \"%s\" to \"%s\".\n", source, dest)
 		return nil
 	}
 
@@ -88,7 +88,7 @@ func ExecCp(cfg *command.Config, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(cfg.WriterOutput, "Copied directory from \"%s\" to \"%s\".\n", source, dest)
+		fmt.Fprintf(cfg.WriterOutput(), "Copied directory from \"%s\" to \"%s\".\n", source, dest)
 		return nil
 	}
 

@@ -27,11 +27,11 @@ import (
 )
 
 //ExecMv runs the "mv" comand.
-func ExecMv(cfg *command.Config, args []string) error {
+func ExecMv(cfg command.Config, args []string) error {
 	var force, f bool
 
 	fs := flag.NewFlagSet("mv", flag.ExitOnError)
-	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput, "Usage: gopass mv old-path new-path") }
+	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass mv old-path new-path") }
 
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
@@ -69,7 +69,7 @@ func ExecMv(cfg *command.Config, args []string) error {
 			return err
 		}
 
-		fmt.Fprintf(cfg.WriterOutput, "Moved password from \"%s\" to \"%s\".\n", source, dest)
+		fmt.Fprintf(cfg.WriterOutput(), "Moved password from \"%s\" to \"%s\".\n", source, dest)
 		return nil
 	}
 
@@ -77,7 +77,7 @@ func ExecMv(cfg *command.Config, args []string) error {
 		if err := store.MoveDirectory(source, dest); err != nil {
 			return err
 		}
-		fmt.Fprintf(cfg.WriterOutput, "Moved directory from \"%s\" to \"%s\".\n", source, dest)
+		fmt.Fprintf(cfg.WriterOutput(), "Moved directory from \"%s\" to \"%s\".\n", source, dest)
 		return nil
 	}
 

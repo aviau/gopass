@@ -19,50 +19,16 @@ package command
 
 import (
 	"io"
-	"os"
-	"path"
 
 	"github.com/aviau/gopass"
 )
 
 //Config contains everything that commands need to run.
-type Config struct {
-	WriterOutput io.Writer //The writer to use for output
-	WriterError  io.Writer //The writer to use for errors
-	ReaderInput  io.Reader //The reader to use for input
-}
-
-//NewConfig creates a Config.
-func NewConfig(writerOutput, writerError io.Writer, readerInput io.Reader) *Config {
-	cfg := Config{
-		WriterOutput: writerOutput,
-		WriterError:  writerError,
-		ReaderInput:  readerInput,
-	}
-	return &cfg
-}
-
-//PasswordStoreDir returns the password store directory.
-func (cfg *Config) PasswordStoreDir() string {
-	storePath := os.Getenv("PASSWORD_STORE_DIR")
-	if storePath == "" {
-		storePath = path.Join(os.Getenv("HOME"), ".password-store")
-	}
-	return storePath
-}
-
-//Editor returns the configured editor.
-func (cfg *Config) Editor() string {
-	editor := os.Getenv("EDITOR")
-	if editor == "" {
-		editor = "editor"
-	}
-	return editor
-}
-
-//PasswordStore returns the PasswordStore.
-func (cfg *Config) PasswordStore() *gopass.PasswordStore {
-	storePath := cfg.PasswordStoreDir()
-	s := gopass.NewPasswordStore(storePath)
-	return s
+type Config interface {
+	WriterOutput() io.Writer
+	WriterError() io.Writer
+	ReaderInput() io.Reader
+	Editor() string
+	PasswordStoreDir() string
+	PasswordStore() *gopass.PasswordStore
 }

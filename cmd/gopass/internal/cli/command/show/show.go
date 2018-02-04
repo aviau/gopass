@@ -28,12 +28,12 @@ import (
 )
 
 //ExecShow runs the "show" command.
-func ExecShow(cfg *command.Config, args []string) error {
+func ExecShow(cfg command.Config, args []string) error {
 	var clip, c bool
 
 	fs := flag.NewFlagSet("show", flag.ContinueOnError)
 	fs.Usage = func() {
-		fmt.Fprintln(cfg.WriterOutput, "Usage: gopass show [pass-name]")
+		fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass show [pass-name]")
 	}
 
 	fs.BoolVar(&clip, "clip", false, "")
@@ -65,9 +65,9 @@ func ExecShow(cfg *command.Config, args []string) error {
 			return err
 		}
 
-		fmt.Fprintln(cfg.WriterOutput, "the first line of the password was copied to clipboard.")
+		fmt.Fprintln(cfg.WriterOutput(), "the first line of the password was copied to clipboard.")
 	} else {
-		fmt.Fprintln(cfg.WriterOutput, password)
+		fmt.Fprintln(cfg.WriterOutput(), password)
 	}
 
 	return nil
