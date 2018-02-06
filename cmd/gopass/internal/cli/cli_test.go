@@ -26,9 +26,14 @@ import (
 	"github.com/aviau/gopass/internal/gopasstest"
 )
 
+//testConfig is a fake command.Config, it does not use env variables.
 type testConfig struct {
-	*command.DefaultConfig
+	command.Config
 	passwordStoreTest *gopasstest.PasswordStoreTest
+}
+
+func (cfg *testConfig) PasswordStore() *gopass.PasswordStore {
+	return cfg.passwordStoreTest.PasswordStore
 }
 
 type cliTest struct {
@@ -56,11 +61,11 @@ func (cliTest *cliTest) Run(args []string) error {
 	baseConfig := command.NewConfig(&cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
 
 	testConfig := testConfig{
-		DefaultConfig:     baseConfig,
+		Config:            baseConfig,
 		passwordStoreTest: cliTest.passwordStoreTest,
 	}
 
-	return runCommand(testConfig, args)
+	return runCommand(&testConfig, args)
 }
 
 func (cliTest *cliTest) Close() {

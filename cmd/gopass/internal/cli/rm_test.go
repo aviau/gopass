@@ -18,6 +18,8 @@
 package cli
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -40,4 +42,18 @@ func TestRmDashH(t *testing.T) {
 	cliTest.Run([]string{"rm", "-h"})
 
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+}
+
+func TestRmDirectoryWithoutRecursive(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	testDirectoryPath := filepath.Join(cliTest.PasswordStore().Path, "dir")
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
+		t.Fatal(err)
+	}
+
+	err := cliTest.Run([]string{"rm", "dir"})
+
+	assert.EqualError(t, err, "\"dir\" is a directory, use -r to remove recursively")
 }
