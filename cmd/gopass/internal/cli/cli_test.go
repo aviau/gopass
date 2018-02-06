@@ -15,31 +15,54 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli_test
+package cli
 
 import (
 	"bytes"
 	"testing"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli"
+	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
+	"github.com/aviau/gopass/internal/gopasstest"
 )
 
+type testConfig struct {
+	*command.DefaultConfig
+	passwordStoreTest *gopasstest.PasswordStoreTest
+}
+
 type cliTest struct {
-	OutputWriter bytes.Buffer
-	ErrorWriter  bytes.Buffer
-	t            *testing.T
+	OutputWriter      bytes.Buffer
+	ErrorWriter       bytes.Buffer
+	t                 *testing.T
+	passwordStoreTest *gopasstest.PasswordStoreTest
 }
 
 func newCliTest(t *testing.T) *cliTest {
+	passwordStoreTest := gopasstest.NewPasswordStoreTest(t)
+
 	cliTest := cliTest{
-		t: t,
+		t:                 t,
+		passwordStoreTest: passwordStoreTest,
 	}
 	return &cliTest
 }
 
+func (cliTest *cliTest) PasswordStore() *gopass.PasswordStore {
+	return cliTest.passwordStoreTest.PasswordStore
+}
+
 func (cliTest *cliTest) Run(args []string) error {
-	return cli.Run(args, &cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
+	baseConfig := command.NewConfig(&cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
+
+	testConfig := testConfig{
+		DefaultConfig:     baseConfig,
+		passwordStoreTest: cliTest.passwordStoreTest,
+	}
+
+	return runCommand(testConfig, args)
 }
 
 func (cliTest *cliTest) Close() {
+	cliTest.passwordStoreTest.Close()
 }
