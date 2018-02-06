@@ -28,13 +28,13 @@ import (
 )
 
 //ExecGenerate runs the "generate" command.
-func ExecGenerate(cfg *command.Config, args []string) error {
+func ExecGenerate(cfg command.Config, args []string) error {
 	var noSymbols, n bool
 	var force, f bool
 
 	fs := flag.NewFlagSet("generate", flag.ContinueOnError)
 	fs.Usage = func() {
-		fmt.Fprintln(cfg.WriterOutput, `Usage: gopass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
+		fmt.Fprintln(cfg.WriterOutput(), `Usage: gopass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
 	}
 
 	fs.BoolVar(&noSymbols, "no-symbols", false, "")
@@ -53,10 +53,10 @@ func ExecGenerate(cfg *command.Config, args []string) error {
 
 	passName := fs.Arg(0)
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	if containsPassword, _ := store.ContainsPassword(passName); containsPassword && !force {
-		if !gopass_terminal.AskYesNo(cfg.WriterOutput, fmt.Sprintf("Password \"%s\" already exists. Would you like to overwrite? [y/n] ", passName)) {
+		if !gopass_terminal.AskYesNo(cfg.WriterOutput(), fmt.Sprintf("Password \"%s\" already exists. Would you like to overwrite? [y/n] ", passName)) {
 			return nil
 		}
 	}
@@ -77,6 +77,6 @@ func ExecGenerate(cfg *command.Config, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Password \"%s\" added to the store.\n", passName)
+	fmt.Fprintf(cfg.WriterOutput(), "Password \"%s\" added to the store.\n", passName)
 	return nil
 }

@@ -19,64 +19,16 @@ package command
 
 import (
 	"io"
-	"os"
-	"path"
 
 	"github.com/aviau/gopass"
 )
 
 //Config contains everything that commands need to run.
-type Config struct {
-	path         string    //Path to the password store
-	editor       string    //Text editor to use
-	WriterOutput io.Writer //The writer to use for output
-	WriterError  io.Writer //The writer to use for errors
-	ReaderInput  io.Reader //The reader to use for input
-}
-
-//NewConfig creates a Config.
-func NewConfig(path, editor string, writerOutput, writerError io.Writer, readerInput io.Reader) *Config {
-	cfg := Config{
-		path:         path,
-		editor:       editor,
-		WriterOutput: writerOutput,
-		WriterError:  writerError,
-		ReaderInput:  readerInput,
-	}
-	return &cfg
-}
-
-//GetDefaultPasswordStoreDir returns the default password store directory.
-func (cfg *Config) GetDefaultPasswordStoreDir() string {
-	//Look for the store path in the commandLine,
-	// env var, or default to $HOME/.password-store
-	storePath := cfg.path
-	if storePath == "" {
-		storePath = os.Getenv("PASSWORD_STORE_DIR")
-		if storePath == "" {
-			storePath = path.Join(os.Getenv("HOME"), ".password-store")
-		}
-	}
-	return storePath
-}
-
-//GetEditor returns the configured editor.
-func (cfg *Config) GetEditor() string {
-	// Look for the editor to use in the commandLine,
-	// env var, or default to editor.
-	editor := cfg.editor
-	if editor == "" {
-		editor = os.Getenv("EDITOR")
-		if editor == "" {
-			editor = "editor"
-		}
-	}
-	return editor
-}
-
-//GetStore finds and returns the PasswordStore.
-func (cfg *Config) GetStore() *gopass.PasswordStore {
-	storePath := cfg.GetDefaultPasswordStoreDir()
-	s := gopass.NewPasswordStore(storePath)
-	return s
+type Config interface {
+	WriterOutput() io.Writer
+	WriterError() io.Writer
+	ReaderInput() io.Reader
+	Editor() string
+	PasswordStoreDir() string
+	PasswordStore() *gopass.PasswordStore
 }

@@ -29,13 +29,13 @@ import (
 )
 
 //ExecGrep runs the "grep" command.
-func ExecGrep(cfg *command.Config, args []string) error {
+func ExecGrep(cfg command.Config, args []string) error {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)
 
 	pattern, _ := regexp.CompilePOSIX(fs.Arg(0))
 
-	store := cfg.GetStore()
+	store := cfg.PasswordStore()
 
 	passwords := store.GetPasswordsList()
 
@@ -50,7 +50,7 @@ func ExecGrep(cfg *command.Config, args []string) error {
 			}
 		}
 		if output != "" {
-			fmt.Fprintf(cfg.WriterOutput, "%s:\n%s", ansi.Color(password, "cyan+b"), output)
+			fmt.Fprintf(cfg.WriterOutput(), "%s:\n%s", ansi.Color(password, "cyan+b"), output)
 		}
 	}
 	return nil

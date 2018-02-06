@@ -27,16 +27,16 @@ import (
 )
 
 //ExecInit runs the "init" command.
-func ExecInit(cfg *command.Config, args []string) error {
+func ExecInit(cfg command.Config, args []string) error {
 	var path, p string
 
 	fs := flag.NewFlagSet("init", flag.ContinueOnError)
 
-	fs.StringVar(&path, "path", cfg.GetDefaultPasswordStoreDir(), "")
+	fs.StringVar(&path, "path", cfg.PasswordStoreDir(), "")
 	fs.StringVar(&p, "p", "", "")
 
 	fs.Usage = func() {
-		fmt.Fprintln(cfg.WriterOutput, `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`)
+		fmt.Fprintln(cfg.WriterOutput(), `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`)
 	}
 
 	if err := fs.Parse(args); err != nil {
@@ -64,6 +64,6 @@ func ExecInit(cfg *command.Config, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput, "Successfully created Password Store at \"%s\".\n", path)
+	fmt.Fprintf(cfg.WriterOutput(), "Successfully created Password Store at \"%s\".\n", path)
 	return nil
 }
