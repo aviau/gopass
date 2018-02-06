@@ -57,3 +57,12 @@ func TestRmDirectoryWithoutRecursive(t *testing.T) {
 
 	assert.EqualError(t, err, "\"dir\" is a directory, use -r to remove recursively")
 }
+
+func TestRmUnexistingPassword(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	err := cliTest.Run([]string{"rm", "dir"})
+
+	assert.EqualError(t, err, "could not find password or directory to remove")
+}
