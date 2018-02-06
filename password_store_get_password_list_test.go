@@ -31,17 +31,17 @@ func TestGetPasswordsList(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	_, err := os.Create(filepath.Join(st.StorePath, "test.com.gpg"))
+	_, err := os.Create(filepath.Join(st.PasswordStore.Path, "test.com.gpg"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Create(filepath.Join(st.StorePath, "test2.com.gpg"))
+	_, err = os.Create(filepath.Join(st.PasswordStore.Path, "test2.com.gpg"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Create(filepath.Join(st.StorePath, "test3"))
+	_, err = os.Create(filepath.Join(st.PasswordStore.Path, "test3"))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -28,7 +28,7 @@ import (
 //PasswordStoreTest allows for testing password stores.
 type PasswordStoreTest struct {
 	PasswordStore *gopass.PasswordStore
-	StorePath     string
+	storePath     string
 	t             *testing.T
 }
 
@@ -48,7 +48,7 @@ func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 
 	passwordStoreTest := PasswordStoreTest{
 		PasswordStore: passwordStore,
-		StorePath:     storePath,
+		storePath:     storePath,
 	}
 
 	return &passwordStoreTest
@@ -56,7 +56,7 @@ func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 
 //Close removes the password store
 func (test *PasswordStoreTest) Close() {
-	if err := os.RemoveAll(test.StorePath); err != nil {
+	if err := os.RemoveAll(test.storePath); err != nil {
 		test.t.Fatal(err)
 	}
 }

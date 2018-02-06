@@ -31,7 +31,7 @@ func TestCopyPassword(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
@@ -40,7 +40,7 @@ func TestCopyPassword(t *testing.T) {
 	_, err = os.Stat(testPasswordPath)
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
-	destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
+	destPasswordPath := filepath.Join(st.PasswordStore.Path, "test2.com.gpg")
 	_, err = os.Stat(destPasswordPath)
 	assert.True(t, os.IsNotExist(err), "test2.com.gpg should not have been created yet")
 
@@ -53,7 +53,7 @@ func TestCopyPasswordInDirectory(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
@@ -62,12 +62,12 @@ func TestCopyPasswordInDirectory(t *testing.T) {
 	_, err = os.Stat(testPasswordPath)
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
-	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
-	destPasswordPath := filepath.Join(st.StorePath, "dir", "test.com.gpg")
+	destPasswordPath := filepath.Join(st.PasswordStore.Path, "dir", "test.com.gpg")
 	_, err = os.Stat(destPasswordPath)
 	assert.True(t, os.IsNotExist(err), "test2.com.gpg should have been created yet")
 

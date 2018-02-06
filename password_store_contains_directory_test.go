@@ -34,7 +34,7 @@ func TestContainsDirectory(t *testing.T) {
 	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")
 	assert.False(t, containsDirectory, "The password store should contain dir")
 
-	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func TestContainsDirectoryTrailingSlash(t *testing.T) {
 	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")
 	assert.False(t, containsDirectory, "The password store should contain dir")
 
-	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}

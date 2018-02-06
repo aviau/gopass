@@ -31,7 +31,7 @@ func TestRemoveDirectory(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func TestRemoveDirectoryTrailingSlash(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -71,7 +71,7 @@ func TestRemoveDirectoryRecursive(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
