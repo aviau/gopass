@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli_test
+package cli
 
 import (
 	"fmt"
@@ -27,7 +27,9 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	cliTest := newCliTest()
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	cliTest.Run([]string{"version"})
 
 	assert.Equal(t,

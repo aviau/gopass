@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli_test
+package cli
 
 import (
 	"strings"
@@ -24,12 +24,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGenerateHelp(t *testing.T) {
-	cliTest := newCliTest()
+func TestGenerateDashDashHelp(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	cliTest.Run([]string{"generate", "--help"})
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass generate"))
+}
 
-	cliTest = newCliTest()
+func TestGenerateDashH(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	cliTest.Run([]string{"generate", "-h"})
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass generate"))
 }

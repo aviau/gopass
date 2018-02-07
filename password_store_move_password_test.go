@@ -23,13 +23,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/aviau/gopass/internal/gopasstest"
 )
 
 func TestMovePassword(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
@@ -43,16 +45,16 @@ func TestMovePassword(t *testing.T) {
 	_, err = os.Stat(testPasswordPath)
 	assert.True(t, os.IsNotExist(err), "test.com.gpg should no longer exist")
 
-	destPasswordPath := filepath.Join(st.StorePath, "test2.com.gpg")
+	destPasswordPath := filepath.Join(st.PasswordStore.Path, "test2.com.gpg")
 	_, err = os.Stat(destPasswordPath)
 	assert.Nil(t, err, "test2.com.gpg should now exist")
 }
 
 func TestMovePasswordInDirectory(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
@@ -61,7 +63,7 @@ func TestMovePasswordInDirectory(t *testing.T) {
 	_, err = os.Stat(testPasswordPath)
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
-	testDirectoryPath := filepath.Join(st.StorePath, "dir")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	err = os.Mkdir(testDirectoryPath, 0700)
 	if err != nil {
 		t.Fatal(err)

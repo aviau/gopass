@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli_test
+package cli
 
 import (
 	"strings"
@@ -24,19 +24,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestShowHelp(t *testing.T) {
-	cliTest := newCliTest()
-	cliTest.Run([]string{"show", "--help"})
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass show"))
+func TestShowDashDashHelp(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
 
-	cliTest = newCliTest()
+	cliTest.Run([]string{"show", "--help"})
+
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass show"))
+}
+
+func TestShowDashH(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	cliTest.Run([]string{"show", "-h"})
+
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass show"))
 }
 
 func TestShowMissingPassword(t *testing.T) {
-	cliTest := newCliTest()
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
 	err := cliTest.Run([]string{"show"})
+
 	assert.EqualError(t, err, "missing password name")
 	assert.Equal(t, cliTest.OutputWriter.String(), "")
 	assert.Equal(t, cliTest.ErrorWriter.String(), "")

@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package gopass_test
+package gopasstest
 
 import (
 	"io/ioutil"
@@ -25,13 +25,15 @@ import (
 	"github.com/aviau/gopass"
 )
 
-type passwordStoreTest struct {
+//PasswordStoreTest allows for testing password stores.
+type PasswordStoreTest struct {
 	PasswordStore *gopass.PasswordStore
-	StorePath     string
+	storePath     string
 	t             *testing.T
 }
 
-func newPasswordStoreTest(t *testing.T) *passwordStoreTest {
+//NewPasswordStoreTest creates a password store for testing
+func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	storePath, err := ioutil.TempDir("", "gopass")
 	if err != nil {
 		t.Fatal(err)
@@ -44,16 +46,17 @@ func newPasswordStoreTest(t *testing.T) *passwordStoreTest {
 		t.Fatal(err)
 	}
 
-	passwordStoreTest := passwordStoreTest{
+	passwordStoreTest := PasswordStoreTest{
 		PasswordStore: passwordStore,
-		StorePath:     storePath,
+		storePath:     storePath,
 	}
 
 	return &passwordStoreTest
 }
 
-func (test *passwordStoreTest) Close() {
-	if err := os.RemoveAll(test.StorePath); err != nil {
+//Close removes the password store
+func (test *PasswordStoreTest) Close() {
+	if err := os.RemoveAll(test.storePath); err != nil {
 		test.t.Fatal(err)
 	}
 }

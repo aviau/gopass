@@ -23,13 +23,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/aviau/gopass/internal/gopasstest"
 )
 
 func TestRemovePassword(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
@@ -44,10 +46,10 @@ func TestRemovePassword(t *testing.T) {
 }
 
 func TestRemovePasswordTrailingSlash(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
@@ -62,10 +64,10 @@ func TestRemovePasswordTrailingSlash(t *testing.T) {
 }
 
 func TestRemovePasswordDirectory(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	testDirectoryPath := filepath.Join(st.StorePath, "test.com")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "test.com")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}

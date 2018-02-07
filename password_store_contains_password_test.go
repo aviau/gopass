@@ -23,16 +23,18 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/aviau/gopass/internal/gopasstest"
 )
 
 func TestContainsPassword(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
 	assert.False(t, containsPassword, "The password store should not contain test.com")
 
-	testPasswordPath := filepath.Join(st.StorePath, "test.com.gpg")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
 	if err != nil {
 		t.Fatal(err)
@@ -46,13 +48,13 @@ func TestContainsPassword(t *testing.T) {
 }
 
 func TestContainsPasswordDirectory(t *testing.T) {
-	st := newPasswordStoreTest(t)
+	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
 	assert.False(t, containsPassword, "The password store should not contain test.com")
 
-	testDirectoryPath := filepath.Join(st.StorePath, "test.com")
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "test.com")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}

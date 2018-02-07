@@ -84,6 +84,8 @@ func ExecRm(cfg command.Config, args []string) error {
 		if err := store.RemoveDirectory(pwname); err != nil {
 			return err
 		}
+	} else {
+		return fmt.Errorf("could not find password or directory to remove")
 	}
 
 	fmt.Fprintf(cfg.WriterOutput(), "Removed password/directory at path \"%s\".\n", fs.Arg(0))

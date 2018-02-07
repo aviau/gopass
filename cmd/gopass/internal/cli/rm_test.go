@@ -15,21 +15,54 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli_test
+package cli
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRmHelp(t *testing.T) {
-	cliTest := newCliTest()
-	cliTest.Run([]string{"rm", "--help"})
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+func TestRmDashDashHelp(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
 
-	cliTest = newCliTest()
-	cliTest.Run([]string{"rm", "-h"})
+	cliTest.Run([]string{"rm", "--help"})
+
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+}
+
+func TestRmDashH(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	cliTest.Run([]string{"rm", "-h"})
+
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+}
+
+func TestRmDirectoryWithoutRecursive(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	testDirectoryPath := filepath.Join(cliTest.PasswordStore().Path, "dir")
+	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
+		t.Fatal(err)
+	}
+
+	err := cliTest.Run([]string{"rm", "dir"})
+
+	assert.EqualError(t, err, "\"dir\" is a directory, use -r to remove recursively")
+}
+
+func TestRmUnexistingPassword(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	err := cliTest.Run([]string{"rm", "dir"})
+
+	assert.EqualError(t, err, "could not find password or directory to remove")
 }
