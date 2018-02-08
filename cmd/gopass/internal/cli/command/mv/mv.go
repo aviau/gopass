@@ -30,7 +30,7 @@ import (
 func ExecMv(cfg command.Config, args []string) error {
 	var force, f bool
 
-	fs := flag.NewFlagSet("mv", flag.ExitOnError)
+	fs := flag.NewFlagSet("mv", flag.ContinueOnError)
 	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass mv old-path new-path") }
 
 	fs.BoolVar(&force, "force", false, "")

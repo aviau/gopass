@@ -31,7 +31,7 @@ func ExecCp(cfg command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool
 
-	fs := flag.NewFlagSet("cp", flag.ExitOnError)
+	fs := flag.NewFlagSet("cp", flag.ContinueOnError)
 	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass cp old-path new-path") }
 
 	fs.BoolVar(&recursive, "recursive", false, "")

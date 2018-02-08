@@ -29,8 +29,12 @@ import (
 
 //ExecEdit runs the "edit" command.
 func ExecEdit(cfg command.Config, args []string) error {
-	fs := flag.NewFlagSet("edit", flag.ExitOnError)
-	fs.Parse(args)
+	fs := flag.NewFlagSet("edit", flag.ContinueOnError)
+	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass edit pass-name") }
+
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
 
 	store := cfg.PasswordStore()
 
