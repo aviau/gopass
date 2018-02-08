@@ -20,6 +20,7 @@ package generate
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
@@ -31,11 +32,17 @@ import (
 func ExecGenerate(cfg command.Config, args []string) error {
 	var noSymbols, n bool
 	var force, f bool
+	var help, h bool
 
 	fs := flag.NewFlagSet("generate", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
 	fs.Usage = func() {
 		fmt.Fprintln(cfg.WriterOutput(), `Usage: gopass generate [--no-symbols,-n] [--force,-f] pass-name pass-length`)
 	}
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	fs.BoolVar(&noSymbols, "no-symbols", false, "")
 	fs.BoolVar(&n, "n", false, "")
@@ -43,9 +50,13 @@ func ExecGenerate(cfg command.Config, args []string) error {
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
 
-	err := fs.Parse(args)
-	if err != nil {
+	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	noSymbols = noSymbols || n

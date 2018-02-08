@@ -28,8 +28,9 @@ func TestHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"help"})
+	err := cliTest.Run([]string{"help"})
 
+	assert.Nil(t, err)
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
@@ -39,8 +40,9 @@ func TestDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"--help"})
+	err := cliTest.Run([]string{"--help"})
 
+	assert.Nil(t, err)
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
@@ -50,8 +52,9 @@ func TestDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"-h"})
+	err := cliTest.Run([]string{"-h"})
 
+	assert.Nil(t, err)
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))

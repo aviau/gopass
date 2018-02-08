@@ -20,6 +20,7 @@ package rm
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
@@ -29,11 +30,17 @@ import (
 func ExecRm(cfg command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool
+	var help, h bool
 
 	fs := flag.NewFlagSet("rm", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
 	fs.Usage = func() {
 		fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass rm pass-name")
 	}
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	fs.BoolVar(&recursive, "recursive", false, "")
 	fs.BoolVar(&r, "r", false, "")
@@ -41,9 +48,13 @@ func ExecRm(cfg command.Config, args []string) error {
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
 
-	err := fs.Parse(args)
-	if err != nil {
+	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	force = force || f

@@ -28,8 +28,9 @@ func TestInitDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"init", "--help"})
+	err := cliTest.Run([]string{"init", "--help"})
 
+	assert.Nil(t, err)
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init"))
 }
 
@@ -37,7 +38,8 @@ func TestInitDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"init", "-h"})
+	err := cliTest.Run([]string{"init", "-h"})
 
+	assert.Nil(t, err)
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init"))
 }

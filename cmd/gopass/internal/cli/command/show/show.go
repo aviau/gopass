@@ -21,6 +21,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
@@ -30,17 +31,28 @@ import (
 //ExecShow runs the "show" command.
 func ExecShow(cfg command.Config, args []string) error {
 	var clip, c bool
+	var help, h bool
 
 	fs := flag.NewFlagSet("show", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
 	fs.Usage = func() {
 		fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass show [pass-name]")
 	}
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	fs.BoolVar(&clip, "clip", false, "")
 	fs.BoolVar(&c, "c", false, "")
 
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	clip = clip || c

@@ -30,8 +30,9 @@ func TestVersion(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"version"})
+	err := cliTest.Run([]string{"version"})
 
+	assert.Nil(t, err)
 	assert.Equal(t,
 		cliTest.OutputWriter.String(),
 		fmt.Sprintf("gopass v%s\n", version.Version))

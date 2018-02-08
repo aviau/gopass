@@ -34,8 +34,13 @@ import (
 func ExecInsert(cfg command.Config, args []string) error {
 	var multiline, m bool
 	var force, f bool
+	var help, h bool
 
 	fs := flag.NewFlagSet("insert", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	fs.BoolVar(&multiline, "multiline", false, "")
 	fs.BoolVar(&m, "m", false, "")
@@ -46,9 +51,14 @@ func ExecInsert(cfg command.Config, args []string) error {
 	fs.Usage = func() {
 		fmt.Fprintln(cfg.WriterOutput(), `Usage: gopass insert [ --multiline, -m ] [ --force, -f ] pass-name`)
 	}
-	err := fs.Parse(args)
-	if err != nil {
+
+	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	multiline = multiline || m

@@ -20,6 +20,7 @@ package cp
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"path/filepath"
 	"strings"
 
@@ -30,9 +31,15 @@ import (
 func ExecCp(cfg command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool
+	var help, h bool
 
 	fs := flag.NewFlagSet("cp", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
 	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass cp old-path new-path") }
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	fs.BoolVar(&recursive, "recursive", false, "")
 	fs.BoolVar(&r, "r", false, "")
@@ -42,6 +49,11 @@ func ExecCp(cfg command.Config, args []string) error {
 
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	recursive = recursive || r

@@ -28,8 +28,9 @@ func TestEditDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"edit", "--help"})
+	err := cliTest.Run([]string{"edit", "--help"})
 
+	assert.Nil(t, err)
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass edit"))
 }
 
@@ -37,7 +38,8 @@ func TestEditDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	cliTest.Run([]string{"edit", "-h"})
+	err := cliTest.Run([]string{"edit", "-h"})
 
+	assert.Nil(t, err)
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass edit"))
 }

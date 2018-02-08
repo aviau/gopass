@@ -20,6 +20,7 @@ package mv
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"path/filepath"
 	"strings"
 
@@ -29,15 +30,26 @@ import (
 //ExecMv runs the "mv" comand.
 func ExecMv(cfg command.Config, args []string) error {
 	var force, f bool
+	var help, h bool
 
 	fs := flag.NewFlagSet("mv", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
 	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass mv old-path new-path") }
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	fs.BoolVar(&force, "force", false, "")
 	fs.BoolVar(&f, "f", false, "")
 
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	force = force || f

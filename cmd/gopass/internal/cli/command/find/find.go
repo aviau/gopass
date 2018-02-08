@@ -20,6 +20,7 @@ package find
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os/exec"
 	"strings"
 
@@ -28,11 +29,23 @@ import (
 
 //ExecFind runs the "find" command.
 func ExecFind(cfg command.Config, args []string) error {
+	var help, h bool
+
 	fs := flag.NewFlagSet("find", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
 	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass find patterns...") }
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	store := cfg.PasswordStore()

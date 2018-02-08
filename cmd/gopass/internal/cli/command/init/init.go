@@ -20,6 +20,7 @@ package init
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"path/filepath"
 
 	"github.com/aviau/gopass"
@@ -29,8 +30,13 @@ import (
 //ExecInit runs the "init" command.
 func ExecInit(cfg command.Config, args []string) error {
 	var path, p string
+	var help, h bool
 
 	fs := flag.NewFlagSet("init", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	fs.StringVar(&path, "path", cfg.PasswordStoreDir(), "")
 	fs.StringVar(&p, "p", "", "")
@@ -41,6 +47,11 @@ func ExecInit(cfg command.Config, args []string) error {
 
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	if p != "" {

@@ -29,11 +29,23 @@ import (
 
 //ExecEdit runs the "edit" command.
 func ExecEdit(cfg command.Config, args []string) error {
+	var help, h bool
+
 	fs := flag.NewFlagSet("edit", flag.ContinueOnError)
+	fs.SetOutput(ioutil.Discard)
+
 	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass edit pass-name") }
+
+	fs.BoolVar(&help, "help", false, "")
+	fs.BoolVar(&h, "h", false, "")
 
 	if err := fs.Parse(args); err != nil {
 		return err
+	}
+
+	if help || h {
+		fs.Usage()
+		return nil
 	}
 
 	store := cfg.PasswordStore()
