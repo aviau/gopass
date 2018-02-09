@@ -31,6 +31,7 @@ func TestEditDashDashHelp(t *testing.T) {
 	err := cliTest.Run([]string{"edit", "--help"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass edit"))
 }
 
@@ -41,5 +42,6 @@ func TestEditDashH(t *testing.T) {
 	err := cliTest.Run([]string{"edit", "-h"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass edit"))
 }

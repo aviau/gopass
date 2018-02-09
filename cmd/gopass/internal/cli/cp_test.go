@@ -31,6 +31,7 @@ func TestCpDashDashHelp(t *testing.T) {
 	err := cliTest.Run([]string{"cp", "--help"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass cp"))
 }
 
@@ -41,5 +42,6 @@ func TestCpDashH(t *testing.T) {
 	err := cliTest.Run([]string{"cp", "-h"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass cp"))
 }

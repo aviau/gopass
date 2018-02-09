@@ -33,6 +33,7 @@ func TestRmDashDashHelp(t *testing.T) {
 	err := cliTest.Run([]string{"rm", "--help"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
 }
 
@@ -43,6 +44,7 @@ func TestRmDashH(t *testing.T) {
 	err := cliTest.Run([]string{"rm", "-h"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
 }
 

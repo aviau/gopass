@@ -31,6 +31,7 @@ func TesFindDashDashHelp(t *testing.T) {
 	err := cliTest.Run([]string{"find", "--help"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass find"))
 }
 
@@ -41,5 +42,6 @@ func TestFindDashH(t *testing.T) {
 	err := cliTest.Run([]string{"find", "-h"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass find"))
 }

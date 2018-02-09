@@ -31,6 +31,7 @@ func TestInsertHelp(t *testing.T) {
 	err := cliTest.Run([]string{"insert", "--help"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass insert"))
 }
 
@@ -41,5 +42,6 @@ func TestInsertDashH(t *testing.T) {
 	err := cliTest.Run([]string{"insert", "--h"})
 
 	assert.Nil(t, err)
+	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass insert"))
 }
