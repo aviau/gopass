@@ -52,10 +52,16 @@ func ExecEdit(cfg command.Config, args []string) error {
 
 	passname := fs.Arg(0)
 
-	password, err := store.GetPassword(passname)
+	action := "inserted"
 
-	if err != nil {
-		return err
+	password := ""
+	if containsPasword, _ := store.ContainsPassword(passname); containsPasword {
+		var err error
+		password, err = store.GetPassword(passname)
+		if err != nil {
+			return err
+		}
+		action = "edited"
 	}
 
 	file, _ := ioutil.TempFile(os.TempDir(), "gopass")
@@ -76,6 +82,6 @@ func ExecEdit(cfg command.Config, args []string) error {
 		return err
 	}
 
-	fmt.Fprintf(cfg.WriterOutput(), "Succesfully edited password \"%s\".\n", passname)
+	fmt.Fprintf(cfg.WriterOutput(), "Succesfully %s password \"%s\".\n", action, passname)
 	return nil
 }
