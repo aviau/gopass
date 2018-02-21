@@ -53,7 +53,6 @@ func ExecEdit(cfg command.Config, args []string) error {
 	passname := fs.Arg(0)
 
 	action := "inserted"
-
 	password := ""
 	if containsPasword, _ := store.ContainsPassword(passname); containsPasword {
 		var err error
