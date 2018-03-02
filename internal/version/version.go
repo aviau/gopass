@@ -17,7 +17,7 @@
 
 package version
 
-var (
+const (
 	// Version is the current gopass version
 	Version = "1.2.0"
 )
