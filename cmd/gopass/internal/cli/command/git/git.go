@@ -23,7 +23,7 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-//ExecGit runs the "git" command.
+// ExecGit runs the "git" command.
 func ExecGit(cfg command.Config, args []string) error {
 	store := cfg.PasswordStore()
 

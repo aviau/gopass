@@ -27,7 +27,7 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-//ExecInit runs the "init" command.
+// ExecInit runs the "init" command.
 func ExecInit(cfg command.Config, args []string) error {
 	var path, p string
 	var help, h bool

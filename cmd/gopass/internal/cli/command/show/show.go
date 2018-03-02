@@ -28,7 +28,7 @@ import (
 	"github.com/aviau/gopass/internal/clipboard"
 )
 
-//ExecShow runs the "show" command.
+// ExecShow runs the "show" command.
 func ExecShow(cfg command.Config, args []string) error {
 	var clip, c bool
 	var help, h bool

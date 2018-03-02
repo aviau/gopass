@@ -27,7 +27,7 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-//ExecEdit runs the "edit" command.
+// ExecEdit runs the "edit" command.
 func ExecEdit(cfg command.Config, args []string) error {
 	var help, h bool
 

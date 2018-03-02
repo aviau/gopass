@@ -23,7 +23,7 @@ import (
 	"github.com/aviau/gopass"
 )
 
-//Config contains everything that commands need to run.
+// Config contains everything that commands need to run.
 type Config interface {
 	WriterOutput() io.Writer
 	WriterError() io.Writer

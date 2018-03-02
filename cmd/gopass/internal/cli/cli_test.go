@@ -26,7 +26,7 @@ import (
 	"github.com/aviau/gopass/internal/gopasstest"
 )
 
-//testConfig is a fake command.Config, it does not use env variables.
+// testConfig is a fake command.Config, it does not use env variables.
 type testConfig struct {
 	command.Config
 	passwordStoreTest *gopasstest.PasswordStoreTest

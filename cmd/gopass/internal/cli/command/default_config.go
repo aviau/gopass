@@ -25,14 +25,14 @@ import (
 	"github.com/aviau/gopass"
 )
 
-//DefaultConfig is a default Config implementation.
+// DefaultConfig is a default Config implementation.
 type DefaultConfig struct {
-	writerOutput io.Writer //The writer to use for output
-	writerError  io.Writer //The writer to use for errors
-	readerInput  io.Reader //The reader to use for input
+	writerOutput io.Writer // The writer to use for output
+	writerError  io.Writer // The writer to use for errors
+	readerInput  io.Reader // The reader to use for input
 }
 
-//NewConfig creates a Config.
+// NewConfig creates a Config.
 func NewConfig(writerOutput, writerError io.Writer, readerInput io.Reader) *DefaultConfig {
 	cfg := DefaultConfig{
 		writerOutput: writerOutput,
@@ -42,22 +42,22 @@ func NewConfig(writerOutput, writerError io.Writer, readerInput io.Reader) *Defa
 	return &cfg
 }
 
-//WriterOutput returns the output writer
+// WriterOutput returns the output writer
 func (cfg *DefaultConfig) WriterOutput() io.Writer {
 	return cfg.writerOutput
 }
 
-//WriterError returns the output writer
+// WriterError returns the output writer
 func (cfg *DefaultConfig) WriterError() io.Writer {
 	return cfg.writerError
 }
 
-//ReaderInput returns the input reader
+// ReaderInput returns the input reader
 func (cfg *DefaultConfig) ReaderInput() io.Reader {
 	return cfg.readerInput
 }
 
-//PasswordStoreDir returns the password store directory.
+// PasswordStoreDir returns the password store directory.
 func (cfg *DefaultConfig) PasswordStoreDir() string {
 	storePath := os.Getenv("PASSWORD_STORE_DIR")
 	if storePath == "" {
@@ -66,7 +66,7 @@ func (cfg *DefaultConfig) PasswordStoreDir() string {
 	return storePath
 }
 
-//Editor returns the configured editor.
+// Editor returns the configured editor.
 func (cfg *DefaultConfig) Editor() string {
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
@@ -75,7 +75,7 @@ func (cfg *DefaultConfig) Editor() string {
 	return editor
 }
 
-//PasswordStore returns the PasswordStore.
+// PasswordStore returns the PasswordStore.
 func (cfg *DefaultConfig) PasswordStore() *gopass.PasswordStore {
 	storePath := cfg.PasswordStoreDir()
 	s := gopass.NewPasswordStore(storePath)

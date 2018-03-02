@@ -28,7 +28,7 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-//ExecGrep runs the "grep" command.
+// ExecGrep runs the "grep" command.
 func ExecGrep(cfg command.Config, args []string) error {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)

@@ -21,7 +21,7 @@ import (
 	"os/exec"
 )
 
-//CopyToClipboard copies a string to the clipboard using xclip
+// CopyToClipboard copies a string to the clipboard using xclip
 func CopyToClipboard(s string) error {
 	xclip := exec.Command(
 		"xclip",

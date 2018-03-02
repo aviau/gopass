@@ -27,7 +27,7 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-//ExecCp runs the "cp" command.
+// ExecCp runs the "cp" command.
 func ExecCp(cfg command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool

@@ -27,7 +27,7 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-//ExecMv runs the "mv" comand.
+// ExecMv runs the "mv" comand.
 func ExecMv(cfg command.Config, args []string) error {
 	var force, f bool
 	var help, h bool

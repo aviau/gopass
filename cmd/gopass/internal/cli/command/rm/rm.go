@@ -26,7 +26,7 @@ import (
 	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 )
 
-//ExecRm runs the "rm" command.
+// ExecRm runs the "rm" command.
 func ExecRm(cfg command.Config, args []string) error {
 	var recursive, r bool
 	var force, f bool

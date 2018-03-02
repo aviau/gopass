@@ -25,14 +25,14 @@ import (
 	"github.com/aviau/gopass"
 )
 
-//PasswordStoreTest allows for testing password stores.
+// PasswordStoreTest allows for testing password stores.
 type PasswordStoreTest struct {
 	PasswordStore *gopass.PasswordStore
 	storePath     string
 	t             *testing.T
 }
 
-//NewPasswordStoreTest creates a password store for testing
+// NewPasswordStoreTest creates a password store for testing
 func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	storePath, err := ioutil.TempDir("", "gopass")
 	if err != nil {
@@ -54,7 +54,7 @@ func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	return &passwordStoreTest
 }
 
-//Close removes the password store
+// Close removes the password store
 func (test *PasswordStoreTest) Close() {
 	if err := os.RemoveAll(test.storePath); err != nil {
 		test.t.Fatal(err)

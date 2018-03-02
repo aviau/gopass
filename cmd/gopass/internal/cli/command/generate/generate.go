@@ -28,7 +28,7 @@ import (
 	"github.com/aviau/gopass/internal/pwgen"
 )
 
-//ExecGenerate runs the "generate" command.
+// ExecGenerate runs the "generate" command.
 func ExecGenerate(cfg command.Config, args []string) error {
 	var noSymbols, n bool
 	var force, f bool

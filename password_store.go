@@ -30,13 +30,13 @@ import (
 	gopassio "github.com/aviau/gopass/internal/io"
 )
 
-//PasswordStore represents a password store.
+// PasswordStore represents a password store.
 type PasswordStore struct {
-	Path    string //path of the store
-	GitDir  string //The path of the git directory
-	GPGBin  string //The GPG binary to use
-	GPGID   string //The GPG ID used to encrypt the passwords
-	UsesGit bool   //Whether or not the store uses git
+	Path    string // path of the store
+	GitDir  string // The path of the git directory
+	GPGBin  string // The GPG binary to use
+	GPGID   string // The GPG ID used to encrypt the passwords
+	UsesGit bool   // Whether or not the store uses git
 }
 
 // NewPasswordStore returns a new password store.
@@ -62,21 +62,21 @@ func NewPasswordStore(storePath string) *PasswordStore {
 	return &s
 }
 
-//Init creates a Password Store at the Path
+// Init creates a Password Store at the Path
 func (store *PasswordStore) Init(gpgID string) error {
-	//Check if the password path already exists
+	// Check if the password path already exists
 	fi, err := os.Stat(store.Path)
 	if err == nil {
-		//Path exists, but is it a directory?
+		// Path exists, but is it a directory?
 		if fi.Mode().IsDir() == false {
 			return fmt.Errorf(
 				"could not create password store. Path \"%s\" already exists and it is not a directory",
 				store.Path)
 		}
 	} else {
-		//Error during os.Stat
+		// Error during os.Stat
 		if os.IsNotExist(err) {
-			//Path does not exist, create it
+			// Path does not exist, create it
 			if err := os.Mkdir(store.Path, 0700); err != nil {
 				return err
 			}
@@ -85,11 +85,11 @@ func (store *PasswordStore) Init(gpgID string) error {
 		}
 	}
 
-	//Check if the .gpg-id file already exists.
+	// Check if the .gpg-id file already exists.
 	gpgIDFilePath := path.Join(store.Path, ".gpg-id")
 	fi, err = os.Stat(gpgIDFilePath)
 	if err == nil {
-		//.gpg-id already exists
+		// .gpg-id already exists
 		return fmt.Errorf("there is already a .gpg-id file at \"%s\". Stopping init", gpgIDFilePath)
 	}
 
@@ -108,11 +108,11 @@ func (store *PasswordStore) Init(gpgID string) error {
 	return store.AddAndCommit("initial commit", ".gpg-id")
 }
 
-//InsertPassword inserts a new password or overwrites an existing one
+// InsertPassword inserts a new password or overwrites an existing one
 func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
 
-	//Check if password already exists
+	// Check if password already exists
 	var gitAction string
 	if containsPassword {
 		gitAction = "edited"
@@ -146,7 +146,7 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	return nil
 }
 
-//RemoveDirectory removes the directory at the given path
+// RemoveDirectory removes the directory at the given path
 func (store *PasswordStore) RemoveDirectory(dirname string) error {
 	containsDirectory, directoryPath := store.ContainsDirectory(dirname)
 
@@ -165,7 +165,7 @@ func (store *PasswordStore) RemoveDirectory(dirname string) error {
 	return nil
 }
 
-//RemovePassword removes the password at the given path
+// RemovePassword removes the password at the given path
 func (store *PasswordStore) RemovePassword(pwname string) error {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
 
@@ -182,7 +182,7 @@ func (store *PasswordStore) RemovePassword(pwname string) error {
 	return nil
 }
 
-//MoveDirectory moves a directory from source to dest
+// MoveDirectory moves a directory from source to dest
 func (store *PasswordStore) MoveDirectory(source, dest string) error {
 	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
 	if !containsDirectory {
@@ -203,7 +203,7 @@ func (store *PasswordStore) MoveDirectory(source, dest string) error {
 	return nil
 }
 
-//MovePassword moves a passsword or directory from source to dest.
+// MovePassword moves a passsword or directory from source to dest.
 func (store *PasswordStore) MovePassword(source, dest string) error {
 	containsPassword, sourcePasswordPath := store.ContainsPassword(source)
 
@@ -232,7 +232,7 @@ func (store *PasswordStore) MovePassword(source, dest string) error {
 	return nil
 }
 
-//CopyPassword copies a password from source to dest
+// CopyPassword copies a password from source to dest
 func (store *PasswordStore) CopyPassword(source, dest string) error {
 	containsPassword, sourcePasswordPath := store.ContainsPassword(source)
 
@@ -260,7 +260,7 @@ func (store *PasswordStore) CopyPassword(source, dest string) error {
 	return nil
 }
 
-//CopyDirectory copies a directory from source to dest
+// CopyDirectory copies a directory from source to dest
 func (store *PasswordStore) CopyDirectory(source, dest string) error {
 	containsDirectory, sourceDirectoryPath := store.ContainsDirectory(source)
 
@@ -280,16 +280,16 @@ func (store *PasswordStore) CopyDirectory(source, dest string) error {
 	return nil
 }
 
-//GetPassword returns a decrypted password
+// GetPassword returns a decrypted password
 func (store *PasswordStore) GetPassword(pwname string) (string, error) {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
 
-	//Error if the password does not exist
+	// Error if the password does not exist
 	if containsPassword == false {
 		return "", fmt.Errorf("could not find password \"%s\" at path \"%s\"", pwname, passwordPath)
 	}
 
-	//TODO: Use GPG lib instead
+	// TODO: Use GPG lib instead
 	show := exec.Command(store.GPGBin, "--quiet", "--batch", "--use-agent", "-d", passwordPath)
 	output, err := show.CombinedOutput()
 
@@ -300,8 +300,8 @@ func (store *PasswordStore) GetPassword(pwname string) (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-//ContainsPassword returns whether or not the store contains a password with this name.
-//it also conveniently returns the password path that was checked
+// ContainsPassword returns whether or not the store contains a password with this name.
+// it also conveniently returns the password path that was checked
 func (store *PasswordStore) ContainsPassword(pwname string) (bool, string) {
 	passwordPath := path.Join(store.Path, pwname+".gpg")
 
@@ -312,8 +312,8 @@ func (store *PasswordStore) ContainsPassword(pwname string) (bool, string) {
 	return true, passwordPath
 }
 
-//ContainsDirectory returns whether or not the store contains a directory with this name.
-//it also conveniently returns the directory path that was checked
+// ContainsDirectory returns whether or not the store contains a directory with this name.
+// it also conveniently returns the directory path that was checked
 func (store *PasswordStore) ContainsDirectory(dirname string) (bool, string) {
 	directoryPath := path.Join(store.Path, dirname)
 
@@ -324,7 +324,7 @@ func (store *PasswordStore) ContainsDirectory(dirname string) (bool, string) {
 	return true, directoryPath
 }
 
-//GetPasswordsList returns a list of all the passwords
+// GetPasswordsList returns a list of all the passwords
 func (store *PasswordStore) GetPasswordsList() []string {
 	var list []string
 
@@ -342,7 +342,7 @@ func (store *PasswordStore) GetPasswordsList() []string {
 	return list
 }
 
-//AddAndCommit adds paths to the index and creates a commit
+// AddAndCommit adds paths to the index and creates a commit
 func (store *PasswordStore) AddAndCommit(message string, paths ...string) error {
 	store.git("reset")
 
@@ -355,7 +355,7 @@ func (store *PasswordStore) AddAndCommit(message string, paths ...string) error 
 	return nil
 }
 
-//git executes a git command
+// git executes a git command
 func (store *PasswordStore) git(args ...string) error {
 	if !store.UsesGit {
 		return nil
@@ -369,7 +369,7 @@ func (store *PasswordStore) git(args ...string) error {
 
 	git := exec.Command("git", gitArgs...)
 
-	//Should we do that?
+	// Should we do that?
 	git.Stdout = os.Stdout
 	git.Stderr = os.Stderr
 	git.Stdin = os.Stdin

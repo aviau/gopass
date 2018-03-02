@@ -22,7 +22,7 @@ import (
 	"io"
 )
 
-//AskYesNo asks a Yes/No question to the user and returns the result
+// AskYesNo asks a Yes/No question to the user and returns the result
 func AskYesNo(writer io.Writer, question string) bool {
 	fmt.Fprint(writer, question)
 

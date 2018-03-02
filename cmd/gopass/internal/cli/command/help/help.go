@@ -23,7 +23,7 @@ import (
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-//ExecHelp runs the "help" command.
+// ExecHelp runs the "help" command.
 func ExecHelp(cfg command.Config) error {
 	fmt.Fprintln(cfg.WriterOutput(), `Usage:
       init                  Initialize a new password store.

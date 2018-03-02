@@ -24,7 +24,7 @@ import (
 	"github.com/aviau/gopass/internal/version"
 )
 
-//ExecVersion runs the "version" command.
+// ExecVersion runs the "version" command.
 func ExecVersion(cfg command.Config) error {
 	fmt.Fprintf(cfg.WriterOutput(), "gopass v%s\n", version.Version)
 	return nil
