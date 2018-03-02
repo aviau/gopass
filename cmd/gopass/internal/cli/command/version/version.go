@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
-	"github.com/aviau/gopass/cmd/gopass/internal/version"
+	"github.com/aviau/gopass/internal/version"
 )
 
 //ExecVersion runs the "version" command.
