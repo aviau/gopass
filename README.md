@@ -109,4 +109,4 @@ This new command should connect to a server using an encrypted rsa key.
 
 ## Note
 
-- This isn't [gopass.pw](gopass.pw).
+- This isn't [gopass.pw](https://www.gopass.pw/).
