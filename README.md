@@ -106,3 +106,7 @@ This new command should connect to a server using an encrypted rsa key.
 - [ ] ``--in-place, -i``
 - [X] ``--force, -f``
 - [X] Prompt before overwriting an existing password, unless --force or -f is specified.
+
+## Note
+
+- This isn't [gopass.pw](gopass.pw).
