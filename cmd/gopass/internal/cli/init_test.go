@@ -32,7 +32,7 @@ func TestInitDashDashHelp(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init [--path=subfolder,-p subfolder] gpg-id..."))
 }
 
 func TestInitDashH(t *testing.T) {
@@ -43,5 +43,5 @@ func TestInitDashH(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init"))
+	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init [--path=subfolder,-p subfolder] gpg-id..."))
 }

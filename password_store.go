@@ -18,9 +18,9 @@
 package gopass
 
 import (
+	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -32,11 +32,31 @@ import (
 
 // PasswordStore represents a password store.
 type PasswordStore struct {
-	Path    string // path of the store
-	GitDir  string // The path of the git directory
-	GPGBin  string // The GPG binary to use
-	GPGID   string // The GPG ID used to encrypt the passwords
-	UsesGit bool   // Whether or not the store uses git
+	Path    string   // path of the store
+	GitDir  string   // The path of the git directory
+	GPGBin  string   // The GPG binary to use
+	GPGIDs  []string // The GPG IDs used for the store
+	UsesGit bool     // Whether or not the store uses git
+}
+
+// Returns the GPG ids for a given directory
+func loadGPGIDs(directory string) ([]string, error) {
+	gpgIDPath := path.Join(directory, ".gpg-id")
+
+	file, err := os.Open(gpgIDPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var gpgIDs []string
+
+	fscanner := bufio.NewScanner(file)
+	for fscanner.Scan() {
+		gpgID := strings.TrimSpace(fscanner.Text())
+		gpgIDs = append(gpgIDs, gpgID)
+	}
+
+	return gpgIDs, nil
 }
 
 // NewPasswordStore returns a new password store.
@@ -55,15 +75,14 @@ func NewPasswordStore(storePath string) *PasswordStore {
 	}
 
 	//Read the .gpg-id file
-	gpgIDPath := path.Join(s.Path, ".gpg-id")
-	content, _ := ioutil.ReadFile(gpgIDPath)
-	s.GPGID = strings.TrimSpace(string(content))
+	gpgIDs, _ := loadGPGIDs(s.Path)
+	s.GPGIDs = gpgIDs
 
 	return &s
 }
 
 // Init creates a Password Store at the Path
-func (store *PasswordStore) Init(gpgID string) error {
+func (store *PasswordStore) Init(gpgIDs []string) error {
 	// Check if the password path already exists
 	fi, err := os.Stat(store.Path)
 	if err == nil {
@@ -98,8 +117,10 @@ func (store *PasswordStore) Init(gpgID string) error {
 		return err
 	}
 	defer gpgIDFile.Close()
-	gpgIDFile.WriteString(gpgID + "\n")
-	store.GPGID = gpgID
+	for _, gpgID := range gpgIDs {
+		gpgIDFile.WriteString(gpgID + "\n")
+	}
+	store.GPGIDs = gpgIDs
 
 	if err := store.git("init"); err != nil {
 		return err
@@ -120,15 +141,24 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 		gitAction = "added"
 	}
 
-	gpg := exec.Command(
-		store.GPGBin,
-		"-e",
-		"-r", store.GPGID,
+	gpgArgs := []string{
+		"--encrypt",
 		"--batch",
 		"--use-agent",
 		"--no-tty",
 		"--yes",
-		"-o", passwordPath)
+		"--output", passwordPath,
+	}
+
+	for _, recipient := range store.GPGIDs {
+		gpgArgs = append(
+			gpgArgs,
+			"--recipient",
+			recipient,
+		)
+	}
+
+	gpg := exec.Command(store.GPGBin, gpgArgs...)
 
 	stdin, _ := gpg.StdinPipe()
 	io.WriteString(stdin, pwtext)
