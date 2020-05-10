@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/aviau/gopass"
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
@@ -71,10 +72,36 @@ func ExecInit(cfg command.Config, args []string) error {
 	gpgIDs := fs.Args()
 
 	store := gopass.NewPasswordStore(path)
-	if err := store.Init(gpgIDs); err != nil {
-		return err
+
+	// There is no existing store, create one.
+	if len(store.GPGIDs) == 0 {
+		if err := store.Init(gpgIDs); err != nil {
+			return err
+		}
+		fmt.Fprintf(cfg.WriterOutput(), "Successfully created Password Store at \"%s\".\n", path)
+	} else {
+		// The store already exists, reencrypt it.
+
+		// First, set the GPG ids...
+		store.SetGPGIDs(gpgIDs)
+
+		// Now, reencrypt every password
+		passwords := store.GetPasswordsList()
+		for _, password := range passwords {
+			fmt.Printf("%s: reencrypting to %s\n", password, strings.Join(gpgIDs, ", "))
+			if err := store.ReencryptPassword(password); err != nil {
+				return err
+			}
+		}
+
+		// Commit
+		if err := store.AddAndCommit(
+			"Reencrypt password store using new GPG id "+strings.Join(gpgIDs, ", "),
+			"*",
+		); err != nil {
+			return err
+		}
 	}
 
-	fmt.Fprintf(cfg.WriterOutput(), "Successfully created Password Store at \"%s\".\n", path)
 	return nil
 }

@@ -31,18 +31,24 @@ func TestGetPasswordsList(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	_, err := os.Create(filepath.Join(st.PasswordStore.Path, "test.com.gpg"))
-	if err != nil {
+	if _, err := os.Create(filepath.Join(st.PasswordStore.Path, "test.com.gpg")); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Create(filepath.Join(st.PasswordStore.Path, "test2.com.gpg"))
-	if err != nil {
+	if _, err := os.Create(filepath.Join(st.PasswordStore.Path, "test2.com.gpg")); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err = os.Create(filepath.Join(st.PasswordStore.Path, "test3"))
-	if err != nil {
+	if _, err := os.Create(filepath.Join(st.PasswordStore.Path, "test3")); err != nil {
+		t.Fatal(err)
+	}
+
+	dirPath := filepath.Join(st.PasswordStore.Path, "dir")
+	if err := os.Mkdir(dirPath, os.ModePerm); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := os.Create(filepath.Join(dirPath, "test3.com.gpg")); err != nil {
 		t.Fatal(err)
 	}
 
@@ -50,7 +56,7 @@ func TestGetPasswordsList(t *testing.T) {
 	assert.Equal(
 		t,
 		passwords,
-		[]string{"test.com", "test2.com"},
+		[]string{"dir/test3.com", "test.com", "test2.com"},
 		"Password list should contain test.com and test2.com",
 	)
 }
