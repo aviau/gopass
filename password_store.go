@@ -21,6 +21,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
@@ -129,6 +130,104 @@ func (store *PasswordStore) Init(gpgIDs []string) error {
 	return store.AddAndCommit("initial commit", ".gpg-id")
 }
 
+//SetGPGIDs will set the store's GPG ids
+func (store *PasswordStore) SetGPGIDs(gpgIDs []string) error {
+	gpgIDFile, err := os.OpenFile(
+		path.Join(store.Path, ".gpg-id"),
+		os.O_WRONLY|os.O_CREATE|os.O_TRUNC,
+		0644,
+	)
+	if err != nil {
+		return err
+	}
+	defer gpgIDFile.Close()
+
+	for _, gpgID := range gpgIDs {
+		gpgIDFile.WriteString(gpgID + "\n")
+	}
+	store.GPGIDs = gpgIDs
+
+	return store.AddAndCommit(
+		fmt.Sprintf("Set GPG id to %s", strings.Join(gpgIDs, ", ")),
+		".gpg-id",
+	)
+}
+
+func (store *PasswordStore) getGPGEncryptArgs(destinationPath string) []string {
+	gpgArgs := []string{
+		"--encrypt",
+		"--batch",
+		"--use-agent",
+		"--no-tty",
+		"--yes",
+		"--output", destinationPath,
+	}
+
+	for _, recipient := range store.GPGIDs {
+		gpgArgs = append(
+			gpgArgs,
+			"--recipient",
+			recipient,
+		)
+	}
+
+	return gpgArgs
+}
+
+func (store *PasswordStore) getGPGDecryptArgs(passwordPath string) []string {
+	return []string{
+		"--quiet",
+		"--batch",
+		"--use-agent",
+		"--decrypt",
+		passwordPath,
+	}
+}
+
+// ReencryptPassword will reencrypt a password to the current GPG ids
+func (store *PasswordStore) ReencryptPassword(pwname string) error {
+	containsPassword, passwordPath := store.ContainsPassword(pwname)
+
+	// Error if the password does not exist
+	if containsPassword == false {
+		return fmt.Errorf("could not find password \"%s\" at path \"%s\"", pwname, passwordPath)
+	}
+
+	// Create a directory to temporarily hold the reencrypted password
+	tempDir, err := ioutil.TempDir("", "gopass")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tempDir)
+
+	tempFile := filepath.Join(tempDir, "temp.gpg")
+
+	// Pipe gpg decrypt to gpg encrypt
+	gpgDecrypt := exec.Command(store.GPGBin, store.getGPGDecryptArgs(passwordPath)...)
+	gpgEncrypt := exec.Command(store.GPGBin, store.getGPGEncryptArgs(tempFile)...)
+
+	gpgDecrypt.Stderr = os.Stderr
+
+	gpgEncrypt.Stdin, _ = gpgDecrypt.StdoutPipe()
+	gpgEncrypt.Stderr = os.Stderr
+	gpgEncrypt.Start()
+
+	if err := gpgDecrypt.Run(); err != nil {
+		return err
+	}
+
+	if err := gpgEncrypt.Wait(); err != nil {
+		return err
+	}
+
+	// Move the newly encrypted password to the password store
+	if err := os.Rename(tempFile, passwordPath); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // InsertPassword inserts a new password or overwrites an existing one
 func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
@@ -141,24 +240,7 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 		gitAction = "added"
 	}
 
-	gpgArgs := []string{
-		"--encrypt",
-		"--batch",
-		"--use-agent",
-		"--no-tty",
-		"--yes",
-		"--output", passwordPath,
-	}
-
-	for _, recipient := range store.GPGIDs {
-		gpgArgs = append(
-			gpgArgs,
-			"--recipient",
-			recipient,
-		)
-	}
-
-	gpg := exec.Command(store.GPGBin, gpgArgs...)
+	gpg := exec.Command(store.GPGBin, store.getGPGEncryptArgs(passwordPath)...)
 
 	stdin, _ := gpg.StdinPipe()
 	io.WriteString(stdin, pwtext)
@@ -319,8 +401,7 @@ func (store *PasswordStore) GetPassword(pwname string) (string, error) {
 		return "", fmt.Errorf("could not find password \"%s\" at path \"%s\"", pwname, passwordPath)
 	}
 
-	// TODO: Use GPG lib instead
-	show := exec.Command(store.GPGBin, "--quiet", "--batch", "--use-agent", "-d", passwordPath)
+	show := exec.Command(store.GPGBin, store.getGPGDecryptArgs(passwordPath)...)
 	output, err := show.CombinedOutput()
 
 	if err != nil {
@@ -360,8 +441,10 @@ func (store *PasswordStore) GetPasswordsList() []string {
 
 	var scan = func(path string, fileInfo os.FileInfo, inpErr error) (err error) {
 		if strings.HasSuffix(path, ".gpg") {
-			_, file := filepath.Split(path)
-			password := strings.TrimSuffix(file, ".gpg")
+			password := strings.TrimSuffix(
+				strings.TrimPrefix(path, store.Path+"/"),
+				".gpg",
+			)
 			list = append(list, password)
 		}
 		return
