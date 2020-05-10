@@ -23,6 +23,7 @@ This section was just added so that I could get an idea of where I am at.
 
 - [X] Creates a folder and a .gpg-id file
 - [X] Support ``--path`` option
+- [X] Support multiple GPG ids
 - [ ] Re-encryption functionality
 - [ ] Should output: ``Password store initialized for [gpg-id].``
 - [ ] ``--clone <url>`` allows to init from an existing repo

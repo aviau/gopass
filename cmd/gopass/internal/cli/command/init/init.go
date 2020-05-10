@@ -42,7 +42,7 @@ func ExecInit(cfg command.Config, args []string) error {
 	fs.StringVar(&p, "p", "", "")
 
 	fs.Usage = func() {
-		fmt.Fprintln(cfg.WriterOutput(), `Usage: gopass init [ --path=sub-folder, -p sub-folder ] gpg-id`)
+		fmt.Fprintln(cfg.WriterOutput(), `Usage: gopass init [--path=subfolder,-p subfolder] gpg-id...`)
 	}
 
 	if err := fs.Parse(args); err != nil {
@@ -63,15 +63,15 @@ func ExecInit(cfg command.Config, args []string) error {
 		return err
 	}
 
-	if fs.NArg() != 1 {
+	if fs.NArg() < 1 {
 		fs.Usage()
 		return nil
 	}
 
-	gpgID := fs.Arg(0)
+	gpgIDs := fs.Args()
 
 	store := gopass.NewPasswordStore(path)
-	if err := store.Init(gpgID); err != nil {
+	if err := store.Init(gpgIDs); err != nil {
 		return err
 	}
 

@@ -53,8 +53,10 @@ password names in
 \fBinit\fP [ \fI--path=path\fP, \fI-p path\fP ] \fIgpg-id...\fP
 Initialize new password storage and use
 .I gpg-id
-for encryption. This command must be run first before a password
-store can be used. Note that use of
+for encryption.
+Multiple gpg-ids may be specified, in order to encrypt each password with multiple ids.
+This command must be run first before a password store can be used.
+Note that use of
 .BR gpg-agent (1)
 is recommended so that the batch decryption does not require as much user
 intervention.

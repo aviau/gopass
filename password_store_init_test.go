@@ -15,48 +15,42 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package gopasstest
+package gopass_test
 
 import (
 	"io/ioutil"
 	"os"
+	"path"
+
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/aviau/gopass"
 )
 
-// PasswordStoreTest allows for testing password stores.
-type PasswordStoreTest struct {
-	PasswordStore *gopass.PasswordStore
-	storePath     string
-	t             *testing.T
-}
-
-// NewPasswordStoreTest creates a password store for testing
-func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
+func TestNewPasswordStoreGPGIds(t *testing.T) {
 	storePath, err := ioutil.TempDir("", "gopass")
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer os.RemoveAll(storePath)
 
 	passwordStore := gopass.NewPasswordStore(storePath)
 	passwordStore.UsesGit = false
 
-	if err := passwordStore.Init([]string{"test"}); err != nil {
+	if err := passwordStore.Init([]string{"test", "test2"}); err != nil {
 		t.Fatal(err)
 	}
 
-	passwordStoreTest := PasswordStoreTest{
-		PasswordStore: passwordStore,
-		storePath:     storePath,
-	}
+	assert.Equal(t, passwordStore.GPGIDs, []string{"test", "test2"})
 
-	return &passwordStoreTest
-}
+	gpgIdContent, _ := ioutil.ReadFile(
+		path.Join(
+			passwordStore.Path,
+			".gpg-id",
+		),
+	)
+	assert.Equal(t, string(gpgIdContent), "test\ntest2\n")
 
-// Close removes the password store
-func (test *PasswordStoreTest) Close() {
-	if err := os.RemoveAll(test.storePath); err != nil {
-		test.t.Fatal(err)
-	}
 }
