@@ -22,15 +22,19 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"regexp"
 	"strings"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	"github.com/aviau/gopass/internal/clipboard"
 )
 
+var usernameRegex = regexp.MustCompile(`(username|user|email):\s*(?P<username>\S*)`)
+
 // ExecShow runs the "show" command.
 func ExecShow(cfg command.Config, args []string) error {
 	var clip, c bool
+	var username, u bool
 	var help, h bool
 
 	fs := flag.NewFlagSet("show", flag.ContinueOnError)
@@ -46,6 +50,9 @@ func ExecShow(cfg command.Config, args []string) error {
 	fs.BoolVar(&clip, "clip", false, "")
 	fs.BoolVar(&c, "c", false, "")
 
+	fs.BoolVar(&username, "username", false, "")
+	fs.BoolVar(&u, "u", false, "")
+
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -57,6 +64,8 @@ func ExecShow(cfg command.Config, args []string) error {
 
 	clip = clip || c
 
+	username = username || u
+
 	password := fs.Arg(0)
 
 	if password == "" {
@@ -65,21 +74,32 @@ func ExecShow(cfg command.Config, args []string) error {
 
 	store := cfg.PasswordStore()
 
+	// Decrypt the password
 	password, err := store.GetPassword(password)
 	if err != nil {
 		return err
 	}
 
-	if clip {
-		firstPasswordLine := strings.Split(password, "\n")[0]
+	// Prepare the password to display or copy.
+	outputPassword := password
+	if username {
+		if matches := usernameRegex.FindStringSubmatch(password); matches != nil {
+			outputPassword = matches[2]
+		} else {
+			return fmt.Errorf("Could not find username in the password")
+		}
+	} else if clip {
+		outputPassword = strings.Split(password, "\n")[0]
+	}
 
-		if err := clipboard.CopyToClipboard(firstPasswordLine); err != nil {
+	// Eithier display the password or copy it to the clipboard.
+	if clip {
+		if err := clipboard.CopyToClipboard(outputPassword); err != nil {
 			return err
 		}
-
 		fmt.Fprintln(cfg.WriterOutput(), "the first line of the password was copied to clipboard.")
 	} else {
-		fmt.Fprintln(cfg.WriterOutput(), password)
+		fmt.Fprintln(cfg.WriterOutput(), outputPassword)
 	}
 
 	return nil
