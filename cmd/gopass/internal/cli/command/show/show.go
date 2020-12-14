@@ -84,7 +84,12 @@ func ExecShow(cfg command.Config, args []string) error {
 	outputPassword := password
 	if username {
 		if matches := usernameRegex.FindStringSubmatch(password); matches != nil {
-			outputPassword = matches[2]
+			for i, name := range usernameRegex.SubexpNames() {
+				if name == "username" {
+					outputPassword = matches[i]
+					break
+				}
+			}
 		} else {
 			return fmt.Errorf("Could not find username in the password")
 		}
