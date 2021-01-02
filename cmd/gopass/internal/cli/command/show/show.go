@@ -29,7 +29,7 @@ import (
 	"github.com/aviau/gopass/internal/clipboard"
 )
 
-var usernameRegex = regexp.MustCompile(`(username|user|email):\s*(?P<username>\S*)`)
+var usernameRegex = regexp.MustCompile(`(username|user|email):\s*(?P<username>.*)`)
 
 // ExecShow runs the "show" command.
 func ExecShow(cfg command.Config, args []string) error {
