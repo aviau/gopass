@@ -24,18 +24,23 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	"github.com/aviau/gopass/internal/clipboard"
+	"github.com/pquerna/otp"
+	"github.com/pquerna/otp/totp"
 )
 
 var usernameRegex = regexp.MustCompile(`(username|user|email):\s*(?P<username>.*)`)
+var twoFactorRegex = regexp.MustCompile(`(2fa):\s*(?P<2fa>.*)`)
 
 // ExecShow runs the "show" command.
 func ExecShow(cfg command.Config, args []string) error {
 	var clip, c bool
 	var username, u bool
 	var help, h bool
+	var twoFactor, twoFa bool
 
 	fs := flag.NewFlagSet("show", flag.ContinueOnError)
 	fs.SetOutput(ioutil.Discard)
@@ -53,6 +58,9 @@ func ExecShow(cfg command.Config, args []string) error {
 	fs.BoolVar(&username, "username", false, "")
 	fs.BoolVar(&u, "u", false, "")
 
+	fs.BoolVar(&twoFactor, "two-factor", false, "")
+	fs.BoolVar(&twoFa, "2fa", false, "")
+
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -65,6 +73,8 @@ func ExecShow(cfg command.Config, args []string) error {
 	clip = clip || c
 
 	username = username || u
+
+	twoFactor = twoFactor || twoFa
 
 	password := fs.Arg(0)
 
@@ -93,6 +103,32 @@ func ExecShow(cfg command.Config, args []string) error {
 		} else {
 			return fmt.Errorf("Could not find username in the password")
 		}
+	} else if twoFactor {
+		twoFactorSecret := ""
+
+		if matches := twoFactorRegex.FindStringSubmatch(password); matches != nil {
+			for i, name := range twoFactorRegex.SubexpNames() {
+				if name == "2fa" {
+					twoFactorSecret = matches[i]
+					break
+				}
+			}
+		} else {
+			return fmt.Errorf("Could not find totp url in the password")
+		}
+
+		if strings.HasPrefix(twoFactorSecret, "otpauth://") {
+			key, err := otp.NewKeyFromURL(twoFactorSecret)
+			if err != nil {
+				return fmt.Errorf("Could not parse otpauth URL: %s", twoFactorSecret)
+			}
+			twoFactorSecret = key.Secret()
+		}
+
+		if outputPassword, err = totp.GenerateCode(twoFactorSecret, time.Now().UTC()); err != nil {
+			return fmt.Errorf("Could not generate otp code: %v", err)
+		}
+
 	} else if clip {
 		outputPassword = strings.Split(password, "\n")[0]
 	}
