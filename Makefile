@@ -23,6 +23,9 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.go') Makefile
 gopass: $(SOURCES)
 	go build -v -o gopass ./cmd/gopass
 
+gopass-sshd: $(SOURCES)
+	go build -v -o gopass-sshd ./cmd/gopass-sshd
+
 .PHONY: test
 test:
 	go test -v ./...
