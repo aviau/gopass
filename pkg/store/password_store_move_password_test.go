@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package gopass_test
+package store_test
 
 import (
 	"os"
@@ -27,7 +27,7 @@ import (
 	"github.com/aviau/gopass/internal/gopasstest"
 )
 
-func TestRemovePassword(t *testing.T) {
+func TestMovePassword(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
@@ -40,12 +40,17 @@ func TestRemovePassword(t *testing.T) {
 	_, err = os.Stat(testPasswordPath)
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
-	st.PasswordStore.RemovePassword("test.com")
+	st.PasswordStore.MovePassword("test.com", "test2.com")
+
 	_, err = os.Stat(testPasswordPath)
-	assert.True(t, os.IsNotExist(err), "test.com should have been removed")
+	assert.True(t, os.IsNotExist(err), "test.com.gpg should no longer exist")
+
+	destPasswordPath := filepath.Join(st.PasswordStore.Path, "test2.com.gpg")
+	_, err = os.Stat(destPasswordPath)
+	assert.Nil(t, err, "test2.com.gpg should now exist")
 }
 
-func TestRemovePasswordTrailingSlash(t *testing.T) {
+func TestMovePasswordInDirectory(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
@@ -58,28 +63,27 @@ func TestRemovePasswordTrailingSlash(t *testing.T) {
 	_, err = os.Stat(testPasswordPath)
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
-	st.PasswordStore.RemovePassword("test.com/")
-	_, err = os.Stat(testPasswordPath)
-	assert.Nil(t, err, "RemovePassword with a trailing slash should not remove a password")
-}
-
-func TestRemovePasswordDirectory(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
-	defer st.Close()
-
-	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "test.com")
-	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
+	err = os.Mkdir(testDirectoryPath, 0700)
+	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, err := os.Stat(testDirectoryPath)
-	assert.Nil(t, err, "test.com.gpg should have been created")
-
-	st.PasswordStore.RemovePassword("test.com")
 	_, err = os.Stat(testDirectoryPath)
-	assert.False(
-		t,
-		os.IsNotExist(err),
-		"RemovePassword should not remove directories",
-	)
+	assert.Nil(t, err, "dir should have been created")
+
+	destinationPath := filepath.Join(testDirectoryPath, "test.com.gpg")
+
+	_, err = os.Stat(destinationPath)
+	assert.True(t, os.IsNotExist(err), "destination path should not exist yet")
+
+	if err = st.PasswordStore.MovePassword("test.com", "dir/"); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = os.Stat(testPasswordPath)
+	assert.True(t, os.IsNotExist(err), "test.com.gpg should no longer exist")
+
+	_, err = os.Stat(destinationPath)
+	assert.Nil(t, err, "dir/test.com.gpg should now exist")
 }

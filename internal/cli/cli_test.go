@@ -22,8 +22,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/aviau/gopass"
 	"github.com/aviau/gopass/internal/gopasstest"
+	"github.com/aviau/gopass/pkg/store"
 )
 
 // testConfig is a fake command.Config, it does not use env variables.
@@ -32,7 +32,7 @@ type testConfig struct {
 	passwordStoreTest *gopasstest.PasswordStoreTest
 }
 
-func (cfg *testConfig) PasswordStore() *gopass.PasswordStore {
+func (cfg *testConfig) PasswordStore() *store.PasswordStore {
 	return cfg.passwordStoreTest.PasswordStore
 }
 
@@ -53,7 +53,7 @@ func newCliTest(t *testing.T) *cliTest {
 	return &cliTest
 }
 
-func (cliTest *cliTest) PasswordStore() *gopass.PasswordStore {
+func (cliTest *cliTest) PasswordStore() *store.PasswordStore {
 	return cliTest.passwordStoreTest.PasswordStore
 }
 

@@ -15,42 +15,25 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package gopass_test
+package store_test
 
 import (
 	"io/ioutil"
 	"os"
-	"path"
-
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/pkg/store"
 )
 
-func TestNewPasswordStoreGPGIds(t *testing.T) {
+func TestNewPasswordStoreUsesGit(t *testing.T) {
 	storePath, err := ioutil.TempDir("", "gopass")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer os.RemoveAll(storePath)
 
-	passwordStore := gopass.NewPasswordStore(storePath)
-	passwordStore.UsesGit = false
-
-	if err := passwordStore.Init([]string{"test", "test2"}); err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, passwordStore.GPGIDs, []string{"test", "test2"})
-
-	gpgIdContent, _ := ioutil.ReadFile(
-		path.Join(
-			passwordStore.Path,
-			".gpg-id",
-		),
-	)
-	assert.Equal(t, string(gpgIdContent), "test\ntest2\n")
-
+	passwordStore := store.NewPasswordStore(storePath)
+	assert.True(t, passwordStore.UsesGit, "UsesGit should be true by default")
 }

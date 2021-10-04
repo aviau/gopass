@@ -22,7 +22,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/pkg/store"
 )
 
 // CommandConfig contains everything that commands needs to run.
@@ -32,7 +32,7 @@ type CommandConfig interface {
 	ReaderInput() io.Reader
 	Editor() string
 	PasswordStoreDir() string
-	PasswordStore() *gopass.PasswordStore
+	PasswordStore() *store.PasswordStore
 }
 
 // DefaultConfig is a default CommandConfig implementation.
@@ -86,8 +86,8 @@ func (cfg *DefaultConfig) Editor() string {
 }
 
 // PasswordStore returns the PasswordStore.
-func (cfg *DefaultConfig) PasswordStore() *gopass.PasswordStore {
+func (cfg *DefaultConfig) PasswordStore() *store.PasswordStore {
 	storePath := cfg.PasswordStoreDir()
-	s := gopass.NewPasswordStore(storePath)
+	s := store.NewPasswordStore(storePath)
 	return s
 }

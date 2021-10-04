@@ -22,12 +22,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/pkg/store"
 )
 
 // PasswordStoreTest allows for testing password stores.
 type PasswordStoreTest struct {
-	PasswordStore *gopass.PasswordStore
+	PasswordStore *store.PasswordStore
 	storePath     string
 	t             *testing.T
 }
@@ -39,7 +39,7 @@ func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 		t.Fatal(err)
 	}
 
-	passwordStore := gopass.NewPasswordStore(storePath)
+	passwordStore := store.NewPasswordStore(storePath)
 	passwordStore.UsesGit = false
 
 	if err := passwordStore.Init([]string{"test"}); err != nil {

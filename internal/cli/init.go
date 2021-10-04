@@ -24,7 +24,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/pkg/store"
 )
 
 // execInit runs the "init" command.
@@ -70,7 +70,7 @@ func execInit(cfg CommandConfig, args []string) error {
 
 	gpgIDs := fs.Args()
 
-	store := gopass.NewPasswordStore(path)
+	store := store.NewPasswordStore(path)
 
 	// There is no existing store, create one.
 	if len(store.GPGIDs) == 0 {

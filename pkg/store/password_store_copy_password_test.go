@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package gopass_test
+package store_test
 
 import (
 	"os"
@@ -27,12 +27,9 @@ import (
 	"github.com/aviau/gopass/internal/gopasstest"
 )
 
-func TestContainsPassword(t *testing.T) {
+func TestCopyPassword(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
-
-	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
-	assert.False(t, containsPassword, "The password store should not contain test.com")
 
 	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
 	_, err := os.Create(testPasswordPath)
@@ -43,25 +40,38 @@ func TestContainsPassword(t *testing.T) {
 	_, err = os.Stat(testPasswordPath)
 	assert.Nil(t, err, "test.com.gpg should have been created")
 
-	containsPassword, _ = st.PasswordStore.ContainsPassword("test.com")
-	assert.True(t, containsPassword, "The password store should contain test.com")
+	destPasswordPath := filepath.Join(st.PasswordStore.Path, "test2.com.gpg")
+	_, err = os.Stat(destPasswordPath)
+	assert.True(t, os.IsNotExist(err), "test2.com.gpg should not have been created yet")
+
+	st.PasswordStore.CopyPassword("test.com", "test2.com")
+	_, err = os.Stat(destPasswordPath)
+	assert.Nil(t, err, "test.com.gpg shoudl have been copied to test2.com.gpg")
 }
 
-func TestContainsPasswordDirectory(t *testing.T) {
+func TestCopyPasswordInDirectory(t *testing.T) {
 	st := gopasstest.NewPasswordStoreTest(t)
 	defer st.Close()
 
-	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
-	assert.False(t, containsPassword, "The password store should not contain test.com")
+	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
+	_, err := os.Create(testPasswordPath)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "test.com")
+	_, err = os.Stat(testPasswordPath)
+	assert.Nil(t, err, "test.com.gpg should have been created")
+
+	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "dir")
 	if err := os.Mkdir(testDirectoryPath, 0700); err != nil {
 		t.Fatal(err)
 	}
 
-	_, err := os.Stat(testDirectoryPath)
-	assert.Nil(t, err, "test.com directory should have been created")
+	destPasswordPath := filepath.Join(st.PasswordStore.Path, "dir", "test.com.gpg")
+	_, err = os.Stat(destPasswordPath)
+	assert.True(t, os.IsNotExist(err), "test2.com.gpg should have been created yet")
 
-	containsPassword, _ = st.PasswordStore.ContainsPassword("test.com")
-	assert.False(t, containsPassword, "The password store should not a password named test.com")
+	st.PasswordStore.CopyPassword("test.com", "dir/")
+	_, err = os.Stat(destPasswordPath)
+	assert.Nil(t, err, "test.com.gpg shoudl have been copied to dir/test2.com.gpg")
 }
