@@ -1,7 +1,5 @@
 # gopass
 
-[![Build Status](https://travis-ci.org/aviau/gopass.svg?branch=master)](https://travis-ci.org/aviau/gopass)
-[![Coverage Status](https://coveralls.io/repos/github/aviau/gopass/badge.svg?branch=master)](https://coveralls.io/github/aviau/gopass?branch=master)
 [![GoDoc](https://godoc.org/github.com/aviau/gopass?status.svg)](http://godoc.org/github.com/aviau/gopass)
 
 
