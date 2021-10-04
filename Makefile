@@ -38,6 +38,7 @@ clean:
 .PHONY: lint
 lint:
 	go vet -v ./...
+	go run honnef.co/go/tools/cmd/staticcheck ./...
 
 .PHONY: fmt
 fmt:
