@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	gopass_terminal "github.com/aviau/gopass/internal/terminal"
+	gopass_terminal "github.com/aviau/gopass/pkg/internal/terminal"
 )
 
 // execRm runs the "rm" command.

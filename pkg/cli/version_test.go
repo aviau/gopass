@@ -1,4 +1,4 @@
-//    Copyright (C) 2017 Alexandre Viau <alexandre@alexandreviau.net>
+//    Copyright (C) 2017-2018 Alexandre Viau <alexandre@alexandreviau.net>
 //
 //    This file is part of gopass.
 //
@@ -15,19 +15,25 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package version_test
+package cli
 
 import (
+	"fmt"
 	"testing"
-	"unicode"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/internal/version"
+	"github.com/aviau/gopass/pkg/internal/version"
 )
 
-func TestVersionNoLetters(t *testing.T) {
-	for _, character := range version.Version {
-		assert.False(t, unicode.IsLetter(character))
-	}
+func TestVersion(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	err := cliTest.Run([]string{"version"})
+
+	assert.Nil(t, err)
+	assert.Equal(t,
+		cliTest.OutputWriter.String(),
+		fmt.Sprintf("gopass v%s\n", version.Version))
 }

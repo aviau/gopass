@@ -20,7 +20,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/aviau/gopass/internal/version"
+	"github.com/aviau/gopass/pkg/internal/version"
 )
 
 // execVersion runs the "version" command.

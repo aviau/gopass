@@ -26,7 +26,7 @@ import (
 
 	"golang.org/x/crypto/ssh/terminal"
 
-	gopass_terminal "github.com/aviau/gopass/internal/terminal"
+	gopass_terminal "github.com/aviau/gopass/pkg/internal/terminal"
 )
 
 // execInsert runs the "insert" command.

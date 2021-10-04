@@ -24,7 +24,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/internal/gopasstest"
+	"github.com/aviau/gopass/pkg/internal/gopasstest"
 )
 
 func TestRemovePassword(t *testing.T) {
