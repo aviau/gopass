@@ -18,17 +18,46 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
 
 	"github.com/aviau/gopass/internal/cli"
 )
 
 func main() {
+	// Create a context for the program. Cancel it on SIGINT.
+	ctx := func() context.Context {
+		ctx, cancel := context.WithCancel(context.Background())
+
+		signalCh := make(chan os.Signal, 1)
+		signal.Notify(signalCh, os.Interrupt)
+
+		go func() {
+			defer signal.Stop(signalCh)
+
+			select {
+			case <-signalCh:
+				cancel()
+			case <-ctx.Done():
+			}
+		}()
+
+		return ctx
+	}()
+
+	// Create a command configuration
+	commandConfig := cli.NewCommandConfig(
+		os.Stdout,
+		os.Stderr,
+		os.Stdin,
+	)
+
 	// Retrieve args and Shift binary name off argument list.
 	args := os.Args[1:]
 
-	if err := cli.Run(args, os.Stdout, os.Stderr, os.Stdin); err != nil {
+	if err := cli.Run(ctx, commandConfig, args); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s.\n", err)
 		os.Exit(1)
 	}

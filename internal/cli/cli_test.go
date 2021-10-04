@@ -19,6 +19,7 @@ package cli
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
 	"github.com/aviau/gopass"
@@ -57,14 +58,14 @@ func (cliTest *cliTest) PasswordStore() *gopass.PasswordStore {
 }
 
 func (cliTest *cliTest) Run(args []string) error {
-	baseConfig := NewConfig(&cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
+	baseConfig := NewCommandConfig(&cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
 
 	testConfig := testConfig{
 		CommandConfig:     baseConfig,
 		passwordStoreTest: cliTest.passwordStoreTest,
 	}
 
-	return runCommand(&testConfig, args)
+	return Run(context.TODO(), &testConfig, args)
 }
 
 func (cliTest *cliTest) Close() {

@@ -17,18 +17,10 @@
 
 package cli
 
-import (
-	"io"
-)
+import "context"
 
 // Run parses the arguments and executes the gopass CLI
-func Run(args []string, writerOutput io.Writer, writerError io.Writer, readerInput io.Reader) error {
-	cfg := NewConfig(writerOutput, writerError, readerInput)
-	return runCommand(cfg, args)
-}
-
-func runCommand(cfg CommandConfig, cmdAndArgs []string) error {
-
+func Run(ctx context.Context, cfg CommandConfig, cmdAndArgs []string) error {
 	cmd := ""
 	if len(cmdAndArgs) > 0 {
 		cmd = cmdAndArgs[0]

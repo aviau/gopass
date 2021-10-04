@@ -19,11 +19,13 @@ package cli
 
 import (
 	"io"
+	"os"
+	"path"
 
 	"github.com/aviau/gopass"
 )
 
-// CommandConfig contains everything that commands need to run.
+// CommandConfig contains everything that commands needs to run.
 type CommandConfig interface {
 	WriterOutput() io.Writer
 	WriterError() io.Writer
@@ -31,4 +33,61 @@ type CommandConfig interface {
 	Editor() string
 	PasswordStoreDir() string
 	PasswordStore() *gopass.PasswordStore
+}
+
+// DefaultConfig is a default CommandConfig implementation.
+type DefaultConfig struct {
+	writerOutput io.Writer // The writer to use for output
+	writerError  io.Writer // The writer to use for errors
+	readerInput  io.Reader // The reader to use for input
+}
+
+// NewCommandConfig creates a CommandConfig.
+func NewCommandConfig(writerOutput, writerError io.Writer, readerInput io.Reader) CommandConfig {
+	cfg := DefaultConfig{
+		writerOutput: writerOutput,
+		writerError:  writerError,
+		readerInput:  readerInput,
+	}
+	return &cfg
+}
+
+// WriterOutput returns the output writer
+func (cfg *DefaultConfig) WriterOutput() io.Writer {
+	return cfg.writerOutput
+}
+
+// WriterError returns the output writer
+func (cfg *DefaultConfig) WriterError() io.Writer {
+	return cfg.writerError
+}
+
+// ReaderInput returns the input reader
+func (cfg *DefaultConfig) ReaderInput() io.Reader {
+	return cfg.readerInput
+}
+
+// PasswordStoreDir returns the password store directory.
+func (cfg *DefaultConfig) PasswordStoreDir() string {
+	storePath := os.Getenv("PASSWORD_STORE_DIR")
+	if storePath == "" {
+		storePath = path.Join(os.Getenv("HOME"), ".password-store")
+	}
+	return storePath
+}
+
+// Editor returns the configured editor.
+func (cfg *DefaultConfig) Editor() string {
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "editor"
+	}
+	return editor
+}
+
+// PasswordStore returns the PasswordStore.
+func (cfg *DefaultConfig) PasswordStore() *gopass.PasswordStore {
+	storePath := cfg.PasswordStoreDir()
+	s := gopass.NewPasswordStore(storePath)
+	return s
 }
