@@ -15,16 +15,14 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package help
+package cli
 
 import (
 	"fmt"
-
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-// ExecHelp runs the "help" command.
-func ExecHelp(cfg command.Config) error {
+// execHelp runs the "help" command.
+func execHelp(cfg CommandConfig) error {
 	fmt.Fprint(cfg.WriterOutput(), `Usage:
       init                  Initialize a new password store.
       ls                    List passwords.

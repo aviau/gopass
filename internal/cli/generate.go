@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package generate
+package cli
 
 import (
 	"flag"
@@ -23,13 +23,12 @@ import (
 	"io/ioutil"
 	"strconv"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
-	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
 	"github.com/aviau/gopass/internal/pwgen"
+	gopass_terminal "github.com/aviau/gopass/internal/terminal"
 )
 
-// ExecGenerate runs the "generate" command.
-func ExecGenerate(cfg command.Config, args []string) error {
+// execGenerate runs the "generate" command.
+func execGenerate(cfg CommandConfig, args []string) error {
 	var noSymbols, n bool
 	var force, f bool
 	var help, h bool

@@ -15,19 +15,18 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package rm
+package cli
 
 import (
 	"flag"
 	"fmt"
 	"io/ioutil"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
-	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
+	gopass_terminal "github.com/aviau/gopass/internal/terminal"
 )
 
-// ExecRm runs the "rm" command.
-func ExecRm(cfg command.Config, args []string) error {
+// execRm runs the "rm" command.
+func execRm(cfg CommandConfig, args []string) error {
 	var recursive, r bool
 	var force, f bool
 	var help, h bool

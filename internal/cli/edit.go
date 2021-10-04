@@ -15,26 +15,24 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package find
+package cli
 
 import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"os/exec"
-	"strings"
-
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-// ExecFind runs the "find" command.
-func ExecFind(cfg command.Config, args []string) error {
+// execEdit runs the "edit" command.
+func execEdit(cfg CommandConfig, args []string) error {
 	var help, h bool
 
-	fs := flag.NewFlagSet("find", flag.ContinueOnError)
+	fs := flag.NewFlagSet("edit", flag.ContinueOnError)
 	fs.SetOutput(ioutil.Discard)
 
-	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass find patterns...") }
+	fs.Usage = func() { fmt.Fprintln(cfg.WriterOutput(), "Usage: gopass edit pass-name") }
 
 	fs.BoolVar(&help, "help", false, "")
 	fs.BoolVar(&h, "h", false, "")
@@ -50,23 +48,37 @@ func ExecFind(cfg command.Config, args []string) error {
 
 	store := cfg.PasswordStore()
 
-	terms := fs.Args()
-	pattern := "*" + strings.Join(terms, "*|*") + "*"
+	passname := fs.Arg(0)
 
-	find := exec.Command(
-		"tree",
-		"-C",
-		"-l",
-		"--noreport",
-		"--prune",       // tree>=1.5
-		"--matchdirs",   // tree>=1.7
-		"--ignore-case", // tree>=1.7
-		"-P",
-		pattern,
-		store.Path)
+	action := "inserted"
+	password := ""
+	if containsPasword, _ := store.ContainsPassword(passname); containsPasword {
+		var err error
+		password, err = store.GetPassword(passname)
+		if err != nil {
+			return err
+		}
+		action = "edited"
+	}
 
-	find.Stdout = cfg.WriterOutput()
-	find.Stderr = cfg.WriterError()
-	find.Run()
+	file, _ := ioutil.TempFile(os.TempDir(), "gopass")
+	defer os.Remove(file.Name())
+
+	ioutil.WriteFile(file.Name(), []byte(password), 0600)
+
+	editor := exec.Command(cfg.Editor(), file.Name())
+	editor.Stdout = cfg.WriterOutput()
+	editor.Stderr = cfg.WriterError()
+	editor.Stdin = cfg.ReaderInput()
+	editor.Run()
+
+	pwText, _ := ioutil.ReadFile(file.Name())
+	password = string(pwText)
+
+	if err := store.InsertPassword(passname, password); err != nil {
+		return err
+	}
+
+	fmt.Fprintf(cfg.WriterOutput(), "Succesfully %s password \"%s\".\n", action, passname)
 	return nil
 }

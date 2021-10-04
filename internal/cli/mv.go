@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package mv
+package cli
 
 import (
 	"flag"
@@ -23,12 +23,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-// ExecMv runs the "mv" comand.
-func ExecMv(cfg command.Config, args []string) error {
+// execMv runs the "mv" comand.
+func execMv(cfg CommandConfig, args []string) error {
 	var force, f bool
 	var help, h bool
 

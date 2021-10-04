@@ -15,20 +15,16 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package command
+package cli
 
 import (
-	"io"
+	"fmt"
 
-	"github.com/aviau/gopass"
+	"github.com/aviau/gopass/internal/version"
 )
 
-// Config contains everything that commands need to run.
-type Config interface {
-	WriterOutput() io.Writer
-	WriterError() io.Writer
-	ReaderInput() io.Reader
-	Editor() string
-	PasswordStoreDir() string
-	PasswordStore() *gopass.PasswordStore
+// execVersion runs the "version" command.
+func execVersion(cfg CommandConfig) error {
+	fmt.Fprintf(cfg.WriterOutput(), "gopass v%s\n", version.Version)
+	return nil
 }

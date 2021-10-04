@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package init
+package cli
 
 import (
 	"flag"
@@ -25,11 +25,10 @@ import (
 	"strings"
 
 	"github.com/aviau/gopass"
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-// ExecInit runs the "init" command.
-func ExecInit(cfg command.Config, args []string) error {
+// execInit runs the "init" command.
+func execInit(cfg CommandConfig, args []string) error {
 	var path, p string
 	var help, h bool
 

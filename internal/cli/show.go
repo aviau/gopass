@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package show
+package cli
 
 import (
 	"errors"
@@ -26,7 +26,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 	"github.com/aviau/gopass/internal/clipboard"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
@@ -35,8 +34,8 @@ import (
 var usernameRegex = regexp.MustCompile(`(username|user|email):\s*(?P<username>.*)`)
 var twoFactorRegex = regexp.MustCompile(`(2fa):\s*(?P<2fa>.*)`)
 
-// ExecShow runs the "show" command.
-func ExecShow(cfg command.Config, args []string) error {
+// execShow runs the "show" command.
+func execShow(cfg CommandConfig, args []string) error {
 	var clip, c bool
 	var username, u bool
 	var help, h bool

@@ -15,31 +15,20 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package git
+package cli
 
 import (
-	"os/exec"
+	"io"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
+	"github.com/aviau/gopass"
 )
 
-// ExecGit runs the "git" command.
-func ExecGit(cfg command.Config, args []string) error {
-	store := cfg.PasswordStore()
-
-	gitArgs := []string{
-		"--git-dir=" + store.GitDir,
-		"--work-tree=" + store.Path}
-
-	gitArgs = append(gitArgs, args...)
-
-	git := exec.Command(
-		"git",
-		gitArgs...)
-
-	git.Stdout = cfg.WriterOutput()
-	git.Stderr = cfg.WriterError()
-	git.Stdin = cfg.ReaderInput()
-	git.Run()
-	return nil
+// CommandConfig contains everything that commands need to run.
+type CommandConfig interface {
+	WriterOutput() io.Writer
+	WriterError() io.Writer
+	ReaderInput() io.Reader
+	Editor() string
+	PasswordStoreDir() string
+	PasswordStore() *gopass.PasswordStore
 }

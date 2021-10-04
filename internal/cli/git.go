@@ -15,17 +15,29 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package version
+package cli
 
 import (
-	"fmt"
-
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
-	"github.com/aviau/gopass/internal/version"
+	"os/exec"
 )
 
-// ExecVersion runs the "version" command.
-func ExecVersion(cfg command.Config) error {
-	fmt.Fprintf(cfg.WriterOutput(), "gopass v%s\n", version.Version)
+// execGit runs the "git" command.
+func execGit(cfg CommandConfig, args []string) error {
+	store := cfg.PasswordStore()
+
+	gitArgs := []string{
+		"--git-dir=" + store.GitDir,
+		"--work-tree=" + store.Path}
+
+	gitArgs = append(gitArgs, args...)
+
+	git := exec.Command(
+		"git",
+		gitArgs...)
+
+	git.Stdout = cfg.WriterOutput()
+	git.Stderr = cfg.WriterError()
+	git.Stdin = cfg.ReaderInput()
+	git.Run()
 	return nil
 }

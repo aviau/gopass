@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli"
+	"github.com/aviau/gopass/internal/cli"
 )
 
 func main() {

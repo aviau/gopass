@@ -15,9 +15,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-all: fmt gopass test vet lint
+all: fmt gopass test lint
 
-SOURCEDIR=.
+SOURCEDIR:=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go') Makefile
 
 gopass: $(SOURCES)
@@ -35,14 +35,9 @@ install:
 clean:
 	rm -rf gopass
 
-.PHONY: vet
-vet: install
-	go get github.com/stretchr/testify/assert
-	go vet -v ./...
-
 .PHONY: lint
 lint:
-	golint ./...
+	go vet -v ./...
 
 .PHONY: fmt
 fmt:

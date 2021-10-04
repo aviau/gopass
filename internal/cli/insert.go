@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package insert
+package cli
 
 import (
 	"flag"
@@ -26,12 +26,11 @@ import (
 
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
-	gopass_terminal "github.com/aviau/gopass/cmd/gopass/internal/terminal"
+	gopass_terminal "github.com/aviau/gopass/internal/terminal"
 )
 
-// ExecInsert runs the "insert" command.
-func ExecInsert(cfg command.Config, args []string) error {
+// execInsert runs the "insert" command.
+func execInsert(cfg CommandConfig, args []string) error {
 	var multiline, m bool
 	var force, f bool
 	var help, h bool

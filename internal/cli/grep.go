@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package grep
+package cli
 
 import (
 	"flag"
@@ -24,12 +24,10 @@ import (
 	"strings"
 
 	"github.com/mgutz/ansi"
-
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-// ExecGrep runs the "grep" command.
-func ExecGrep(cfg command.Config, args []string) error {
+// execGrep runs the "grep" command.
+func execGrep(cfg CommandConfig, args []string) error {
 	fs := flag.NewFlagSet("grep", flag.ExitOnError)
 	fs.Parse(args)
 

@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cp
+package cli
 
 import (
 	"flag"
@@ -23,12 +23,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-
-	"github.com/aviau/gopass/cmd/gopass/internal/cli/command"
 )
 
-// ExecCp runs the "cp" command.
-func ExecCp(cfg command.Config, args []string) error {
+// execCp runs the "cp" command.
+func execCp(cfg CommandConfig, args []string) error {
 	var recursive, r bool
 	var force, f bool
 	var help, h bool
