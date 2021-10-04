@@ -17,7 +17,7 @@
 
 all: fmt gopass test lint
 
-SOURCEDIR := .
+SOURCEDIR := $(CURDIR)
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go') Makefile
 
 gopass: $(SOURCES)
