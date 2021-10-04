@@ -44,7 +44,6 @@ lint:
 fmt:
 	go fmt ./...
 
-
 .PHONY: get-deps
 get-deps:
 	go get -t ./...
