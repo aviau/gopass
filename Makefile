@@ -29,7 +29,7 @@ test:
 
 .PHONY: install
 install:
-	go install ./...
+	go install ./cmd/gopass
 
 .PHONY: clean
 clean:
