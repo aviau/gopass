@@ -26,7 +26,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aviau/gopass/pkg/internal/clipboard"
+	"github.com/aviau/gopass/internal/clipboard"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 )

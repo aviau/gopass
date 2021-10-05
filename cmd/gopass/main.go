@@ -23,7 +23,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/aviau/gopass/pkg/cli"
+	"github.com/aviau/gopass/internal/cli"
 )
 
 func main() {

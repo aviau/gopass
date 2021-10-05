@@ -23,8 +23,8 @@ import (
 	"io/ioutil"
 	"strconv"
 
-	"github.com/aviau/gopass/pkg/internal/pwgen"
-	gopass_terminal "github.com/aviau/gopass/pkg/internal/terminal"
+	"github.com/aviau/gopass/internal/pwgen"
+	gopass_terminal "github.com/aviau/gopass/internal/terminal"
 )
 
 // execGenerate runs the "generate" command.
