@@ -24,7 +24,7 @@ import (
 	"os"
 	"os/exec"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 
 	gopass_terminal "github.com/aviau/gopass/internal/terminal"
 )
@@ -91,11 +91,11 @@ func execInsert(cfg CommandConfig, args []string) error {
 		fd := int(os.Stdin.Fd())
 		for {
 			fmt.Fprintln(cfg.WriterOutput(), "Enter password:")
-			try1, _ := terminal.ReadPassword(fd)
+			try1, _ := term.ReadPassword(fd)
 			fmt.Fprintln(cfg.WriterOutput())
 
 			fmt.Fprintln(cfg.WriterOutput(), "Enter confirmation:")
-			try2, _ := terminal.ReadPassword(fd)
+			try2, _ := term.ReadPassword(fd)
 			fmt.Fprintln(cfg.WriterOutput())
 
 			if string(try1) == string(try2) {
