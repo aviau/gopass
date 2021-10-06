@@ -100,7 +100,7 @@ func execShow(cfg CommandConfig, args []string) error {
 				}
 			}
 		} else {
-			return fmt.Errorf("Could not find username in the password")
+			return fmt.Errorf("could not find username in the password")
 		}
 	} else if twoFactor {
 		twoFactorSecret := ""
@@ -113,19 +113,19 @@ func execShow(cfg CommandConfig, args []string) error {
 				}
 			}
 		} else {
-			return fmt.Errorf("Could not find totp url in the password")
+			return fmt.Errorf("could not find totp url in the password")
 		}
 
 		if strings.HasPrefix(twoFactorSecret, "otpauth://") {
 			key, err := otp.NewKeyFromURL(twoFactorSecret)
 			if err != nil {
-				return fmt.Errorf("Could not parse otpauth URL: %s", twoFactorSecret)
+				return fmt.Errorf("could not parse otpauth URL: %s", twoFactorSecret)
 			}
 			twoFactorSecret = key.Secret()
 		}
 
 		if outputPassword, err = totp.GenerateCode(twoFactorSecret, time.Now().UTC()); err != nil {
-			return fmt.Errorf("Could not generate otp code: %v", err)
+			return fmt.Errorf("could not generate otp code: %w", err)
 		}
 
 	} else if clip {
