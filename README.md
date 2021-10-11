@@ -23,8 +23,6 @@ This section was just added so that I could get an idea of where I am at.
 - [X] Support ``--path`` option
 - [X] Support multiple GPG ids
 - [X] Re-encryption functionality
-- [ ] Should output: ``Password store initialized for [gpg-id].``
-- [ ] ``--clone <url>`` allows to init from an existing repo
 
 ### ``gopass insert``
 
