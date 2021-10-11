@@ -21,7 +21,6 @@ package store
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -29,16 +28,23 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/aviau/gopass/internal/gpg"
 	gopassio "github.com/aviau/gopass/internal/io"
 )
 
 // PasswordStore represents a password store.
 type PasswordStore struct {
-	Path    string   // path of the store
-	GitDir  string   // The path of the git directory
-	GPGBin  string   // The GPG binary to use
-	GPGIDs  []string // The GPG IDs used for the store
-	UsesGit bool     // Whether or not the store uses git
+	Path       string     // path of the store
+	GitDir     string     // The path of the git directory
+	GPGIDs     []string   // The GPG IDs used for the store
+	GPGBackend GPGBackend // The store's GPG backend.
+	UsesGit    bool       // Whether or not the store uses git
+}
+
+// GPGBackend the PasswordStore's GPG backend.
+type GPGBackend interface {
+	Encrypt(content []byte, recipients []string) ([]byte, error)
+	Decrypt(content []byte) ([]byte, error)
 }
 
 // Returns the GPG ids for a given directory
@@ -68,13 +74,11 @@ func NewPasswordStore(storePath string) *PasswordStore {
 	s.UsesGit = true
 	s.GitDir = path.Join(s.Path, ".git")
 
-	// Find the GPG bin
-	which := exec.Command("which", "gpg2")
-	if err := which.Run(); err == nil {
-		s.GPGBin = "gpg2"
-	} else {
-		s.GPGBin = "gpg"
+	gpgBin := "gpg2"
+	if err := exec.Command("which", "gpg2").Run(); err != nil {
+		gpgBin = "gpg"
 	}
+	s.GPGBackend = gpg.New(gpgBin)
 
 	//Read the .gpg-id file
 	gpgIDs, _ := loadGPGIDs(s.Path)
@@ -150,37 +154,6 @@ func (store *PasswordStore) SetGPGIDs(gpgIDs []string) error {
 	)
 }
 
-func (store *PasswordStore) getGPGEncryptArgs(destinationPath string) []string {
-	gpgArgs := []string{
-		"--encrypt",
-		"--batch",
-		"--use-agent",
-		"--no-tty",
-		"--yes",
-		"--output", destinationPath,
-	}
-
-	for _, recipient := range store.GPGIDs {
-		gpgArgs = append(
-			gpgArgs,
-			"--recipient",
-			recipient,
-		)
-	}
-
-	return gpgArgs
-}
-
-func (store *PasswordStore) getGPGDecryptArgs(passwordPath string) []string {
-	return []string{
-		"--quiet",
-		"--batch",
-		"--use-agent",
-		"--decrypt",
-		passwordPath,
-	}
-}
-
 // ReencryptPassword will reencrypt a password to the current GPG ids
 func (store *PasswordStore) ReencryptPassword(pwname string) error {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
@@ -190,36 +163,23 @@ func (store *PasswordStore) ReencryptPassword(pwname string) error {
 		return fmt.Errorf("could not find password \"%s\" at path \"%s\"", pwname, passwordPath)
 	}
 
-	// Create a directory to temporarily hold the reencrypted password
-	tempDir, err := ioutil.TempDir("", "gopass")
+	encryptedPassword, err := ioutil.ReadFile(passwordPath)
 	if err != nil {
-		return err
-	}
-	defer os.RemoveAll(tempDir)
-
-	tempFile := filepath.Join(tempDir, "temp.gpg")
-
-	// Pipe gpg decrypt to gpg encrypt
-	gpgDecrypt := exec.Command(store.GPGBin, store.getGPGDecryptArgs(passwordPath)...)
-	gpgEncrypt := exec.Command(store.GPGBin, store.getGPGEncryptArgs(tempFile)...)
-
-	gpgDecrypt.Stderr = os.Stderr
-
-	gpgEncrypt.Stdin, _ = gpgDecrypt.StdoutPipe()
-	gpgEncrypt.Stderr = os.Stderr
-	gpgEncrypt.Start()
-
-	if err := gpgDecrypt.Run(); err != nil {
-		return err
+		return fmt.Errorf("could not read encrypted password: %w", err)
 	}
 
-	if err := gpgEncrypt.Wait(); err != nil {
-		return err
+	decryptedPassword, err := store.GPGBackend.Decrypt(encryptedPassword)
+	if err != nil {
+		return fmt.Errorf("could not decrypt the password: %w", err)
 	}
 
-	// Move the newly encrypted password to the password store
-	if err := os.Rename(tempFile, passwordPath); err != nil {
-		return err
+	reEncryptedPassword, err := store.GPGBackend.Encrypt(decryptedPassword, store.GPGIDs)
+	if err != nil {
+		return fmt.Errorf("could not re-encrypt the password: %w", err)
+	}
+
+	if err := ioutil.WriteFile(passwordPath, reEncryptedPassword, 0600); err != nil {
+		return fmt.Errorf("could not write the newly encrypted password: %w", err)
 	}
 
 	return nil
@@ -237,14 +197,13 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 		gitAction = "added"
 	}
 
-	gpg := exec.Command(store.GPGBin, store.getGPGEncryptArgs(passwordPath)...)
+	encryptedPassword, err := store.GPGBackend.Encrypt([]byte(pwtext), store.GPGIDs)
+	if err != nil {
+		return fmt.Errorf("could not encrypt the password: %w", err)
+	}
 
-	stdin, _ := gpg.StdinPipe()
-	io.WriteString(stdin, pwtext)
-	stdin.Close()
-
-	if output, err := gpg.CombinedOutput(); err != nil {
-		return fmt.Errorf("gpg error: \"%s\"", string(output))
+	if err := ioutil.WriteFile(passwordPath, encryptedPassword, 0600); err != nil {
+		return fmt.Errorf("could not write the newly encrypted password: %w", err)
 	}
 
 	store.AddAndCommit(
@@ -397,14 +356,17 @@ func (store *PasswordStore) GetPassword(pwname string) (string, error) {
 		return "", fmt.Errorf("could not find password \"%s\" at path \"%s\"", pwname, passwordPath)
 	}
 
-	show := exec.Command(store.GPGBin, store.getGPGDecryptArgs(passwordPath)...)
-	output, err := show.CombinedOutput()
-
+	encryptedPassword, err := ioutil.ReadFile(passwordPath)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not read the encrypted password: %w", err)
 	}
 
-	return strings.TrimSpace(string(output)), nil
+	decryptedPassword, err := store.GPGBackend.Decrypt(encryptedPassword)
+	if err != nil {
+		return "", fmt.Errorf("could not decrypt the password: %w", err)
+	}
+
+	return strings.TrimSpace(string(decryptedPassword)), nil
 }
 
 // ContainsPassword returns whether or not the store contains a password with this name.
