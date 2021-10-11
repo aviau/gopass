@@ -73,12 +73,7 @@ func NewPasswordStore(storePath string) *PasswordStore {
 	s.Path = storePath
 	s.UsesGit = true
 	s.GitDir = path.Join(s.Path, ".git")
-
-	gpgBin := "gpg2"
-	if err := exec.Command("which", "gpg2").Run(); err != nil {
-		gpgBin = "gpg"
-	}
-	s.GPGBackend = gpg.New(gpgBin)
+	s.GPGBackend = gpg.New("", nil, false)
 
 	//Read the .gpg-id file
 	gpgIDs, _ := loadGPGIDs(s.Path)

@@ -9,6 +9,6 @@ import (
 
 func TestImplementsGPG(t *testing.T) {
 	_ = func() store.GPGBackend {
-		return gpg.New("")
+		return gpg.New("", nil, false)
 	}
 }

@@ -19,10 +19,18 @@
 package gopasstest
 
 import (
+	"os"
 	"testing"
 
+	_ "embed"
+
+	"github.com/aviau/gopass/internal/gpg"
 	"github.com/aviau/gopass/pkg/store"
 )
+
+//go:embed testdata/CED3B67C8F1F6CA9.private.key
+var testSecretKey []byte
+var testSecretKeyID string = "CED3B67C8F1F6CA9"
 
 // PasswordStoreTest allows for testing password stores.
 type PasswordStoreTest struct {
@@ -34,10 +42,29 @@ type PasswordStoreTest struct {
 func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	storePath := t.TempDir()
 
+	// Prepare GPG
+	gnupgHome := t.TempDir()
+	if err := os.Chmod(gnupgHome, 0700); err != nil {
+		t.Fatal(err)
+	}
+	gpgBackend := gpg.New(
+		"",
+		[]string{
+			"GNUPGHOME=" + gnupgHome,
+		},
+		true,
+	)
+	if err := gpgBackend.Import(testSecretKey); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create the store
 	passwordStore := store.NewPasswordStore(storePath)
 	passwordStore.UsesGit = false
+	passwordStore.GPGBackend = gpgBackend
 
-	if err := passwordStore.Init([]string{"test"}); err != nil {
+	// Init the store
+	if err := passwordStore.Init([]string{testSecretKeyID}); err != nil {
 		t.Fatal(err)
 	}
 
