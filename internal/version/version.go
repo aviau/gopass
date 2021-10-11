@@ -20,5 +20,5 @@ package version
 
 const (
 	// Version is the current gopass version
-	Version = "1.2.0"
+	Version = "1.5.0"
 )
