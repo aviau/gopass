@@ -80,11 +80,13 @@ List names of passwords inside the tree that match \fIpass-names\fP by using the
 .BR tree (1)
 program. This command is alternatively named \fBsearch\fP.
 .TP
-\fBshow\fP [ \fI--clip\fP, \fI-c\fP ] [ \fI--username\fP, \fI-u\fP ] \fIpass-name\fP
+\fBshow\fP [ \fI--clip\fP, \fI-c\fP ] [ \fI--two-factor\fP, \fI-2fa\fP ] [ \fI--username\fP, \fI-u\fP ] \fIpass-name\fP
 Decrypt and print a password named \fIpass-name\fP.
-If \fI--username\fP or \fI-u\fP is specified, do not print the password but insteat attempt to find the username.
+If \fI--username\fP or \fI-u\fP is specified, do not print the password but instead attempt to find the username.
 If \fI--clip\fP or \fI-c\fP is specified, do not print the password but instead copy
 the first line to the clipboard using \fBxclip\fP(1).
+If \fI--two-factor\fP or \fI-2fa\fP is specified, attempt to generate a TOTP code for the given password. This requires
+that the password contain either a full otpauth:// URI or a TOTP secret prefixed by '2fa:'.
 .TP
 \fBinsert\fP [ \fI--multiline\fP, \fI-m\fP ] [ \fI--force\fP, \fI-f\fP ] \fIpass-name\fP
 Insert a new password into the password store called \fIpass-name\fP. This will
