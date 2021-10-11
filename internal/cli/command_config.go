@@ -1,4 +1,4 @@
-//    Copyright (C) 2018 Alexandre Viau <alexandre@alexandreviau.net>
+//    Copyright (C) 2018-2021 Alexandre Viau <alexandre@alexandreviau.net>
 //
 //    This file is part of gopass.
 //
@@ -18,8 +18,11 @@
 package cli
 
 import (
+	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"os/exec"
 	"path"
 
 	"github.com/aviau/gopass/pkg/store"
@@ -30,7 +33,7 @@ type CommandConfig interface {
 	WriterOutput() io.Writer
 	WriterError() io.Writer
 	ReaderInput() io.Reader
-	Editor() string
+	Edit(string) (string, error)
 	PasswordStoreDir() string
 	PasswordStore() *store.PasswordStore
 }
@@ -76,8 +79,15 @@ func (cfg *DefaultConfig) PasswordStoreDir() string {
 	return storePath
 }
 
-// Editor returns the configured editor.
-func (cfg *DefaultConfig) Editor() string {
+// PasswordStore returns the PasswordStore.
+func (cfg *DefaultConfig) PasswordStore() *store.PasswordStore {
+	storePath := cfg.PasswordStoreDir()
+	s := store.NewPasswordStore(storePath)
+	return s
+}
+
+// editor returns the configured editor.
+func (cfg *DefaultConfig) editor() string {
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
 		editor = "editor"
@@ -85,9 +95,35 @@ func (cfg *DefaultConfig) Editor() string {
 	return editor
 }
 
-// PasswordStore returns the PasswordStore.
-func (cfg *DefaultConfig) PasswordStore() *store.PasswordStore {
-	storePath := cfg.PasswordStoreDir()
-	s := store.NewPasswordStore(storePath)
-	return s
+// Edit is a callback for asking the user to edit text.
+func (cfg *DefaultConfig) Edit(content string) (string, error) {
+	file, err := ioutil.TempFile(os.TempDir(), "gopass")
+	if err != nil {
+		return "", fmt.Errorf("can't create tempfile: %w", err)
+	}
+	defer file.Close()
+	defer os.Remove(file.Name())
+
+	if _, err := file.WriteString(content); err != nil {
+		return "", fmt.Errorf("could not write content to tempfile: %w", err)
+	}
+
+	editor := exec.Command(cfg.editor(), file.Name())
+	editor.Stdout = cfg.WriterOutput()
+	editor.Stderr = cfg.WriterError()
+	editor.Stdin = cfg.ReaderInput()
+	editor.Run()
+
+	if _, err := file.Seek(0, 0); err != nil {
+		return "", fmt.Errorf("could not seek to file start: %w", err)
+	}
+
+	editedContentBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return "", fmt.Errorf("could not read edited file: %w", err)
+	}
+
+	editedContent := string(editedContentBytes)
+
+	return editedContent, nil
 }

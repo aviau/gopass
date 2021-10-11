@@ -59,7 +59,7 @@ func execEdit(cfg CommandConfig, args []string) error {
 		action = "edited"
 	}
 
-	editedPassword, err := editUsingTempfile(cfg, decryptedPassword)
+	editedPassword, err := cfg.Edit(decryptedPassword)
 	if err != nil {
 		return fmt.Errorf("could not edit password: %w", err)
 	}

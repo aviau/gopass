@@ -77,7 +77,7 @@ func execInsert(cfg CommandConfig, args []string) error {
 
 	if multiline {
 		var err error
-		password, err = editUsingTempfile(cfg, "")
+		password, err = cfg.Edit("")
 		if err != nil {
 			return fmt.Errorf("could not edit multiline password: %w", err)
 		}
