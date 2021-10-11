@@ -85,32 +85,28 @@ func NewPasswordStore(storePath string) *PasswordStore {
 // Init creates a Password Store at the Path
 func (store *PasswordStore) Init(gpgIDs []string) error {
 	// Check if the password path already exists
-	fi, err := os.Stat(store.Path)
-	if err == nil {
+	if fi, err := os.Stat(store.Path); os.IsNotExist(err) {
+		// Path does not exist, create it
+		if err := os.Mkdir(store.Path, 0700); err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	} else {
 		// Path exists, but is it a directory?
-		if fi.Mode().IsDir() == false {
+		if !fi.Mode().IsDir() {
 			return fmt.Errorf(
 				"could not create password store. Path \"%s\" already exists and it is not a directory",
 				store.Path)
-		}
-	} else {
-		// Error during os.Stat
-		if os.IsNotExist(err) {
-			// Path does not exist, create it
-			if err := os.Mkdir(store.Path, 0700); err != nil {
-				return err
-			}
-		} else {
-			return err
 		}
 	}
 
 	// Check if the .gpg-id file already exists.
 	gpgIDFilePath := path.Join(store.Path, ".gpg-id")
-	fi, err = os.Stat(gpgIDFilePath)
-	if err == nil {
-		// .gpg-id already exists
+	if _, err := os.Stat(gpgIDFilePath); err == nil {
 		return fmt.Errorf("there is already a .gpg-id file at \"%s\". Stopping init", gpgIDFilePath)
+	} else if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("could not look for an existing .gpg-id: %w", err)
 	}
 
 	gpgIDFile, err := os.Create(path.Join(store.Path, ".gpg-id"))
@@ -245,9 +241,8 @@ func (store *PasswordStore) InsertPassword(pwname, pwtext string) error {
 	stdin, _ := gpg.StdinPipe()
 	io.WriteString(stdin, pwtext)
 	stdin.Close()
-	output, err := gpg.CombinedOutput()
 
-	if err != nil {
+	if output, err := gpg.CombinedOutput(); err != nil {
 		return fmt.Errorf("gpg error: \"%s\"", string(output))
 	}
 
