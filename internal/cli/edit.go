@@ -48,23 +48,43 @@ func execEdit(cfg CommandConfig, args []string) error {
 
 	store := cfg.PasswordStore()
 
-	passname := fs.Arg(0)
+	passName := fs.Arg(0)
 
 	action := "inserted"
-	password := ""
-	if containsPasword, _ := store.ContainsPassword(passname); containsPasword {
+	decryptedPassword := ""
+	if containsPasword, _ := store.ContainsPassword(passName); containsPasword {
 		var err error
-		password, err = store.GetPassword(passname)
+		decryptedPassword, err = store.GetPassword(passName)
 		if err != nil {
 			return err
 		}
 		action = "edited"
 	}
 
-	file, _ := ioutil.TempFile(os.TempDir(), "gopass")
+	editedPassword, err := editUsingTempfile(cfg, decryptedPassword)
+	if err != nil {
+		return fmt.Errorf("could not edit password: %w", err)
+	}
+
+	if err := store.InsertPassword(passName, editedPassword); err != nil {
+		return err
+	}
+
+	fmt.Fprintf(cfg.WriterOutput(), "Succesfully %s password \"%s\".\n", action, passName)
+	return nil
+}
+
+func editUsingTempfile(cfg CommandConfig, pass string) (string, error) {
+	file, err := ioutil.TempFile(os.TempDir(), "gopass")
+	if err != nil {
+		return "", fmt.Errorf("can't create tempfile: %w", err)
+	}
+	defer file.Close()
 	defer os.Remove(file.Name())
 
-	ioutil.WriteFile(file.Name(), []byte(password), 0600)
+	if _, err := file.WriteString(pass); err != nil {
+		return "", fmt.Errorf("could not write password to tempfile: %w", err)
+	}
 
 	editor := exec.Command(cfg.Editor(), file.Name())
 	editor.Stdout = cfg.WriterOutput()
@@ -72,13 +92,16 @@ func execEdit(cfg CommandConfig, args []string) error {
 	editor.Stdin = cfg.ReaderInput()
 	editor.Run()
 
-	pwText, _ := ioutil.ReadFile(file.Name())
-	password = string(pwText)
-
-	if err := store.InsertPassword(passname, password); err != nil {
-		return err
+	if _, err := file.Seek(0, 0); err != nil {
+		return "", fmt.Errorf("could not seek to password start: %w", err)
 	}
 
-	fmt.Fprintf(cfg.WriterOutput(), "Succesfully %s password \"%s\".\n", action, passname)
-	return nil
+	editedPasswordBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return "", fmt.Errorf("could not read edited file: %w", err)
+	}
+
+	editedPassword := string(editedPasswordBytes)
+
+	return editedPassword, nil
 }
