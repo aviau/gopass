@@ -45,3 +45,33 @@ func TestInsertDashH(t *testing.T) {
 	assert.Equal(t, "", cliTest.ErrorWriter.String())
 	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass insert"))
 }
+
+func TestInsertMultiline(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	// Setup the EditFunc callback.
+	editFuncCalled := false
+	cliTest.EditFunc = func(content string) (string, error) {
+		editFuncCalled = true
+		return "edited password", nil
+	}
+
+	// Ensure the password does not already exists.
+	containsPassword, _ := cliTest.PasswordStore().ContainsPassword("test.com")
+	assert.False(t, containsPassword, "there should be no preexisting password")
+
+	// Run the command
+	err := cliTest.Run([]string{"insert", "-m", "test.com"})
+
+	// Asserts
+	assert.Nil(t, err)
+	assert.True(t, editFuncCalled, "the editor should have been opened")
+
+	containsPassword, _ = cliTest.PasswordStore().ContainsPassword("test.com")
+	assert.True(t, containsPassword, "the password should have been created")
+
+	decryptedPassword, err := cliTest.PasswordStore().GetPassword("test.com")
+	assert.Nil(t, err)
+	assert.Equal(t, "edited password", decryptedPassword)
+}

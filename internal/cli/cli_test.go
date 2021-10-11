@@ -26,21 +26,28 @@ import (
 	"github.com/aviau/gopass/pkg/store"
 )
 
-// testConfig is a fake command.Config, it does not use env variables.
+// testConfig is a fake CommandConfig.
 type testConfig struct {
 	CommandConfig
 	passwordStoreTest *gopasstest.PasswordStoreTest
+	editFunc          func(string) (string, error)
 }
 
 func (cfg *testConfig) PasswordStore() *store.PasswordStore {
 	return cfg.passwordStoreTest.PasswordStore
 }
 
+func (cfg *testConfig) Edit(content string) (string, error) {
+	return cfg.editFunc(content)
+}
+
+// cliTest allows for testing the CLI without a TTY.
 type cliTest struct {
 	OutputWriter      bytes.Buffer
 	ErrorWriter       bytes.Buffer
 	t                 *testing.T
 	passwordStoreTest *gopasstest.PasswordStoreTest
+	EditFunc          func(string) (string, error)
 }
 
 func newCliTest(t *testing.T) *cliTest {
@@ -49,6 +56,9 @@ func newCliTest(t *testing.T) *cliTest {
 	cliTest := cliTest{
 		t:                 t,
 		passwordStoreTest: passwordStoreTest,
+		EditFunc: func(content string) (string, error) {
+			return content, nil
+		},
 	}
 	return &cliTest
 }
@@ -63,6 +73,7 @@ func (cliTest *cliTest) Run(args []string) error {
 	testConfig := testConfig{
 		CommandConfig:     baseConfig,
 		passwordStoreTest: cliTest.passwordStoreTest,
+		editFunc:          cliTest.EditFunc,
 	}
 
 	return Run(context.TODO(), &testConfig, args)

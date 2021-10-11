@@ -56,3 +56,18 @@ func TestShowMissingPassword(t *testing.T) {
 	assert.Equal(t, cliTest.OutputWriter.String(), "")
 	assert.Equal(t, cliTest.ErrorWriter.String(), "")
 }
+
+func TestShow(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	if err := cliTest.PasswordStore().InsertPassword("test.com", "hello world"); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := cliTest.Run([]string{"show", "test.com"}); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, cliTest.OutputWriter.String(), "hello world\n")
+}
