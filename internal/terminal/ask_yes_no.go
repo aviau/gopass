@@ -15,6 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
+// Package terminal implements utilities for interacting with the terminal.
 package terminal
 
 import (

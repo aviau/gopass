@@ -15,6 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
+// Package clipboard implements utilities for interating with the clipboard.
 package clipboard
 
 import (

@@ -15,6 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
+// Package pwgen implements methods for generating secure passwords.
 package pwgen
 
 import (
