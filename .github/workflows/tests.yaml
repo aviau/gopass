@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: "tests/lint"
+name: "tests"
 
 jobs:
   test:
@@ -28,3 +28,6 @@ jobs:
 
     - name: Lint
       run: make lint
+
+    - name: tests
+      run: make test
