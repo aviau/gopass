@@ -45,12 +45,12 @@ func TestNewPasswordStoreGPGIds(t *testing.T) {
 
 	assert.Equal(t, passwordStore.GPGIDs, []string{"test", "test2"})
 
-	gpgIdContent, _ := ioutil.ReadFile(
+	gpgIDContent, _ := ioutil.ReadFile(
 		path.Join(
 			passwordStore.Path,
 			".gpg-id",
 		),
 	)
-	assert.Equal(t, string(gpgIdContent), "test\ntest2\n")
+	assert.Equal(t, string(gpgIDContent), "test\ntest2\n")
 
 }
