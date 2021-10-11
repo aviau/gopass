@@ -19,8 +19,6 @@
 package gopasstest
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/aviau/gopass/pkg/store"
@@ -30,15 +28,11 @@ import (
 type PasswordStoreTest struct {
 	PasswordStore *store.PasswordStore
 	storePath     string
-	t             *testing.T
 }
 
 // NewPasswordStoreTest creates a password store for testing
 func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
-	storePath, err := ioutil.TempDir("", "gopass")
-	if err != nil {
-		t.Fatal(err)
-	}
+	storePath := t.TempDir()
 
 	passwordStore := store.NewPasswordStore(storePath)
 	passwordStore.UsesGit = false
@@ -55,9 +49,7 @@ func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	return &passwordStoreTest
 }
 
-// Close removes the password store
+// Close cleans the test.
 func (test *PasswordStoreTest) Close() {
-	if err := os.RemoveAll(test.storePath); err != nil {
-		test.t.Fatal(err)
-	}
+	// Nothing for now.
 }

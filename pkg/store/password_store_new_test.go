@@ -18,8 +18,6 @@
 package store_test
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,12 +26,6 @@ import (
 )
 
 func TestNewPasswordStoreUsesGit(t *testing.T) {
-	storePath, err := ioutil.TempDir("", "gopass")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(storePath)
-
-	passwordStore := store.NewPasswordStore(storePath)
+	passwordStore := store.NewPasswordStore(t.TempDir())
 	assert.True(t, passwordStore.UsesGit, "UsesGit should be true by default")
 }

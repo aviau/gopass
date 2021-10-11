@@ -19,7 +19,6 @@ package store_test
 
 import (
 	"io/ioutil"
-	"os"
 	"path"
 
 	"testing"
@@ -30,13 +29,7 @@ import (
 )
 
 func TestNewPasswordStoreGPGIds(t *testing.T) {
-	storePath, err := ioutil.TempDir("", "gopass")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(storePath)
-
-	passwordStore := store.NewPasswordStore(storePath)
+	passwordStore := store.NewPasswordStore(t.TempDir())
 	passwordStore.UsesGit = false
 
 	if err := passwordStore.Init([]string{"test", "test2"}); err != nil {
