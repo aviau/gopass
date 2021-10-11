@@ -185,7 +185,7 @@ func (store *PasswordStore) ReencryptPassword(pwname string) error {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
 
 	// Error if the password does not exist
-	if containsPassword == false {
+	if !containsPassword {
 		return fmt.Errorf("could not find password \"%s\" at path \"%s\"", pwname, passwordPath)
 	}
 
@@ -392,7 +392,7 @@ func (store *PasswordStore) GetPassword(pwname string) (string, error) {
 	containsPassword, passwordPath := store.ContainsPassword(pwname)
 
 	// Error if the password does not exist
-	if containsPassword == false {
+	if !containsPassword {
 		return "", fmt.Errorf("could not find password \"%s\" at path \"%s\"", pwname, passwordPath)
 	}
 
