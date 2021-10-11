@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 
 	"golang.org/x/term"
 
@@ -77,16 +76,11 @@ func execInsert(cfg CommandConfig, args []string) error {
 	var password string
 
 	if multiline {
-		file, _ := ioutil.TempFile(os.TempDir(), "gopass")
-		defer os.Remove(file.Name())
-
-		editor := exec.Command(cfg.Editor(), file.Name())
-		editor.Stdout = os.Stdout
-		editor.Stdin = os.Stdin
-		editor.Run()
-
-		pwText, _ := ioutil.ReadFile(file.Name())
-		password = string(pwText)
+		var err error
+		password, err = editUsingTempfile(cfg, "")
+		if err != nil {
+			return fmt.Errorf("could not edit multiline password: %w", err)
+		}
 	} else {
 		fd := int(os.Stdin.Fd())
 		for {

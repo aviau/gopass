@@ -21,8 +21,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"os"
-	"os/exec"
 )
 
 // execEdit runs the "edit" command.
@@ -72,36 +70,4 @@ func execEdit(cfg CommandConfig, args []string) error {
 
 	fmt.Fprintf(cfg.WriterOutput(), "Succesfully %s password \"%s\".\n", action, passName)
 	return nil
-}
-
-func editUsingTempfile(cfg CommandConfig, pass string) (string, error) {
-	file, err := ioutil.TempFile(os.TempDir(), "gopass")
-	if err != nil {
-		return "", fmt.Errorf("can't create tempfile: %w", err)
-	}
-	defer file.Close()
-	defer os.Remove(file.Name())
-
-	if _, err := file.WriteString(pass); err != nil {
-		return "", fmt.Errorf("could not write password to tempfile: %w", err)
-	}
-
-	editor := exec.Command(cfg.Editor(), file.Name())
-	editor.Stdout = cfg.WriterOutput()
-	editor.Stderr = cfg.WriterError()
-	editor.Stdin = cfg.ReaderInput()
-	editor.Run()
-
-	if _, err := file.Seek(0, 0); err != nil {
-		return "", fmt.Errorf("could not seek to password start: %w", err)
-	}
-
-	editedPasswordBytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		return "", fmt.Errorf("could not read edited file: %w", err)
-	}
-
-	editedPassword := string(editedPasswordBytes)
-
-	return editedPassword, nil
 }
