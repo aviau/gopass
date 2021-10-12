@@ -20,33 +20,53 @@ package cli
 import (
 	"bytes"
 	"context"
+	"io"
+	"os"
 	"testing"
 
 	"github.com/aviau/gopass/internal/gopasstest"
 	"github.com/aviau/gopass/pkg/store"
 )
 
-// testConfig is a fake CommandConfig.
+// testConfig is a CommandConfig for testing.
 type testConfig struct {
-	CommandConfig
-	passwordStoreTest *gopasstest.PasswordStoreTest
-	editFunc          func(string) (string, error)
+	passwordStore *store.PasswordStore
+	editFunc      func(string) (string, error)
+	writerOutput  io.Writer
+	writerError   io.Writer
+	readerInput   io.Reader
 }
 
 func (cfg *testConfig) PasswordStore() *store.PasswordStore {
-	return cfg.passwordStoreTest.PasswordStore
+	return cfg.passwordStore
+}
+
+func (cfg *testConfig) PasswordStoreDir() string {
+	return cfg.passwordStore.Path
 }
 
 func (cfg *testConfig) Edit(content string) (string, error) {
 	return cfg.editFunc(content)
 }
 
+func (cfg *testConfig) WriterOutput() io.Writer {
+	return cfg.writerOutput
+}
+
+func (cfg *testConfig) WriterError() io.Writer {
+	return cfg.writerError
+}
+
+func (cfg *testConfig) ReaderInput() io.Reader {
+	return cfg.readerInput
+}
+
 // cliTest allows for testing the CLI without a TTY.
 type cliTest struct {
-	OutputWriter      bytes.Buffer
-	ErrorWriter       bytes.Buffer
 	t                 *testing.T
 	passwordStoreTest *gopasstest.PasswordStoreTest
+	OutputWriter      *bytes.Buffer
+	ErrorWriter       *bytes.Buffer
 	EditFunc          func(string) (string, error)
 }
 
@@ -56,10 +76,13 @@ func newCliTest(t *testing.T) *cliTest {
 	cliTest := cliTest{
 		t:                 t,
 		passwordStoreTest: passwordStoreTest,
+		OutputWriter:      &bytes.Buffer{},
+		ErrorWriter:       &bytes.Buffer{},
 		EditFunc: func(content string) (string, error) {
 			return content, nil
 		},
 	}
+
 	return &cliTest
 }
 
@@ -68,15 +91,15 @@ func (cliTest *cliTest) PasswordStore() *store.PasswordStore {
 }
 
 func (cliTest *cliTest) Run(args []string) error {
-	baseConfig := NewCommandConfig(&cliTest.OutputWriter, &cliTest.ErrorWriter, nil)
-
-	testConfig := testConfig{
-		CommandConfig:     baseConfig,
-		passwordStoreTest: cliTest.passwordStoreTest,
-		editFunc:          cliTest.EditFunc,
+	testConfig := &testConfig{
+		passwordStore: cliTest.PasswordStore(),
+		editFunc:      cliTest.EditFunc,
+		writerOutput:  cliTest.OutputWriter,
+		writerError:   cliTest.ErrorWriter,
+		readerInput:   os.Stdin,
 	}
 
-	return Run(context.TODO(), &testConfig, args)
+	return Run(context.TODO(), testConfig, args)
 }
 
 func (cliTest *cliTest) Close() {
