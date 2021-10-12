@@ -30,22 +30,22 @@ func TestRmDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"rm", "--help"})
+	result, err := cliTest.Run([]string{"rm", "--help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass rm"))
 }
 
 func TestRmDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"rm", "-h"})
+	result, err := cliTest.Run([]string{"rm", "-h"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass rm"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass rm"))
 }
 
 func TestRmDirectoryWithoutRecursive(t *testing.T) {
@@ -57,7 +57,7 @@ func TestRmDirectoryWithoutRecursive(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := cliTest.Run([]string{"rm", "dir"})
+	_, err := cliTest.Run([]string{"rm", "dir"})
 
 	assert.EqualError(t, err, "\"dir\" is a directory, use -r to remove recursively")
 }
@@ -66,7 +66,7 @@ func TestRmUnexistingPassword(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"rm", "dir"})
+	_, err := cliTest.Run([]string{"rm", "dir"})
 
 	assert.EqualError(t, err, "could not find password or directory to remove")
 }

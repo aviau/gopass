@@ -28,33 +28,33 @@ func TestShowDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"show", "--help"})
+	result, err := cliTest.Run([]string{"show", "--help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass show"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass show"))
 }
 
 func TestShowDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"show", "-h"})
+	result, err := cliTest.Run([]string{"show", "-h"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass show"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass show"))
 }
 
 func TestShowMissingPassword(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"show"})
+	result, err := cliTest.Run([]string{"show"})
 
 	assert.EqualError(t, err, "missing password name")
-	assert.Equal(t, cliTest.OutputWriter.String(), "")
-	assert.Equal(t, cliTest.ErrorWriter.String(), "")
+	assert.Equal(t, result.Stdout.String(), "")
+	assert.Equal(t, result.Stderr.String(), "")
 }
 
 func TestShow(t *testing.T) {
@@ -65,9 +65,9 @@ func TestShow(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := cliTest.Run([]string{"show", "test.com"}); err != nil {
-		t.Fatal(err)
-	}
+	result, err := cliTest.Run([]string{"show", "test.com"})
 
-	assert.Equal(t, cliTest.OutputWriter.String(), "hello world\n")
+	assert.Nil(t, err)
+	assert.Equal(t, result.Stderr.String(), "")
+	assert.Equal(t, result.Stdout.String(), "hello world\n")
 }

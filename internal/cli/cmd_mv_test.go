@@ -28,20 +28,20 @@ func TestMvDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"mv", "--help"})
+	result, err := cliTest.Run([]string{"mv", "--help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass mv"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass mv"))
 }
 
 func TestMvDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"mv", "-h"})
+	result, err := cliTest.Run([]string{"mv", "-h"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass mv"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass mv"))
 }

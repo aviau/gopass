@@ -28,20 +28,20 @@ func TestInitDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"init", "--help"})
+	result, err := cliTest.Run([]string{"init", "--help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init [--path=subfolder,-p subfolder] gpg-id..."))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass init [--path=subfolder,-p subfolder] gpg-id..."))
 }
 
 func TestInitDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"init", "-h"})
+	result, err := cliTest.Run([]string{"init", "-h"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass init [--path=subfolder,-p subfolder] gpg-id..."))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass init [--path=subfolder,-p subfolder] gpg-id..."))
 }

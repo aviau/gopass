@@ -28,20 +28,20 @@ func TestGenerateDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"generate", "--help"})
+	result, err := cliTest.Run([]string{"generate", "--help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass generate"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass generate"))
 }
 
 func TestGenerateDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"generate", "-h"})
+	result, err := cliTest.Run([]string{"generate", "-h"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass generate"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass generate"))
 }

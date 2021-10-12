@@ -28,22 +28,22 @@ func TestInsertHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"insert", "--help"})
+	result, err := cliTest.Run([]string{"insert", "--help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass insert"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass insert"))
 }
 
 func TestInsertDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"insert", "--h"})
+	result, err := cliTest.Run([]string{"insert", "--h"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage: gopass insert"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage: gopass insert"))
 }
 
 func TestInsertMultiline(t *testing.T) {
@@ -62,7 +62,7 @@ func TestInsertMultiline(t *testing.T) {
 	assert.False(t, containsPassword, "there should be no preexisting password")
 
 	// Run the command
-	err := cliTest.Run([]string{"insert", "-m", "test.com"})
+	_, err := cliTest.Run([]string{"insert", "-m", "test.com"})
 
 	// Asserts
 	assert.Nil(t, err)

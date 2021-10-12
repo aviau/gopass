@@ -65,8 +65,6 @@ func (cfg *testConfig) ReaderInput() io.Reader {
 type cliTest struct {
 	t                 *testing.T
 	passwordStoreTest *gopasstest.PasswordStoreTest
-	OutputWriter      *bytes.Buffer
-	ErrorWriter       *bytes.Buffer
 	EditFunc          func(string) (string, error)
 }
 
@@ -76,8 +74,6 @@ func newCliTest(t *testing.T) *cliTest {
 	cliTest := cliTest{
 		t:                 t,
 		passwordStoreTest: passwordStoreTest,
-		OutputWriter:      &bytes.Buffer{},
-		ErrorWriter:       &bytes.Buffer{},
 		EditFunc: func(content string) (string, error) {
 			return content, nil
 		},
@@ -90,16 +86,31 @@ func (cliTest *cliTest) PasswordStore() *store.PasswordStore {
 	return cliTest.passwordStoreTest.PasswordStore
 }
 
-func (cliTest *cliTest) Run(args []string) error {
+type runResult struct {
+	Stdout *bytes.Buffer
+	Stderr *bytes.Buffer
+}
+
+func (cliTest *cliTest) Run(args []string) (*runResult, error) {
+	stdout := &bytes.Buffer{}
+	stderr := &bytes.Buffer{}
+
 	testConfig := &testConfig{
 		passwordStore: cliTest.PasswordStore(),
 		editFunc:      cliTest.EditFunc,
-		writerOutput:  cliTest.OutputWriter,
-		writerError:   cliTest.ErrorWriter,
+		writerOutput:  stdout,
+		writerError:   stderr,
 		readerInput:   os.Stdin,
 	}
 
-	return Run(context.TODO(), testConfig, args)
+	err := Run(context.TODO(), testConfig, args)
+
+	runResult := &runResult{
+		Stdout: stdout,
+		Stderr: stderr,
+	}
+
+	return runResult, err
 }
 
 func (cliTest *cliTest) Close() {

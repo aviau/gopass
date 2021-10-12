@@ -28,37 +28,37 @@ func TestHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"help"})
+	result, err := cliTest.Run([]string{"help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage"))
+	assert.True(t, strings.Contains(result.Stdout.String(), "init"))
+	assert.True(t, strings.Contains(result.Stdout.String(), "insert"))
 }
 
 func TestDashDashHelp(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"--help"})
+	result, err := cliTest.Run([]string{"--help"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage"))
+	assert.True(t, strings.Contains(result.Stdout.String(), "init"))
+	assert.True(t, strings.Contains(result.Stdout.String(), "insert"))
 }
 
 func TestDashH(t *testing.T) {
 	cliTest := newCliTest(t)
 	defer cliTest.Close()
 
-	err := cliTest.Run([]string{"-h"})
+	result, err := cliTest.Run([]string{"-h"})
 
 	assert.Nil(t, err)
-	assert.Equal(t, "", cliTest.ErrorWriter.String())
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "Usage"))
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "init"))
-	assert.True(t, strings.Contains(cliTest.OutputWriter.String(), "insert"))
+	assert.Equal(t, "", result.Stderr.String())
+	assert.True(t, strings.Contains(result.Stdout.String(), "Usage"))
+	assert.True(t, strings.Contains(result.Stdout.String(), "init"))
+	assert.True(t, strings.Contains(result.Stdout.String(), "insert"))
 }
