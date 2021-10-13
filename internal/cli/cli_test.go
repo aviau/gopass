@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli
+package cli_test
 
 import (
 	"bytes"
@@ -25,6 +25,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aviau/gopass/internal/cli"
 	"github.com/aviau/gopass/internal/gopasstest"
 	"github.com/aviau/gopass/pkg/store"
 )
@@ -114,7 +115,7 @@ func (cliTest *cliTest) Run(args []string) (*runResult, error) {
 		readerInput:   os.Stdin,
 	}
 
-	err := Run(context.TODO(), testConfig, args)
+	err := cli.Run(context.TODO(), testConfig, args)
 
 	runResult := &runResult{
 		Stdout: stdout,
