@@ -24,7 +24,6 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/aviau/gopass/internal/clipboard"
 	"github.com/pquerna/otp"
@@ -124,7 +123,7 @@ func execShow(cfg CommandConfig, args []string) error {
 			twoFactorSecret = key.Secret()
 		}
 
-		if outputPassword, err = totp.GenerateCode(twoFactorSecret, time.Now().UTC()); err != nil {
+		if outputPassword, err = totp.GenerateCode(twoFactorSecret, cfg.Now().UTC()); err != nil {
 			return fmt.Errorf("could not generate otp code: %w", err)
 		}
 
