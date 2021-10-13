@@ -72,8 +72,6 @@ func (cfg *testConfig) Now() time.Time {
 type cliTest struct {
 	t                 *testing.T
 	passwordStoreTest *gopasstest.PasswordStoreTest
-	EditFunc          func(string) (string, error)
-	NowFunc           func() time.Time
 }
 
 func newCliTest(t *testing.T) *cliTest {
@@ -82,12 +80,6 @@ func newCliTest(t *testing.T) *cliTest {
 	cliTest := cliTest{
 		t:                 t,
 		passwordStoreTest: passwordStoreTest,
-		EditFunc: func(content string) (string, error) {
-			return content, nil
-		},
-		NowFunc: func() time.Time {
-			return time.Now()
-		},
 	}
 
 	return &cliTest
@@ -102,17 +94,28 @@ type runResult struct {
 	Stderr *bytes.Buffer
 }
 
-func (cliTest *cliTest) Run(args []string) (*runResult, error) {
+func (cliTest *cliTest) Run(
+	args []string,
+	runOpts ...func(*testConfig),
+) (*runResult, error) {
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 
 	testConfig := &testConfig{
 		passwordStore: cliTest.PasswordStore(),
-		editFunc:      cliTest.EditFunc,
-		nowFunc:       cliTest.NowFunc,
-		writerOutput:  stdout,
-		writerError:   stderr,
-		readerInput:   os.Stdin,
+		editFunc: func(content string) (string, error) {
+			return content, nil
+		},
+		nowFunc: func() time.Time {
+			return time.Now()
+		},
+		writerOutput: stdout,
+		writerError:  stderr,
+		readerInput:  os.Stdin,
+	}
+
+	for _, f := range runOpts {
+		f(testConfig)
 	}
 
 	err := cli.Run(context.TODO(), testConfig, args)
