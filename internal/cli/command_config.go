@@ -24,6 +24,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"time"
 
 	"github.com/aviau/gopass/pkg/store"
 )
@@ -36,6 +37,7 @@ type CommandConfig interface {
 	Edit(string) (string, error)
 	PasswordStoreDir() string
 	PasswordStore() *store.PasswordStore
+	Now() time.Time
 }
 
 // DefaultConfig is a default CommandConfig implementation.
@@ -126,4 +128,8 @@ func (cfg *DefaultConfig) Edit(content string) (string, error) {
 	editedContent := string(editedContentBytes)
 
 	return editedContent, nil
+}
+
+func (cfg *DefaultConfig) Now() time.Time {
+	return time.Now()
 }

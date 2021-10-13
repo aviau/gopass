@@ -20,6 +20,7 @@ package cli
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -70,4 +71,54 @@ func TestShow(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, result.Stderr.String(), "")
 	assert.Equal(t, result.Stdout.String(), "hello world\n")
+}
+
+func TestShowTwoFactor(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	passwordWithTwoFactor := `pass123
+---
+2fa: JBSWY3DPEHPK3PXP
+`
+
+	if err := cliTest.PasswordStore().InsertPassword("test.com", passwordWithTwoFactor); err != nil {
+		t.Fatal(err)
+	}
+
+	cliTest.NowFunc = func() time.Time {
+		return time.Date(2020, 1, 2, 15, 0, 0, 0, time.UTC)
+	}
+
+	result, err := cliTest.Run([]string{"show", "--2fa", "test.com"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, result.Stderr.String(), "")
+	assert.Equal(t, result.Stdout.String(), "891690\n")
+
+}
+
+func TestShowTwoFactorOtpauthURI(t *testing.T) {
+	cliTest := newCliTest(t)
+	defer cliTest.Close()
+
+	passwordWithTwoFactor := `pass123
+--
+2fa: otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example
+`
+
+	if err := cliTest.PasswordStore().InsertPassword("test.com", passwordWithTwoFactor); err != nil {
+		t.Fatal(err)
+	}
+
+	cliTest.NowFunc = func() time.Time {
+		return time.Date(2020, 1, 2, 15, 0, 0, 0, time.UTC)
+	}
+
+	result, err := cliTest.Run([]string{"show", "--2fa", "test.com"})
+
+	assert.Nil(t, err)
+	assert.Equal(t, result.Stderr.String(), "")
+	assert.Equal(t, result.Stdout.String(), "891690\n")
+
 }

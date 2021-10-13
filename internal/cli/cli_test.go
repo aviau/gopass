@@ -23,6 +23,7 @@ import (
 	"io"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/aviau/gopass/internal/gopasstest"
 	"github.com/aviau/gopass/pkg/store"
@@ -32,6 +33,7 @@ import (
 type testConfig struct {
 	passwordStore *store.PasswordStore
 	editFunc      func(string) (string, error)
+	nowFunc       func() time.Time
 	writerOutput  io.Writer
 	writerError   io.Writer
 	readerInput   io.Reader
@@ -61,11 +63,16 @@ func (cfg *testConfig) ReaderInput() io.Reader {
 	return cfg.readerInput
 }
 
+func (cfg *testConfig) Now() time.Time {
+	return cfg.nowFunc()
+}
+
 // cliTest allows for testing the CLI without a TTY.
 type cliTest struct {
 	t                 *testing.T
 	passwordStoreTest *gopasstest.PasswordStoreTest
 	EditFunc          func(string) (string, error)
+	NowFunc           func() time.Time
 }
 
 func newCliTest(t *testing.T) *cliTest {
@@ -76,6 +83,9 @@ func newCliTest(t *testing.T) *cliTest {
 		passwordStoreTest: passwordStoreTest,
 		EditFunc: func(content string) (string, error) {
 			return content, nil
+		},
+		NowFunc: func() time.Time {
+			return time.Now()
 		},
 	}
 
@@ -98,6 +108,7 @@ func (cliTest *cliTest) Run(args []string) (*runResult, error) {
 	testConfig := &testConfig{
 		passwordStore: cliTest.PasswordStore(),
 		editFunc:      cliTest.EditFunc,
+		nowFunc:       cliTest.NowFunc,
 		writerOutput:  stdout,
 		writerError:   stderr,
 		readerInput:   os.Stdin,
