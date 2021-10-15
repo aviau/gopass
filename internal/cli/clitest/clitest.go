@@ -50,7 +50,10 @@ func (cfg *testConfig) PasswordStoreDir() string {
 }
 
 func (cfg *testConfig) Edit(content string) (string, error) {
-	return cfg.editFunc(content)
+	if cfg.editFunc != nil {
+		return cfg.editFunc(content)
+	}
+	return content, nil
 }
 
 func (cfg *testConfig) WriterOutput() io.Writer {
@@ -66,29 +69,22 @@ func (cfg *testConfig) ReaderInput() io.Reader {
 }
 
 func (cfg *testConfig) Now() time.Time {
-	return cfg.nowFunc()
+	if cfg.nowFunc != nil {
+		return cfg.nowFunc()
+	}
+	return time.Now()
 }
 
 // cliTest allows for testing the CLI without a TTY.
 type cliTest struct {
-	t                 *testing.T
 	passwordStoreTest *storetest.PasswordStoreTest
-	EditFunc          func(string) (string, error)
-	NowFunc           func() time.Time
 }
 
 func NewCliTest(t *testing.T) *cliTest {
 	passwordStoreTest := storetest.NewPasswordStoreTest(t)
 
 	cliTest := cliTest{
-		t:                 t,
 		passwordStoreTest: passwordStoreTest,
-		EditFunc: func(content string) (string, error) {
-			return content, nil
-		},
-		NowFunc: func() time.Time {
-			return time.Now()
-		},
 	}
 
 	return &cliTest
@@ -103,17 +99,19 @@ type runResult struct {
 	Stderr *bytes.Buffer
 }
 
-func (cliTest *cliTest) Run(args []string) (*runResult, error) {
+func (cliTest *cliTest) Run(args []string, runOptions ...RunOption) (*runResult, error) {
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 
 	testConfig := &testConfig{
 		passwordStore: cliTest.PasswordStore(),
-		editFunc:      cliTest.EditFunc,
-		nowFunc:       cliTest.NowFunc,
 		writerOutput:  stdout,
 		writerError:   stderr,
 		readerInput:   os.Stdin,
+	}
+
+	for _, fn := range runOptions {
+		fn(testConfig)
 	}
 
 	err := cli.Run(context.TODO(), testConfig, args)

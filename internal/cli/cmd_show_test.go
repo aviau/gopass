@@ -87,11 +87,14 @@ func TestShowTwoFactor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cliTest.NowFunc = func() time.Time {
+	nowFunc := func() time.Time {
 		return time.Date(2020, 1, 2, 15, 0, 0, 0, time.UTC)
 	}
 
-	result, err := cliTest.Run([]string{"show", "--2fa", "test.com"})
+	result, err := cliTest.Run(
+		[]string{"show", "--2fa", "test.com"},
+		clitest.WithNowFunc(nowFunc),
+	)
 
 	assert.Nil(t, err)
 	assert.Equal(t, result.Stderr.String(), "")
@@ -112,11 +115,14 @@ func TestShowTwoFactorOtpauthURI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cliTest.NowFunc = func() time.Time {
+	nowFunc := func() time.Time {
 		return time.Date(2020, 1, 2, 15, 0, 0, 0, time.UTC)
 	}
 
-	result, err := cliTest.Run([]string{"show", "--2fa", "test.com"})
+	result, err := cliTest.Run(
+		[]string{"show", "--2fa", "test.com"},
+		clitest.WithNowFunc(nowFunc),
+	)
 
 	assert.Nil(t, err)
 	assert.Equal(t, result.Stderr.String(), "")

@@ -53,7 +53,7 @@ func TestInsertMultiline(t *testing.T) {
 
 	// Setup the EditFunc callback.
 	editFuncCalled := false
-	cliTest.EditFunc = func(content string) (string, error) {
+	editFunc := func(content string) (string, error) {
 		editFuncCalled = true
 		return "edited password", nil
 	}
@@ -63,7 +63,10 @@ func TestInsertMultiline(t *testing.T) {
 	assert.False(t, containsPassword, "there should be no preexisting password")
 
 	// Run the command
-	_, err := cliTest.Run([]string{"insert", "-m", "test.com"})
+	_, err := cliTest.Run(
+		[]string{"insert", "-m", "test.com"},
+		clitest.WithEditFunc(editFunc),
+	)
 
 	// Asserts
 	assert.Nil(t, err)
