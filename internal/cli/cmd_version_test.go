@@ -23,11 +23,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/aviau/gopass/internal/cli/clitest"
 	"github.com/aviau/gopass/internal/version"
 )
 
 func TestVersion(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"version"})

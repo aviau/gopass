@@ -21,11 +21,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/aviau/gopass/internal/cli/clitest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInsertHelp(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"insert", "--help"})
@@ -36,7 +37,7 @@ func TestInsertHelp(t *testing.T) {
 }
 
 func TestInsertDashH(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"insert", "--h"})
@@ -47,7 +48,7 @@ func TestInsertDashH(t *testing.T) {
 }
 
 func TestInsertMultiline(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	// Setup the EditFunc callback.

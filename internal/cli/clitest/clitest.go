@@ -15,7 +15,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-package cli_test
+// Package clitest provides utilities for testing the CLI.
+package clitest
 
 import (
 	"bytes"
@@ -76,7 +77,7 @@ type cliTest struct {
 	NowFunc           func() time.Time
 }
 
-func newCliTest(t *testing.T) *cliTest {
+func NewCliTest(t *testing.T) *cliTest {
 	passwordStoreTest := storetest.NewPasswordStoreTest(t)
 
 	cliTest := cliTest{

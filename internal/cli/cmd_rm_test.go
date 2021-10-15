@@ -23,11 +23,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/aviau/gopass/internal/cli/clitest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRmDashDashHelp(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"rm", "--help"})
@@ -38,7 +39,7 @@ func TestRmDashDashHelp(t *testing.T) {
 }
 
 func TestRmDashH(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"rm", "-h"})
@@ -49,7 +50,7 @@ func TestRmDashH(t *testing.T) {
 }
 
 func TestRmDirectoryWithoutRecursive(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	testDirectoryPath := filepath.Join(cliTest.PasswordStore().Path, "dir")
@@ -63,7 +64,7 @@ func TestRmDirectoryWithoutRecursive(t *testing.T) {
 }
 
 func TestRmUnexistingPassword(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	_, err := cliTest.Run([]string{"rm", "dir"})

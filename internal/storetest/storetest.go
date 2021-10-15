@@ -15,7 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with gopass.  If not, see <http://www.gnu.org/licenses/>.
 
-// Package storetest implements utilities for testing the store package.
+// Package storetest provides utilities for testing the store.
 package storetest
 
 import (

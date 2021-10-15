@@ -21,11 +21,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/aviau/gopass/internal/cli/clitest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestMvDashDashHelp(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"mv", "--help"})
@@ -36,7 +37,7 @@ func TestMvDashDashHelp(t *testing.T) {
 }
 
 func TestMvDashH(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"mv", "-h"})

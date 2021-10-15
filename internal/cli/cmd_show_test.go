@@ -22,11 +22,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aviau/gopass/internal/cli/clitest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestShowDashDashHelp(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"show", "--help"})
@@ -37,7 +38,7 @@ func TestShowDashDashHelp(t *testing.T) {
 }
 
 func TestShowDashH(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"show", "-h"})
@@ -48,7 +49,7 @@ func TestShowDashH(t *testing.T) {
 }
 
 func TestShowMissingPassword(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	result, err := cliTest.Run([]string{"show"})
@@ -59,7 +60,7 @@ func TestShowMissingPassword(t *testing.T) {
 }
 
 func TestShow(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	if err := cliTest.PasswordStore().InsertPassword("test.com", "hello world"); err != nil {
@@ -74,7 +75,7 @@ func TestShow(t *testing.T) {
 }
 
 func TestShowTwoFactor(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	passwordWithTwoFactor := `pass123
@@ -99,7 +100,7 @@ func TestShowTwoFactor(t *testing.T) {
 }
 
 func TestShowTwoFactorOtpauthURI(t *testing.T) {
-	cliTest := newCliTest(t)
+	cliTest := clitest.NewCliTest(t)
 	defer cliTest.Close()
 
 	passwordWithTwoFactor := `pass123
