@@ -26,7 +26,7 @@ import (
 	"time"
 
 	"github.com/aviau/gopass/internal/cli"
-	"github.com/aviau/gopass/internal/gopasstest"
+	"github.com/aviau/gopass/internal/storetest"
 	"github.com/aviau/gopass/pkg/store"
 )
 
@@ -71,13 +71,13 @@ func (cfg *testConfig) Now() time.Time {
 // cliTest allows for testing the CLI without a TTY.
 type cliTest struct {
 	t                 *testing.T
-	passwordStoreTest *gopasstest.PasswordStoreTest
+	passwordStoreTest *storetest.PasswordStoreTest
 	EditFunc          func(string) (string, error)
 	NowFunc           func() time.Time
 }
 
 func newCliTest(t *testing.T) *cliTest {
-	passwordStoreTest := gopasstest.NewPasswordStoreTest(t)
+	passwordStoreTest := storetest.NewPasswordStoreTest(t)
 
 	cliTest := cliTest{
 		t:                 t,

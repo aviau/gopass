@@ -24,11 +24,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/internal/gopasstest"
+	"github.com/aviau/gopass/internal/storetest"
 )
 
 func TestContainsPassword(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
+	st := storetest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")
@@ -48,7 +48,7 @@ func TestContainsPassword(t *testing.T) {
 }
 
 func TestContainsPasswordDirectory(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
+	st := storetest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	containsPassword, _ := st.PasswordStore.ContainsPassword("test.com")

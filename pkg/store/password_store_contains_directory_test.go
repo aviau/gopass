@@ -24,11 +24,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/internal/gopasstest"
+	"github.com/aviau/gopass/internal/storetest"
 )
 
 func TestContainsDirectory(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
+	st := storetest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")
@@ -47,7 +47,7 @@ func TestContainsDirectory(t *testing.T) {
 }
 
 func TestContainsDirectoryTrailingSlash(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
+	st := storetest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	containsDirectory, _ := st.PasswordStore.ContainsDirectory("dir")

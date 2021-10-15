@@ -24,11 +24,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/aviau/gopass/internal/gopasstest"
+	"github.com/aviau/gopass/internal/storetest"
 )
 
 func TestRemovePassword(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
+	st := storetest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
@@ -46,7 +46,7 @@ func TestRemovePassword(t *testing.T) {
 }
 
 func TestRemovePasswordTrailingSlash(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
+	st := storetest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	testPasswordPath := filepath.Join(st.PasswordStore.Path, "test.com.gpg")
@@ -64,7 +64,7 @@ func TestRemovePasswordTrailingSlash(t *testing.T) {
 }
 
 func TestRemovePasswordDirectory(t *testing.T) {
-	st := gopasstest.NewPasswordStoreTest(t)
+	st := storetest.NewPasswordStoreTest(t)
 	defer st.Close()
 
 	testDirectoryPath := filepath.Join(st.PasswordStore.Path, "test.com")
