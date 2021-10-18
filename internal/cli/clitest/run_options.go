@@ -19,17 +19,22 @@ package clitest
 
 import "time"
 
-type RunOption func(*testConfig)
+type runOptions struct {
+	editFunc func(string) (string, error)
+	nowFunc  func() time.Time
+}
+
+type RunOption func(*runOptions)
 
 func WithEditFunc(editFunc func(string) (string, error)) RunOption {
-	return func(cfg *testConfig) {
-		cfg.editFunc = editFunc
+	return func(opts *runOptions) {
+		opts.editFunc = editFunc
 	}
 }
 
 func WithNowFunc(nowFunc func() time.Time) RunOption {
-	return func(cfg *testConfig) {
-		cfg.nowFunc = nowFunc
+	return func(opts *runOptions) {
+		opts.nowFunc = nowFunc
 	}
 }
 
