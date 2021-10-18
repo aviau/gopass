@@ -19,6 +19,7 @@ package clitest
 
 import "time"
 
+// runOptions contain *optitonal* parameters for Run().
 type runOptions struct {
 	editFunc func(string) (string, error)
 	nowFunc  func() time.Time
