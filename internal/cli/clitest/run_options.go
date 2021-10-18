@@ -32,3 +32,11 @@ func WithNowFunc(nowFunc func() time.Time) RunOption {
 		cfg.nowFunc = nowFunc
 	}
 }
+
+func WithFixedTime(t time.Time) RunOption {
+	return WithNowFunc(
+		func() time.Time {
+			return t
+		},
+	)
+}
