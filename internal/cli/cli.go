@@ -36,6 +36,8 @@ func Run(ctx context.Context, cfg CommandConfig, cmdAndArgs []string) error {
 		return execInsert(cfg, cmdAndArgs[1:])
 	case "find", "ls", "search", "list":
 		return execFind(cfg, cmdAndArgs[1:])
+	case "alfred":
+		return execAlfred(cfg, cmdAndArgs[1:])
 	case "":
 		return execFind(cfg, cmdAndArgs)
 	case "grep":
