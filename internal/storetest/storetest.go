@@ -19,6 +19,7 @@
 package storetest
 
 import (
+	"io/ioutil"
 	"os"
 	"testing"
 
@@ -36,14 +37,21 @@ var testSecretKeyID string = "CED3B67C8F1F6CA9"
 type PasswordStoreTest struct {
 	PasswordStore *store.PasswordStore
 	storePath     string
+	gnupgHome     string
+	t             *testing.T
 }
 
 // NewPasswordStoreTest creates a password store for testing
 func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	storePath := t.TempDir()
 
-	// Prepare GPG
-	gnupgHome := t.TempDir()
+	// Createa a GNUPGHOME. Don't use t.TempDir() because its path is
+	// too long on macOS and GPG can't handle it:
+	// - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=847206
+	gnupgHome, err := ioutil.TempDir("/tmp", "gopass-tests")
+	if err != nil {
+		t.Fatal(err)
+	}
 	if err := os.Chmod(gnupgHome, 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -71,6 +79,8 @@ func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	passwordStoreTest := PasswordStoreTest{
 		PasswordStore: passwordStore,
 		storePath:     storePath,
+		t:             t,
+		gnupgHome:     gnupgHome,
 	}
 
 	return &passwordStoreTest
@@ -78,5 +88,7 @@ func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 
 // Close cleans the test.
 func (test *PasswordStoreTest) Close() {
-	// Nothing for now.
+	if err := os.RemoveAll(test.gnupgHome); err != nil {
+		test.t.Fatal(err)
+	}
 }
