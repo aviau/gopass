@@ -51,26 +51,26 @@ func TestAlfred(t *testing.T) {
 	}
 
 	type testCase struct {
-		query           []string
-		expectedResults []string
+		query        []string
+		exoectedUIDs []string
 	}
 
 	testCases := []*testCase{
 		{
-			query:           []string{"aa"},
-			expectedResults: []string{"aaaa", "aabbcc"},
+			query:        []string{"aa"},
+			exoectedUIDs: []string{"aaaa", "aabbcc"},
 		},
 		{
-			query:           []string{"aa", "cc"},
-			expectedResults: []string{"aabbcc"},
+			query:        []string{"aa", "cc"},
+			exoectedUIDs: []string{"aabbcc"},
 		},
 		{
-			query:           []string{"cc", "aa"},
-			expectedResults: []string{},
+			query:        []string{"cc", "aa"},
+			exoectedUIDs: []string{},
 		},
 		{
-			query:           []string{"bb", "bb"},
-			expectedResults: []string{},
+			query:        []string{"bb", "bb"},
+			exoectedUIDs: []string{},
 		},
 	}
 
@@ -87,12 +87,12 @@ func TestAlfred(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var results = make([]string, 0)
+		var UIDs = make([]string, 0)
 		for _, item := range parsedOutput.Items {
-			results = append(results, item.UID)
+			UIDs = append(UIDs, item.UID)
 		}
 
-		assert.Equal(t, testCase.expectedResults, results)
+		assert.Equal(t, testCase.exoectedUIDs, UIDs)
 	}
 
 }
