@@ -45,7 +45,7 @@ type PasswordStoreTest struct {
 func NewPasswordStoreTest(t *testing.T) *PasswordStoreTest {
 	storePath := t.TempDir()
 
-	// Createa a GNUPGHOME. Don't use t.TempDir() because its path is
+	// Create a GNUPGHOME. Don't use t.TempDir() because its path is
 	// too long on macOS and GPG can't handle it:
 	// - https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=847206
 	gnupgHome, err := ioutil.TempDir("/tmp", "gopass-tests")
