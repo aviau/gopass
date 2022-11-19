@@ -126,7 +126,7 @@ func (store *PasswordStore) Init(gpgIDs []string) error {
 	return store.AddAndCommit("initial commit", ".gpg-id")
 }
 
-//SetGPGIDs will set the store's GPG ids
+// SetGPGIDs will set the store's GPG ids
 func (store *PasswordStore) SetGPGIDs(gpgIDs []string) error {
 	gpgIDFile, err := os.OpenFile(
 		path.Join(store.Path, ".gpg-id"),
